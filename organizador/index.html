@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Cona — Organizador</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+button{-webkit-appearance:none;appearance:none}
+:root{
+--bg:#0a1a10;--f1:#0f2916;--f2:#14351d;--line:rgba(167,238,67,.12);
+--g:#A7EE43;--g2:rgba(167,238,67,.15);
+--t1b:rgba(20,20,25,.85);--t1c:rgba(255,255,255,.55);
+--t2b:rgba(167,238,67,.88);--t2c:#0a1a10;
+--w:#fff;--w7:rgba(255,255,255,.7);--w4:rgba(255,255,255,.35);--w2:rgba(255,255,255,.15);
+--sab:env(safe-area-inset-bottom,0px);--sat:env(safe-area-inset-top,0px)
+}
+html,body{height:100%;overflow:hidden;overscroll-behavior:none}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--w)}
+/* SVG icons inherit color */
+.ic{display:inline-flex;align-items:center;justify-content:center}
+.ic svg{fill:currentColor}
+
+/* ═══ SETUP ═══ */
+.setup{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.setup.gone{display:none}
+.su-h{padding:max(20px,var(--sat)) 20px 10px;text-align:center}
+.su-h h1{font-size:20px;font-weight:800}
+.su-h p{font-size:11px;color:var(--w4);margin-top:2px}
+.su-b{padding:0 16px;flex:1}
+.su-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--w4);margin:14px 0 6px}
+.su-fx{display:flex;gap:8px}
+.si{width:100%;padding:12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-family:inherit;font-size:14px;font-weight:600;outline:none}
+.si:focus{border-color:rgba(167,238,67,.4)}
+.si::placeholder{color:rgba(255,255,255,.2)}
+.si.sn{width:48px;flex:none;text-align:center;font-size:16px;font-weight:800;padding:12px 4px}
+.su-t{margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.su-td{width:18px;height:18px;border-radius:6px}
+.su-td.t1{background:var(--t1b);border:2px solid var(--t1c)}
+.su-td.t2{background:var(--t2b)}
+.su-tn{font-size:13px;font-weight:800}
+.su-r{display:flex;gap:6px;margin-bottom:5px;align-items:center}
+.su-p{font-size:7px;font-weight:700;color:var(--w4);padding:4px 6px;background:rgba(255,255,255,.05);border-radius:4px;flex-shrink:0}
+.su-x{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:rgba(255,60,60,.06);color:rgba(255,60,60,.5);font-size:14px;cursor:pointer;flex-shrink:0;border:none}
+.su-a{width:100%;padding:10px;border:1px dashed rgba(255,255,255,.1);border-radius:8px;background:none;color:var(--w4);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:3px}
+.su-ft{position:sticky;bottom:0;padding:12px 16px calc(12px + var(--sab));background:linear-gradient(transparent,var(--bg) 30%)}
+.su-go{width:100%;padding:16px;background:var(--g);color:#0a1a10;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
+
+/* ═══ APP ═══ */
+.app{display:none;flex-direction:column;height:100dvh}
+.app.on{display:flex}
+.app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
+.app-right{display:none}
+
+/* Scoreboard */
+.sb{display:flex;flex-shrink:0;padding:max(10px,var(--sat)) 14px 10px;background:rgba(6,16,10,.85);backdrop-filter:blur(10px);border-bottom:1px solid rgba(167,238,67,.08)}
+.sb-core{display:flex;align-items:center;justify-content:center;flex:1;gap:4px}
+.sb-nm{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.sb-nm.t1{color:rgba(255,255,255,.7)}
+.sb-nm.t2{color:var(--g)}
+.sb-sc{font-size:42px;font-weight:800;min-width:32px;text-align:center;line-height:1}
+.sb-sc.t1{color:#fff}
+.sb-sc.t2{color:var(--g)}
+.sb-d{padding:0 6px;font-size:20px;color:var(--w4);font-weight:300}
+.sb-tm{font-size:14px;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer;font-variant-numeric:tabular-nums;flex-shrink:0}
+.sb-tm.on{color:var(--g);background:rgba(167,238,67,.1);border:1px solid rgba(167,238,67,.2)}
+.sb-tm.off{color:var(--w4);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);animation:bl 1.2s infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* Field */
+.pitch{flex:1;position:relative;overflow:hidden;background:var(--f1)}
+.pitch::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(180deg,var(--f1) 0%,var(--f1) 10%,var(--f2) 10%,var(--f2) 20%);opacity:.7}
+.fm{position:absolute;border:1px solid var(--line);pointer-events:none;z-index:1}
+.fm.bd{left:3%;right:3%;top:1.5%;bottom:1.5%;border-radius:3px}
+.fm.hl{left:3%;right:3%;top:50%;height:0}
+.fm.cc{width:70px;height:70px;border-radius:50%;left:50%;top:50%;transform:translate(-50%,-50%)}
+.fm.cd{width:5px;height:5px;border-radius:50%;background:var(--line);left:50%;top:50%;transform:translate(-50%,-50%);border:none}
+.fm.bt{left:50%;top:1.5%;width:50%;height:16%;transform:translateX(-50%)}
+.fm.bb{left:50%;bottom:1.5%;width:50%;height:16%;transform:translateX(-50%)}
+.fm.gt{left:50%;top:1.5%;width:22%;height:6%;transform:translateX(-50%)}
+.fm.gb{left:50%;bottom:1.5%;width:22%;height:6%;transform:translateX(-50%)}
+
+/* Nodes */
+.pn{position:absolute;z-index:5;display:flex;flex-direction:column;align-items:center;cursor:pointer}
+.pn:active .bl{transform:scale(.9)}
+.bl{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;box-shadow:0 3px 12px rgba(0,0,0,.5);position:relative;transition:transform .08s}
+.pn.t1 .bl{background:rgba(20,20,25,.9);border:2.5px solid rgba(255,255,255,.5);color:#fff;backdrop-filter:blur(3px)}
+.pn.t2 .bl{background:var(--g);border:2.5px solid rgba(120,200,30,.6);color:var(--t2c)}
+.pn.por .bl{border-style:dashed}
+.pn .lb{font-size:9px;font-weight:700;color:rgba(255,255,255,.75);margin-top:3px;text-shadow:0 1px 4px rgba(0,0,0,.9);max-width:64px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* badges */
+.badge{position:absolute;min-width:18px;height:18px;border-radius:9px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.badge.bg{top:-5px;right:-5px;background:var(--g);color:#0a1a10}
+.badge.bs{top:-5px;left:-5px;background:#fbbf24;color:#0a1a10}
+
+/* ═══ POPUP ═══ */
+.pop-bg{position:fixed;inset:0;z-index:50;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center}
+.pop-bg.on{display:flex}
+.pop{background:rgba(10,20,13,.97);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:0 0 14px;width:calc(100% - 16px);max-width:400px;max-height:90vh;overflow-y:auto;box-shadow:0 16px 48px rgba(0,0,0,.6)}
+.pop-hd{display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.06)}
+.pop-j{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex-shrink:0}
+.pop-j.t1{background:var(--t1b);border:2.5px solid var(--t1c);color:#fff}
+.pop-j.t2{background:var(--t2b);border:2.5px solid rgba(120,200,30,.5);color:var(--t2c)}
+.pop-nm{font-size:17px;font-weight:800;flex:1}
+.pop-ps{font-size:9px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.06em;margin-top:1px}
+.pop-x{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w4);font-size:14px;flex-shrink:0;border:none;font-family:inherit}
+.pop-bd{padding:0 14px}
+
+/* Section dividers */
+.pop-sec{display:flex;align-items:center;gap:8px;padding:12px 4px 8px}
+.pop-sec-ico{display:inline-flex;align-items:center;justify-content:center}
+.pop-sec-ico svg{width:14px;height:14px}
+.pop-sec-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em}
+.pop-sec-lb.atk{color:var(--g)}
+.pop-sec-lb.def{color:#58a6ff}
+.pop-sec-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+
+/* Stat grid */
+.sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.sc{border-radius:12px;overflow:hidden;border:1.5px solid transparent;display:flex;flex-direction:column}
+.sc-top{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 4px 0}
+.sc-ico{display:flex;align-items:center;justify-content:center}
+.sc-ico svg{width:16px;height:16px}
+.sc-lb{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.sc-row{display:flex;align-items:center;justify-content:space-between}
+.sc-btn{width:48px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;cursor:pointer;border:none;background:none;font-family:inherit;color:inherit;transition:background .08s;border-radius:8px;-webkit-appearance:none;appearance:none}
+.sc-btn:active{background:rgba(255,255,255,.12)}
+.sc-btn.mn{color:rgba(255,255,255,.2)}
+.sc-v{font-size:22px;font-weight:800;min-width:24px;text-align:center;font-variant-numeric:tabular-nums}
+
+/* colors */
+.sc.gol{background:rgba(167,238,67,.06);border-color:rgba(167,238,67,.15);color:var(--g)}
+.sc.tap{background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.1);color:#fbbf24}
+.sc.tir{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06);color:var(--w7)}
+.sc.pst{background:rgba(255,165,0,.05);border-color:rgba(255,165,0,.1);color:#ffa500}
+.sc.sal{background:rgba(88,166,255,.05);border-color:rgba(88,166,255,.1);color:#58a6ff}
+
+/* autogol btn */
+.og-btn{width:100%;padding:12px;border:1px dashed rgba(255,60,60,.25);border-radius:10px;background:rgba(255,60,60,.04);color:rgba(255,80,80,.8);font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;-webkit-appearance:none;appearance:none}
+.og-btn:active{background:rgba(255,60,60,.12)}
+.og-btn svg{width:16px;height:16px}
+
+/* primary row */
+.sc.pri{flex-direction:row;align-items:center;padding:6px 0}
+.sc.pri .sc-top{padding:0 10px;flex-direction:column;gap:1px}
+.sc.pri .sc-ico svg{width:22px;height:22px}
+.sc.pri .sc-lb{font-size:10px}
+.sc.pri .sc-row{flex:1;justify-content:center;gap:6px}
+.sc.pri .sc-btn{width:54px;height:48px;font-size:26px}
+.sc.pri .sc-v{font-size:30px;min-width:32px}
+
+/* ═══ ASSIST ═══ */
+.ast-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
+.ast-bg.on{display:flex}
+.ast-sh{background:rgba(15,25,18,.95);backdrop-filter:blur(12px);border-top:2px solid var(--g);border-radius:16px 16px 0 0;padding:14px 16px calc(14px + var(--sab));max-height:55vh;overflow-y:auto}
+.ast-t{font-size:11px;font-weight:700;color:var(--g);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;text-align:center}
+.ast-g{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.ast-b{display:flex;align-items:center;gap:8px;padding:12px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);cursor:pointer}
+.ast-b:active{background:rgba(88,166,255,.1);border-color:rgba(88,166,255,.25)}
+.ast-j{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.ast-j.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.ast-j.t2{background:var(--t2b);color:var(--t2c)}
+.ast-n{font-size:12px;font-weight:700;color:var(--w7)}
+.ast-no{width:100%;padding:12px;border-radius:10px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.04);cursor:pointer;text-align:center;font-size:11px;font-weight:700;color:var(--w4);margin-top:6px;font-family:inherit}
+
+/* ═══ INFO BAR (right side) ═══ */
+.ib{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);backdrop-filter:blur(10px);border:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10}
+.ib-ev{font-size:8px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 6px;border-radius:4px}
+.ib-last{display:none}
+.ib-btn{padding:7px 8px;border-radius:8px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.12);font-family:inherit;font-size:9px;font-weight:700;color:var(--g);cursor:pointer;white-space:nowrap}
+.ib-btn:active{background:rgba(167,238,67,.15)}
+
+/* ═══ TIMELINE ═══ */
+.tl-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column}
+.tl-bg.on{display:flex}
+.tl-x{position:absolute;top:max(12px,var(--sat));right:12px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--w7);font-size:15px;z-index:1;border:none;font-family:inherit}
+.tl-w{flex:1;overflow-y:auto;padding-bottom:24px}
+.tl-hd{padding:max(20px,calc(var(--sat) + 8px)) 24px 16px;text-align:center;border-bottom:1px solid rgba(167,238,67,.1)}
+.tl-mn{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--g);margin-bottom:12px}
+.tl-sr{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:6px}
+.tl-ts{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:70px}
+.tl-td{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.tl-td.t1{background:var(--t1b);border:2px solid var(--t1c);color:#fff}
+.tl-td.t2{background:var(--t2b);color:var(--t2c)}
+.tl-tn{font-size:10px;font-weight:700;color:var(--w7)}
+.tl-fs{font-size:42px;font-weight:800;line-height:1}
+.tl-fs.t1{color:#fff}
+.tl-fs.t2{color:var(--g)}
+.tl-fd{font-size:20px;color:var(--w4);font-weight:300}
+.tl-dur{font-size:10px;color:var(--w4);margin-top:4px}
+.tl-bd{padding:8px 20px;position:relative}
+.tl-bd::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(255,255,255,.07)}
+.tl-emp{text-align:center;padding:32px 0;color:var(--w4);font-size:13px}
+.tl-r{display:flex;align-items:center;margin-bottom:2px;min-height:40px;position:relative}
+.tl-r.t1{justify-content:flex-end;padding-right:calc(50% + 10px)}
+.tl-r.t1 .tl-c{text-align:right;flex-direction:row-reverse}
+.tl-r.t2{padding-left:calc(50% + 10px)}
+.tl-c{display:flex;align-items:center;gap:6px}
+.tl-m{font-size:11px;font-weight:800;color:var(--w4);font-variant-numeric:tabular-nums}
+.tl-p{font-size:13px;font-weight:700}
+.tl-a{font-size:10px;font-weight:600;color:rgba(88,166,255,.7)}
+.tl-dt{position:absolute;left:50%;transform:translateX(-50%);width:7px;height:7px;border-radius:50%}
+.tl-r.t1 .tl-dt{background:var(--t1c)}
+.tl-r.t2 .tl-dt{background:var(--g)}
+.tl-rs{text-align:center;padding:2px 0 6px;font-size:14px;font-weight:800;letter-spacing:.05em}
+
+/* ═══ EXPORT ═══ */
+.ex-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column;justify-content:flex-end}
+.ex-bg.on{display:flex}
+.ex-sh{background:rgba(10,26,16,.98);border-top:1px solid rgba(167,238,67,.15);border-radius:16px 16px 0 0;padding:18px 16px calc(18px + var(--sab));max-height:80vh;overflow-y:auto}
+.ex-t{font-size:16px;font-weight:800;margin-bottom:14px;text-align:center;color:var(--g)}
+.ex-pre{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;font-family:'SF Mono',monospace;font-size:10px;color:var(--w7);white-space:pre-wrap;line-height:1.5;max-height:40vh;overflow-y:auto;margin-bottom:12px}
+.ex-row{display:flex;gap:8px}
+.ex-btn{flex:1;padding:14px;border-radius:10px;border:none;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer}
+.ex-btn.cp{background:var(--g);color:#0a1a10}
+.ex-btn.cl{background:rgba(255,255,255,.06);color:var(--w7)}
+
+/* ═══ HOME ═══ */
+.home{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.home.gone{display:none}
+.hm-h{padding:max(24px,var(--sat)) 20px 8px;text-align:center}
+.hm-h h1{font-size:22px;font-weight:800}
+.hm-h h1 span{color:var(--g)}
+.hm-h p{font-size:11px;color:var(--w4);margin-top:4px}
+.hm-new{margin:16px 16px 0;padding:18px;background:var(--g);color:#0a1a10;border:none;border-radius:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px}
+.hm-new:active{opacity:.85}
+.hm-new svg{width:22px;height:22px}
+.hm-sec{display:flex;align-items:center;gap:10px;padding:20px 16px 10px}
+.hm-sec-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.14em;color:var(--w4)}
+.hm-sec-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.hm-sec-cnt{font-size:9px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 8px;border-radius:10px}
+.hm-list{padding:0 16px 24px;display:flex;flex-direction:column;gap:8px}
+.hm-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;cursor:pointer;transition:background .1s}
+.hm-card:active{background:rgba(255,255,255,.06)}
+.hm-card.active{border-color:rgba(167,238,67,.25)}
+.hm-card.done{border-color:rgba(255,255,255,.08)}
+.hm-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.hm-name{font-size:14px;font-weight:800;color:#fff}
+.hm-badge{font-size:8px;font-weight:700;padding:3px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.08em}
+.hm-badge.live{background:rgba(167,238,67,.15);color:var(--g);border:1px solid rgba(167,238,67,.25)}
+.hm-badge.fin{background:rgba(255,255,255,.05);color:var(--w4);border:1px solid rgba(255,255,255,.06)}
+.hm-score{font-size:16px;font-weight:800;margin-bottom:6px}
+.hm-score .t1c{color:#fff}
+.hm-score .t2c{color:var(--g)}
+.hm-score .sep{color:var(--w4);font-weight:300;margin:0 4px}
+.hm-meta{display:flex;flex-wrap:wrap;gap:6px 14px}
+.hm-mi{font-size:10px;color:var(--w4);font-weight:600}
+.hm-mi span{color:var(--w7)}
+.hm-empty{text-align:center;padding:32px 16px;color:var(--w4);font-size:12px;line-height:1.6}
+.hm-loading{text-align:center;padding:24px;color:var(--w4);font-size:11px}
+
+/* Recovery overlay */
+.rec-bg{position:fixed;inset:0;z-index:250;display:none;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.rec-bg.on{display:flex}
+.rec-box{background:rgba(10,26,16,.97);border:1px solid rgba(167,238,67,.2);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;text-align:center}
+.rec-ico{font-size:36px;margin-bottom:12px}
+.rec-title{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.rec-sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:18px;line-height:1.5}
+.rec-info{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px;margin-bottom:20px;text-align:left}
+.rec-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0}
+.rec-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em}
+.rec-val{font-size:12px;font-weight:700;color:#fff}
+.rec-val.g{color:#A7EE43}
+.rec-btns{display:flex;flex-direction:column;gap:8px}
+.rec-btn{width:100%;padding:16px;border:none;border-radius:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.rec-btn.cont{background:#A7EE43;color:#0a1a10}
+.rec-btn.new{background:rgba(255,255,255,.06);color:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.08)}
+.rec-btn.new:active{background:rgba(255,60,60,.1);border-color:rgba(255,60,60,.2);color:rgba(255,100,100,.9)}
+
+/* Toast */
+.toast{position:fixed;top:max(48px,calc(var(--sat) + 36px));left:50%;transform:translateX(-50%) translateY(-16px);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;z-index:300;opacity:0;transition:all .2s;pointer-events:none;white-space:nowrap;background:var(--g);color:#0a1a10;box-shadow:0 4px 16px rgba(167,238,67,.3)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ═══ FINALIZAR ═══ */
+.fin-btn{padding:8px 14px;border-radius:8px;background:rgba(255,60,60,.1);border:1px solid rgba(255,60,60,.2);font-family:inherit;font-size:10px;font-weight:700;color:rgba(255,100,100,.9);cursor:pointer}
+.fin-btn:active{background:rgba(255,60,60,.2)}
+.fin-btn.done{background:var(--g);border-color:var(--g);color:#0a1a10}
+
+/* Shooter overlay (save → who shot?) */
+.sht-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
+.sht-bg.on{display:flex}
+.sht-sh{background:rgba(15,25,18,.95);backdrop-filter:blur(12px);border-top:2px solid #fbbf24;border-radius:16px 16px 0 0;padding:14px 16px calc(14px + var(--sab));max-height:55vh;overflow-y:auto}
+.sht-t{font-size:11px;font-weight:700;color:#fbbf24;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;text-align:center}
+
+/* Shot type overlay */
+.sty-bg{position:fixed;inset:0;z-index:60;display:none;background:rgba(0,0,0,.65);flex-direction:column;justify-content:flex-end}
+.sty-bg.on{display:flex}
+.sty-sh{background:rgba(15,25,18,.95);backdrop-filter:blur(12px);border-top:2px solid var(--w7);border-radius:16px 16px 0 0;padding:14px 16px calc(14px + var(--sab))}
+.sty-t{font-size:11px;font-weight:700;color:var(--w7);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;text-align:center}
+.sty-opts{display:flex;flex-direction:column;gap:8px}
+.sty-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:12px;cursor:pointer;border:none;background:rgba(255,255,255,.04);font-family:inherit;font-size:13px;font-weight:700;color:var(--w7);text-align:left;-webkit-appearance:none;width:100%}
+.sty-opt:active{background:rgba(255,255,255,.1)}
+.sty-opt .sty-emoji{font-size:18px;width:28px;text-align:center;flex-shrink:0}
+.sty-opt .sty-desc{font-size:10px;font-weight:600;color:var(--w4);margin-top:2px}
+.sty-opt.err{border:1px solid rgba(255,60,60,.2)}
+.sty-opt.neu{border:1px solid rgba(255,255,255,.08)}
+.sty-opt.good{border:1px solid rgba(167,238,67,.15)}
+
+/* ═══ TABLA (SofaScore style) ═══ */
+.tb-bg{position:fixed;inset:0;z-index:100;display:none;background:var(--bg);flex-direction:column}
+.tb-bg.on{display:flex}
+.tb-w{flex:1;overflow-y:auto;padding:0 10px calc(24px + var(--sab))}
+.tb-hd{padding:max(16px,calc(var(--sat) + 6px)) 16px 12px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+.tb-ti{font-size:16px;font-weight:800;color:#fff}
+.tb-sub{font-size:11px;color:var(--w4);font-weight:600;margin-top:4px}
+
+/* Card container */
+.tb-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;margin-top:10px;overflow:hidden}
+.tb-card-title{text-align:center;font-size:12px;font-weight:800;color:var(--w7);padding:14px 16px 0}
+
+/* Stat row — SofaScore style: value | label | value */
+.tb-sr{display:flex;align-items:center;padding:11px 16px;border-bottom:1px solid rgba(255,255,255,.03)}
+.tb-sr:last-child{border-bottom:none}
+.tb-sv{font-size:14px;font-weight:800;min-width:36px;font-variant-numeric:tabular-nums}
+.tb-sv.t1{text-align:left;color:rgba(255,255,255,.5)}
+.tb-sv.t2{text-align:right;color:rgba(255,255,255,.5)}
+.tb-sv.win{padding:2px 8px;border-radius:6px}
+.tb-sv.t1.win{background:rgba(255,255,255,.1);color:#fff}
+.tb-sv.t2.win{background:rgba(167,238,67,.15);color:var(--g)}
+.tb-sl{flex:1;text-align:center;font-size:11px;font-weight:600;color:var(--w4)}
+
+/* Big score row */
+.tb-big{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px}
+.tb-big-side{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.tb-big-dot{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800}
+.tb-big-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.tb-big-dot.t2{background:var(--t2b);color:var(--t2c)}
+.tb-big-name{font-size:10px;font-weight:700;color:var(--w4)}
+.tb-big-sc{font-size:38px;font-weight:800;line-height:1}
+.tb-big-sc.t1{color:#fff}
+.tb-big-sc.t2{color:var(--g)}
+.tb-big-sep{font-size:24px;color:var(--w4);font-weight:300;padding:0 8px}
+
+/* Bar comparison */
+.tb-bar{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px;margin:0 16px 14px}
+.tb-bar-bl{height:100%;border-radius:3px;transition:width .3s}
+.tb-bar-bl.t1{background:rgba(255,255,255,.35)}
+.tb-bar-bl.t2{background:var(--g)}
+
+/* Section divider */
+.tb-div{display:flex;align-items:center;gap:10px;padding:14px 6px 4px}
+.tb-div-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.tb-div-lb{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--g)}
+
+/* Individual leaderboards */
+.tb-sec{padding:0 4px}
+.tb-sec-hd{display:flex;align-items:center;gap:6px;padding:12px 12px 8px}
+.tb-sec-ico{display:inline-flex;align-items:center;justify-content:center}
+.tb-sec-ico svg{width:14px;height:14px}
+.tb-sec-lb{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.tb-sec-lb.gol{color:var(--g)}.tb-sec-lb.ast{color:var(--g)}.tb-sec-lb.tap{color:#fbbf24}.tb-sec-lb.sal{color:#58a6ff}
+.tb-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03)}
+.tb-row:last-child{border-bottom:none}
+.tb-pos{font-size:11px;font-weight:800;color:var(--w4);min-width:16px}
+.tb-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;flex-shrink:0}
+.tb-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.tb-dot.t2{background:var(--t2b);color:var(--t2c)}
+.tb-nm{font-size:12px;font-weight:600;color:var(--w7);flex:1}
+.tb-val{font-size:15px;font-weight:800;padding:2px 8px;border-radius:6px}
+.tb-val.gol{color:var(--g);background:rgba(167,238,67,.1)}.tb-val.ast{color:var(--g);background:rgba(167,238,67,.1)}
+.tb-val.tap{color:#fbbf24;background:rgba(251,191,36,.1)}.tb-val.sal{color:#58a6ff;background:rgba(88,166,255,.1)}
+.tb-empty{font-size:11px;color:var(--w4);padding:8px 12px}
+
+/* ═══ PREVIEW (pre-report editable stats) ═══ */
+.prev-bg{position:fixed;inset:0;z-index:100;display:none;background:var(--bg);flex-direction:column}
+.prev-bg.on{display:flex}
+.prev-hd{padding:max(16px,calc(var(--sat) + 6px)) 16px 12px;text-align:center;border-bottom:1px solid rgba(167,238,67,.1);flex-shrink:0}
+.prev-ti{font-size:16px;font-weight:800;color:#fff}
+.prev-sub{font-size:11px;color:var(--w4);font-weight:600;margin-top:4px}
+.prev-w{flex:1;overflow-y:auto;padding:0 10px calc(24px + var(--sab));-webkit-overflow-scrolling:touch}
+.prev-team{display:flex;align-items:center;gap:8px;padding:14px 6px 8px}
+.prev-team-dot{width:16px;height:16px;border-radius:6px}
+.prev-team-dot.t1{background:var(--t1b);border:2px solid var(--t1c)}
+.prev-team-dot.t2{background:var(--t2b)}
+.prev-team-nm{font-size:12px;font-weight:800}
+.prev-team-line{flex:1;height:1px;background:rgba(255,255,255,.06)}
+.prev-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;margin-bottom:6px}
+.prev-card-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.prev-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.prev-dot.t1{background:var(--t1b);border:1.5px solid var(--t1c);color:#fff}
+.prev-dot.t2{background:var(--t2b);color:var(--t2c)}
+.prev-nm{font-size:13px;font-weight:700;flex:1;color:var(--w7)}
+.prev-pos{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase}
+.prev-rt{font-size:14px;font-weight:800;padding:2px 8px;border-radius:6px}
+.prev-rt.high{background:rgba(167,238,67,.15);color:var(--g)}
+.prev-rt.mid{background:rgba(251,191,36,.12);color:#fbbf24}
+.prev-rt.low{background:rgba(255,107,107,.12);color:#ff6b6b}
+.prev-stats{display:flex;flex-wrap:wrap;gap:4px}
+.prev-stat{display:flex;align-items:center;gap:2px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:4px 4px 4px 8px}
+.prev-stat-lb{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.04em;margin-right:2px}
+.prev-stat-v{font-size:13px;font-weight:800;min-width:16px;text-align:center;font-variant-numeric:tabular-nums;color:var(--w7)}
+.prev-stat-btn{width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;border:none;background:none;color:var(--w4);cursor:pointer;border-radius:6px;font-family:inherit;-webkit-appearance:none;appearance:none}
+.prev-stat-btn:active{background:rgba(255,255,255,.1)}
+.prev-ft{position:sticky;bottom:0;padding:12px 16px calc(12px + var(--sab));background:linear-gradient(transparent,var(--bg) 30%);flex-shrink:0}
+.prev-go{width:100%;padding:16px;background:var(--g);color:#0a1a10;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;-webkit-appearance:none;appearance:none}
+.prev-back{width:100%;padding:12px;background:rgba(255,255,255,.06);color:var(--w7);border:1px solid rgba(255,255,255,.08);border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;-webkit-appearance:none;appearance:none}
+
+/* ═══ DESKTOP ═══ */
+@media(min-width:768px){
+  /* Home */
+  .home{align-items:center}
+  .hm-h{padding-top:40px}
+  .hm-new{max-width:400px;margin:20px auto 0}
+  .hm-sec{max-width:800px;width:100%;margin:0 auto;padding:24px 20px 12px}
+  .hm-list{max-width:800px;width:100%;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:12px;padding:0 20px 40px}
+  .hm-card{transition:transform .1s}
+  .hm-card:hover{transform:translateY(-2px);background:rgba(255,255,255,.05)}
+
+  /* Setup */
+  .setup{align-items:center}
+  .su-h{max-width:500px;width:100%}
+  .su-b{max-width:500px;width:100%}
+  .su-ft{max-width:500px;width:100%;margin:0 auto}
+
+  /* App / Tracking — side by side */
+  .app.on{flex-direction:row;height:100dvh}
+  .sb{flex-shrink:0;width:100%;position:absolute;top:0;left:0;right:0;z-index:20}
+  .app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
+  .pitch{flex:1}
+
+  /* Desktop tabla sidebar */
+  .app-right{display:none;width:360px;flex-shrink:0;background:rgba(6,16,10,.95);border-left:1px solid rgba(167,238,67,.08);overflow-y:auto}
+  .app.on .app-right{display:block}
+  .desk-tb-hd{padding:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
+  .desk-tb-hd .tb-ti{font-size:15px;font-weight:800;color:#fff}
+  .desk-tb-hd .tb-sub{font-size:10px;color:var(--w4);margin-top:2px}
+  .desk-tb-w{padding:0 8px 24px}
+
+  /* Popup wider on desktop */
+  .pop{max-width:440px}
+
+  /* Tabla fullscreen overlay — still works on desktop */
+  .tb-bg{max-width:500px;margin:0 auto;border-left:1px solid rgba(255,255,255,.06);border-right:1px solid rgba(255,255,255,.06)}
+  .tl-bg{max-width:500px;margin:0 auto}
+}
+
+@media(min-width:1024px){
+  .hm-list{grid-template-columns:repeat(3,1fr);max-width:1000px}
+  .hm-sec{max-width:1000px}
+  .app-right{width:420px}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- HOME -->
+<div class="home" id="home">
+<div class="hm-h">
+  <h1>Cona <span>Organizador</span></h1>
+  <p>Gestiona tus mejengas</p>
+</div>
+<button class="hm-new" onclick="goToSetup()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+  Nueva Mejenga
+</button>
+<div class="hm-sec">
+  <span class="hm-sec-lb">Mejengas</span>
+  <div class="hm-sec-line"></div>
+  <span class="hm-sec-cnt" id="hmCnt">...</span>
+</div>
+<div class="hm-list" id="hmList">
+  <div class="hm-loading">Cargando mejengas...</div>
+</div>
+</div>
+
+<!-- SETUP -->
+<div class="setup gone" id="setup">
+<div class="su-h">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:0 4px">
+    <button onclick="backToHome()" style="background:none;border:none;color:var(--w4);font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;padding:8px 0">← Volver</button>
+    <span style="font-size:9px;color:var(--w4)">Nueva mejenga</span>
+  </div>
+  <h1>Setup Mejenga</h1><p>Arma los equipos y arranca</p>
+</div>
+<div class="su-b">
+  <div class="su-lbl">Partido</div>
+  <div class="su-fx">
+    <input class="si" id="sN" placeholder="Mejenga 7" value="Mejenga 7">
+    <input class="si" id="sF" placeholder="Fut 5" value="Fut 5" style="width:80px;flex:none">
+  </div>
+  <div class="su-lbl">Detalles</div>
+  <input class="si" id="sC" placeholder="Cancha (ej: PlayFútbol Curri)">
+  <input class="si" id="sU" placeholder="Ubicación (ej: Curridabat)" style="margin-top:6px">
+  <input class="si" id="sO" placeholder="Organizador (ej: Esteban)" style="margin-top:6px">
+  <div class="su-t"><div class="su-td t1"></div><span class="su-tn">Equipo Negro</span></div>
+  <div id="st1"></div>
+  <button class="su-a" onclick="addR('st1')">+ Jugador</button>
+  <div class="su-t"><div class="su-td t2"></div><span class="su-tn">Equipo Verde</span></div>
+  <div id="st2"></div>
+  <button class="su-a" onclick="addR('st2')">+ Jugador</button>
+</div>
+<div class="su-ft"><button class="su-go" onclick="go()">Iniciar Mejenga</button></div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+<div class="app-left">
+<div class="sb">
+  <div class="sb-tm off" id="tmr" onclick="togT()">00:00</div>
+  <div class="sb-core">
+    <div class="sb-nm t1">Negro</div>
+    <div class="sb-sc t1" id="s1">0</div>
+    <div class="sb-d">-</div>
+    <div class="sb-sc t2" id="s2">0</div>
+    <div class="sb-nm t2">Verde</div>
+  </div>
+  <div class="sb-tm" style="visibility:hidden">00:00</div>
+</div>
+<div class="pitch">
+  <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc"></div><div class="fm cd"></div>
+  <div class="fm bt"></div><div class="fm bb"></div><div class="fm gt"></div><div class="fm gb"></div>
+  <div id="nd"></div>
+  <div class="ib">
+    <div class="ib-ev" id="ec">0</div>
+    <div class="ib-btn" onclick="openTabla()">Tabla</div>
+    <div class="ib-btn" onclick="openTl()">Timeline</div>
+    <div class="ib-btn" onclick="openEx()">Datos</div>
+    <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+    <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
+  </div>
+  <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);z-index:10"><span id="syncBadge" style="font-size:8px;font-weight:600;transition:color .3s"></span></div>
+  <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
+</div>
+</div>
+<!-- Desktop sidebar -->
+<div class="app-right" id="deskTabla">
+  <div class="desk-tb-hd">
+    <div class="tb-ti" id="deskTbTi">Estadísticas</div>
+    <div class="tb-sub" id="deskTbSub"></div>
+  </div>
+  <div class="desk-tb-w" id="deskTbW"></div>
+</div>
+</div>
+
+<!-- POPUP -->
+<div class="pop-bg" id="popBg" onclick="closePop()">
+<div class="pop" onclick="event.stopPropagation()">
+  <div class="pop-hd">
+    <div class="pop-j" id="pJ"></div>
+    <div style="flex:1"><div class="pop-nm" id="pN"></div><div class="pop-ps" id="pP"></div></div>
+    <button class="pop-x" onclick="closePop()">✕</button>
+  </div>
+  <div class="pop-bd" id="pB"></div>
+</div>
+</div>
+
+<!-- ASSIST -->
+<div class="ast-bg" id="astBg">
+<div class="ast-sh">
+  <div class="ast-t">Gol! Quien asistio?</div>
+  <div class="ast-g" id="astG"></div>
+  <button class="ast-no" onclick="doAst(null)">Sin asistencia</button>
+</div>
+</div>
+
+<!-- SHOOTER (save → who shot?) -->
+<div class="sht-bg" id="shtBg">
+<div class="sht-sh">
+  <div class="sht-t">Tapada! Quien tiro?</div>
+  <div class="ast-g" id="shtG"></div>
+  <button class="ast-no" onclick="doShooter(null)">No se</button>
+</div>
+</div>
+
+<!-- TABLA -->
+<div class="tb-bg" id="tbBg">
+<button class="tl-x" onclick="closeTabla()">✕</button>
+<div class="tb-hd">
+  <div class="tb-ti" id="tbTi">Estadísticas</div>
+  <div class="tb-sub" id="tbSub"></div>
+</div>
+<div class="tb-w" id="tbW"></div>
+</div>
+
+<!-- TIMELINE -->
+<div class="tl-bg" id="tlBg">
+<button class="tl-x" onclick="closeTl()">✕</button>
+<div class="tl-w">
+  <div class="tl-hd">
+    <div class="tl-mn" id="tlM"></div>
+    <div class="tl-sr">
+      <div class="tl-ts"><div class="tl-td t1">N</div><div class="tl-tn">Negro</div></div>
+      <div style="display:flex;align-items:center;gap:8px"><div class="tl-fs t1" id="tS1">0</div><div class="tl-fd">-</div><div class="tl-fs t2" id="tS2">0</div></div>
+      <div class="tl-ts"><div class="tl-td t2">V</div><div class="tl-tn">Verde</div></div>
+    </div>
+    <div class="tl-dur" id="tDur"></div>
+  </div>
+  <div class="tl-bd" id="tlBd"></div>
+</div>
+</div>
+
+<!-- RECOVERY -->
+<div class="rec-bg" id="recBg">
+<div class="rec-box">
+  <div class="rec-ico">&#9917;</div>
+  <div class="rec-title">Mejenga en progreso</div>
+  <div class="rec-sub">Se encontró una mejenga guardada.<br>¿Querés continuar o empezar una nueva?</div>
+  <div class="rec-info" id="recInfo"></div>
+  <div class="rec-btns">
+    <button class="rec-btn cont" onclick="resumeState()">Continuar mejenga</button>
+    <button class="rec-btn new" onclick="discardState()">Descartar y empezar nueva</button>
+  </div>
+</div>
+</div>
+
+<!-- SHOT TYPE (afuera → error/neutro/buen tiro) -->
+<div class="sty-bg" id="styBg">
+<div class="sty-sh">
+  <div class="sty-t">Tipo de tiro afuera</div>
+  <div class="sty-opts">
+    <button class="sty-opt err" onclick="doShotType('error')"><span class="sty-emoji">❌</span><div><div>Error</div><div class="sty-desc">Chance clara fallada, mano a mano</div></div></button>
+    <button class="sty-opt neu" onclick="doShotType('neutral')"><span class="sty-emoji">➖</span><div><div>Neutro</div><div class="sty-desc">Tiro normal, ni bueno ni malo</div></div></button>
+    <button class="sty-opt good" onclick="doShotType('good')"><span class="sty-emoji">👍</span><div><div>Buen tiro</div><div class="sty-desc">Buen intento, buscando esquina</div></div></button>
+  </div>
+</div>
+</div>
+
+<!-- PREVIEW (pre-report) -->
+<div class="prev-bg" id="prevBg">
+<div class="prev-hd">
+  <div class="prev-ti">Revision Final</div>
+  <div class="prev-sub">Revisa y ajusta las estadisticas antes de generar el reporte</div>
+</div>
+<div class="prev-w" id="prevW"></div>
+<div class="prev-ft">
+  <button class="prev-go" onclick="confirmPreview()">Confirmar y Ver Reporte</button>
+  <button class="prev-back" onclick="closePreview()">← Volver a editar</button>
+</div>
+</div>
+
+<!-- EXPORT -->
+<div class="ex-bg" id="exBg">
+<div class="ex-sh">
+  <div class="ex-t">Datos del partido</div>
+  <pre class="ex-pre" id="exP"></pre>
+  <div class="ex-row">
+    <button class="ex-btn cl" onclick="closeEx()">Cerrar</button>
+    <button class="ex-btn cp" onclick="cpEx()">Copiar</button>
+  </div>
+</div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyDQHb2VvCWnQSxpWTF7VlgkQykeJnSd1wA",
+  authDomain:"cona-futbol.firebaseapp.com",
+  projectId:"cona-futbol",
+  storageBucket:"cona-futbol.firebasestorage.app",
+  messagingSenderId:"690430888694",
+  appId:"1:690430888694:web:a605a46e544c875a6abad7"
+});
+const db=firebase.firestore();
+const MEJENGAS_COL='mejengas_organizador';
+
+// ── SVG ICONS ──
+const I={
+  goal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/><path d="M2 12h20"/></svg>`,
+  assist:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`,
+  save:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 17"/></svg>`,
+  shotOff:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>`,
+  post:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4v16"/><path d="M4 4h16"/><path d="M20 4v6"/><circle cx="12" cy="14" r="3"/></svg>`,
+  salvada:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  autogoal:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/><path d="M2 12h20"/><path d="M8 8l8 8M16 8l-8 8"/></svg>`,
+  defcon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>`
+};
+
+// ── STATE ──
+let N='',F='',CA='',UB='',ORG='',P=[],EV=[],sel=null,tOn=false,tS=0,tI=null,goalP=null,saveP=null,MVP=null,done=false,mejengaId=null;
+
+// ── PERSISTENCE (localStorage + Firebase) ──
+const LS_KEY='cona_org_state';
+let _syncTimer=null;
+
+function getStateObj(){
+  return {N,F,CA,UB,ORG,P,EV,tS,MVP,done,mejengaId,ts:Date.now()};
+}
+function saveState(){
+  try{
+    localStorage.setItem(LS_KEY,JSON.stringify(getStateObj()));
+  }catch(e){}
+  // Debounce Firebase sync — max 1 write per 3 seconds
+  if(_syncTimer)clearTimeout(_syncTimer);
+  _syncTimer=setTimeout(syncToFirebase,3000);
+  // Update desktop sidebar if visible
+  try{updDeskTabla();}catch(e){}
+}
+let _firstSync=true;
+function syncToFirebase(){
+  if(!mejengaId||!P.length)return;
+  const data=getStateObj();
+  data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  if(_firstSync){
+    data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
+    _firstSync=false;
+  }
+  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
+    updateSyncBadge(true);
+  }).catch(e=>{
+    console.warn('Firebase sync failed:',e.message);
+    updateSyncBadge(false);
+    // Retry once after 10s
+    setTimeout(()=>{if(mejengaId&&P.length)syncToFirebase();},10000);
+  });
+}
+function updateSyncBadge(ok){
+  const el=document.getElementById('syncBadge');
+  if(!el)return;
+  el.textContent=ok?'☁️ Guardado':'⚠️ Sin conexión';
+  el.style.color=ok?'rgba(167,238,67,.6)':'rgba(255,180,60,.7)';
+  if(ok){clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent='';},2500);}
+}
+function loadState(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(!raw)return false;
+    const s=JSON.parse(raw);
+    N=s.N||'';F=s.F||'';CA=s.CA||'';UB=s.UB||'';ORG=s.ORG||'';
+    P=s.P||[];EV=s.EV||[];tS=s.tS||0;MVP=s.MVP||null;done=s.done||false;
+    mejengaId=s.mejengaId||null;
+    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;});
+    return P.length>0;
+  }catch(e){return false;}
+}
+function clearState(){
+  localStorage.removeItem(LS_KEY);
+}
+function generateId(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return `mej_${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+}
+function resetMejenga(){
+  if(!confirm('¿Iniciar nueva mejenga? Se borrarán los datos locales.\n\nLa mejenga anterior queda guardada en Firebase.'))return;
+  clearState();
+  location.reload();
+}
+
+// ── SETUP ──
+function initS(){
+  ren('st1',[{n:'',m:'',p:1},{n:'',m:''},{n:'',m:''},{n:'',m:''},{n:'',m:''}]);
+  ren('st2',[{n:'',m:'',p:1},{n:'',m:''},{n:'',m:''},{n:'',m:''},{n:'',m:''}]);
+}
+function ren(id,d){
+  const c=document.getElementById(id);
+  c.innerHTML=d.map((x,i)=>`<div class="su-r">
+    <input class="si sn" value="${x.n}" placeholder="#" maxlength="2" inputmode="numeric"
+      onkeydown="if(event.key==='Enter'||event.key==='Tab'){event.preventDefault();focusNext(this)}">
+    <input class="si" value="${x.m}" placeholder="${x.p?'Portero':'Jugador '+(i+1)}" autocapitalize="words"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();focusNext(this)}">
+    ${x.p?'<span class="su-p">POR</span>':`<button class="su-x" onclick="delR(this)">✕</button>`}
+  </div>`).join('');
+  c._d=d;
+}
+function focusNext(el){
+  const all=[...document.querySelectorAll('#setup .si')];
+  const i=all.indexOf(el);
+  if(i<all.length-1)all[i+1].focus();
+  else all[i].blur();
+}
+function syncD(id){
+  const c=document.getElementById(id),rows=c.querySelectorAll('.su-r');
+  const d=[];
+  rows.forEach((r,i)=>{
+    const n=r.querySelector('.sn').value;
+    const m=r.querySelectorAll('.si')[1].value;
+    const p=!!r.querySelector('.su-p');
+    d.push({n,m,p:p?1:0});
+  });
+  c._d=d;return d;
+}
+function addR(id){const d=syncD(id);d.push({n:'',m:''});ren(id,d);const c=document.getElementById(id),ins=c.querySelectorAll('.sn');ins[ins.length-1]?.focus();}
+function delR(b){const r=b.closest('.su-r'),c=r.parentElement;const d=syncD(c.id);const i=[...c.children].indexOf(r);if(d.length>2){d.splice(i,1);ren(c.id,d);}}
+function readT(id,t){
+  const rows=document.getElementById(id).querySelectorAll('.su-r'),out=[];
+  rows.forEach((r,i)=>{
+    const n=r.querySelector('.sn').value.trim();
+    const m=r.querySelectorAll('.si')[1].value.trim();
+    if(m||n)out.push({id:t+'_'+i,team:t,num:n||'-',name:m||(i===0?'Portero':'Jugador '+(i+1)),por:i===0,goals:0,autogoals:0,assists:0,saves:0,shotsOn:0,shotsOff:0,shotsOffError:0,shotsOffGood:0,shotsOffNeutral:0,posts:0,salvadas:0,defcon:0,rating:0});
+  });
+  return out;
+}
+function go(){
+  N=document.getElementById('sN').value.trim()||'Mejenga';
+  F=document.getElementById('sF').value.trim()||'Fut 5';
+  CA=document.getElementById('sC').value.trim();
+  UB=document.getElementById('sU').value.trim();
+  ORG=document.getElementById('sO').value.trim();
+  const a=readT('st1','t1'),b=readT('st2','t2');
+  if(!a.length||!b.length){show('Ambos equipos necesitan jugadores');return;}
+  P=[...a,...b];
+  mejengaId=generateId();
+  document.getElementById('setup').classList.add('gone');
+  document.getElementById('app').classList.add('on');
+  draw();
+  // Auto-start timer
+  const tmr=document.getElementById('tmr');
+  tI=setInterval(()=>{tS++;tmr.textContent=ft(tS);if(tS%10===0)saveState();},1000);
+  tOn=true;tmr.className='sb-tm on';tmr.textContent=ft(tS);
+  saveState();
+  // Force immediate first sync
+  syncToFirebase();
+}
+
+// ── FIELD ──
+function draw(){
+  const nd=document.getElementById('nd');
+  const t1=P.filter(p=>p.team==='t1'),t2=P.filter(p=>p.team==='t2');
+  const f1=form(t1.length,true),f2=form(t2.length,false);
+  let h='';
+  t1.forEach((p,i)=>{h+=node(p,f1[i])});
+  t2.forEach((p,i)=>{h+=node(p,f2[i])});
+  nd.innerHTML=h;
+}
+function form(n,top){
+  if(!n)return[];
+  const pts=[],yA=top?3:52,yB=top?48:97;
+  pts.push([50,top?yA+2:yB-2]);
+  const f=n-1;if(!f)return pts;
+  let rows;
+  if(f<=2)rows=[f];
+  else if(f<=3)rows=[f];
+  else if(f<=5)rows=[Math.ceil(f/2),Math.floor(f/2)];
+  else if(f<=7)rows=[2,Math.ceil((f-2)/2),Math.floor((f-2)/2)];
+  else rows=[3,Math.ceil((f-3)/2),Math.floor((f-3)/2)];
+  rows.forEach((cnt,ri)=>{
+    const frac=(ri+1)/(rows.length+1);
+    const ry=top?yA+(yB-yA)*frac:yB-(yB-yA)*frac;
+    for(let j=0;j<cnt;j++){
+      pts.push([6+(j+1)/(cnt+1)*88,ry]);
+    }
+  });
+  return pts;
+}
+function node(p,xy){
+  if(!xy)xy=[50,50];
+  const gb=p.goals>0?`<div class="badge bg">${p.goals}</div>`:'';
+  const sb=p.por&&p.saves>0?`<div class="badge bs">${p.saves}</div>`:'';
+  return `<div class="pn ${p.team}${p.por?' por':''}" style="left:${xy[0]}%;top:${xy[1]}%;transform:translate(-50%,-50%)" onclick="tap('${p.id}')">
+    <div class="bl">${p.num}${gb}${sb}</div>
+    <div class="lb">${p.name.split(' ')[0]}</div>
+  </div>`;
+}
+
+// ── POPUP ──
+function tap(id){
+  sel=id;
+  const p=P.find(x=>x.id===id);if(!p)return;
+  const j=document.getElementById('pJ');
+  j.className='pop-j '+p.team;j.textContent=p.num;
+  document.getElementById('pN').textContent=p.name;
+  document.getElementById('pP').textContent=p.por?'Portero':'Jugador de campo';
+  buildPop(p);
+  document.getElementById('popBg').classList.add('on');
+}
+function buildPop(p){
+  let h='';
+  const atkIco=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`;
+  const defIco=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+  const ogIco=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="16" height="16"><circle cx="12" cy="12" r="10"/><path d="M12 2a15 15 0 0 1 4 10 15 15 0 0 1-4 10 15 15 0 0 1-4-10 15 15 0 0 1 4-10z"/><path d="M2 12h20"/><path d="M8 8l8 8M16 8l-8 8"/></svg>`;
+  const secAtk=`<div class="pop-sec"><span class="pop-sec-ico">${atkIco}</span><span class="pop-sec-lb atk">Ataque</span><div class="pop-sec-line"></div></div>`;
+  const secDef=`<div class="pop-sec"><span class="pop-sec-ico">${defIco}</span><span class="pop-sec-lb def">Defensa</span><div class="pop-sec-line"></div></div>`;
+  const totalOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  const shotOffBtn=`<div class="sc tir">
+    <div class="sc-top"><span class="sc-ico">${I.shotOff}</span><span class="sc-lb">Afuera</span></div>
+    <div class="sc-row">
+      <button class="sc-btn mn" onclick="undoShotOff()">-</button>
+      <div class="sc-v">${totalOff}</div>
+      <button class="sc-btn" onclick="openShotType()">+</button>
+    </div>
+  </div>`;
+  if(p.por){
+    h+=sc('saves',I.save,'Tapadas','tap',p.saves,true);
+    h+=secAtk;
+    h+=`<div class="sg">`;
+    h+=sc('goals',I.goal,'Goles','gol',p.goals);
+    h+=shotOffBtn;
+    h+=sc('posts',I.post,'Palo','pst',p.posts);
+    h+=`</div>`;
+    h+=`<button type="button" class="og-btn" ontouchend="event.preventDefault();doAutogoal()" onclick="doAutogoal()">${ogIco} Autogol</button>`;
+  }else{
+    h+=sc('goals',I.goal,'Goles','gol',p.goals,true);
+    h+=secAtk;
+    h+=`<div class="sg">`;
+    h+=shotOffBtn;
+    h+=sc('posts',I.post,'Palo','pst',p.posts);
+    h+=`</div>`;
+    h+=secDef;
+    h+=`<div class="sg">`;
+    h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas);
+    h+=sc('defcon',I.defcon,'DEF CON','sal',p.defcon||0);
+    h+=`</div>`;
+    h+=`<button type="button" class="og-btn" ontouchend="event.preventDefault();doAutogoal()" onclick="doAutogoal()">${ogIco} Autogol</button>`;
+  }
+  document.getElementById('pB').innerHTML=h;
+}
+function sc(t,ico,lbl,cls,v,pri){
+  return `<div class="sc ${cls}${pri?' pri':''}">
+    <div class="sc-top"><span class="sc-ico">${ico}</span><span class="sc-lb">${lbl}</span></div>
+    <div class="sc-row">
+      <button class="sc-btn mn" onclick="adj('${t}',-1)">-</button>
+      <div class="sc-v">${v}</div>
+      <button class="sc-btn" onclick="adj('${t}',1)">+</button>
+    </div>
+  </div>`;
+}
+function adj(t,d){
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  const old=p[t];
+  p[t]=Math.max(0,p[t]+d);
+  if(p[t]===old)return;
+
+  if(d>0){
+    if(t==='goals'){
+      addEv('goal',p);
+      updSc();draw();buildPop(p);
+      goalP=p;
+      showAst(p);
+      if(navigator.vibrate)navigator.vibrate([15,50,15]);
+      return;
+    }
+    if(t==='saves'){
+      addEv('saves',p);
+      updSc();draw();buildPop(p);
+      saveP=p;
+      showShooter(p);
+      if(navigator.vibrate)navigator.vibrate([15,50,15]);
+      return;
+    }
+    addEv(t,p);
+  }else{
+    // undo last event of type
+    const evType=t==='goals'?'goal':t==='autogoals'?'autogoal':t;
+    for(let i=EV.length-1;i>=0;i--){
+      if(EV[i].type===evType&&EV[i].pid===p.id){
+        if((t==='goals'||t==='autogoals')&&EV[i].astBy){
+          const a=P.find(x=>x.name===EV[i].astBy);
+          if(a)a.assists=Math.max(0,a.assists-1);
+        }
+        if(t==='saves'&&EV[i].shotBy){
+          const sh=P.find(x=>x.name===EV[i].shotBy);
+          if(sh)sh.shotsOn=Math.max(0,sh.shotsOn-1);
+        }
+        EV.splice(i,1);break;
+      }
+    }
+  }
+  updSc();draw();buildPop(p);saveState();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function closePop(){document.getElementById('popBg').classList.remove('on');sel=null;}
+
+// ── SHOT TYPE ──
+function openShotType(){
+  document.getElementById('styBg').classList.add('on');
+}
+function doShotType(type){
+  document.getElementById('styBg').classList.remove('on');
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  if(type==='error'){p.shotsOffError=(p.shotsOffError||0)+1;}
+  else if(type==='good'){p.shotsOffGood=(p.shotsOffGood||0)+1;}
+  else{p.shotsOffNeutral=(p.shotsOffNeutral||0)+1;}
+  p.shotsOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  addEv('shotsOff',p,{shotType:type});
+  updSc();draw();buildPop(p);saveState();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+function undoShotOff(){
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  const total=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  if(!total)return;
+  // Find last shotsOff event for this player and undo it
+  for(let i=EV.length-1;i>=0;i--){
+    if(EV[i].type==='shotsOff'&&EV[i].pid===p.id){
+      const st=EV[i].shotType||'neutral';
+      if(st==='error')p.shotsOffError=Math.max(0,(p.shotsOffError||0)-1);
+      else if(st==='good')p.shotsOffGood=Math.max(0,(p.shotsOffGood||0)-1);
+      else p.shotsOffNeutral=Math.max(0,(p.shotsOffNeutral||0)-1);
+      EV.splice(i,1);break;
+    }
+  }
+  p.shotsOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
+  updSc();draw();buildPop(p);saveState();
+  if(navigator.vibrate)navigator.vibrate(8);
+}
+
+// ── ASSIST ──
+function showAst(scorer){
+  const tm=P.filter(p=>p.team===scorer.team&&p.id!==scorer.id);
+  document.getElementById('astG').innerHTML=tm.map(p=>
+    `<div class="ast-b" onclick="doAst('${p.id}')"><div class="ast-j ${p.team}">${p.num}</div><div class="ast-n">${p.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('astBg').classList.add('on');
+}
+function doAst(id){
+  document.getElementById('astBg').classList.remove('on');
+  if(id&&goalP){
+    const a=P.find(p=>p.id===id);
+    if(a){
+      a.assists++;
+      addEv('assists',a);
+      const lg=[...EV].reverse().find(e=>e.type==='goal'&&e.pid===goalP.id);
+      if(lg)lg.astBy=a.name;
+    }
+  }
+  show('Gol registrado'+(id?' + asistencia':''));
+  goalP=null;
+  updSc();draw();saveState();
+  if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
+}
+
+// ── EVENTS ──
+function addEv(t,p,extra){const ev={type:t,pid:p.id,player:p.name,team:p.team,num:p.num,time:ft(tS),ts:Date.now()};if(extra)Object.assign(ev,extra);EV.push(ev);updIb();saveState();}
+function updIb(){
+  document.getElementById('ec').textContent=EV.length;
+  if(EV.length){const l=EV[EV.length-1];document.getElementById('le').textContent=`${l.time} ${l.player}`;}
+}
+function updSc(){
+  const t1g=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.autogoals,0);
+  const t2g=P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.autogoals,0);
+  document.getElementById('s1').textContent=t1g;
+  document.getElementById('s2').textContent=t2g;
+}
+function teamScore(team){
+  const opp=team==='t1'?'t2':'t1';
+  return P.filter(p=>p.team===team).reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team===opp).reduce((s,p)=>s+p.autogoals,0);
+}
+
+// ── TIMER ──
+function togT(){
+  const el=document.getElementById('tmr');
+  if(tOn){clearInterval(tI);tOn=false;el.className='sb-tm off';el.textContent=ft(tS);saveState();}
+  else{tI=setInterval(()=>{tS++;document.getElementById('tmr').textContent=ft(tS);if(tS%10===0)saveState();},1000);tOn=true;el.className='sb-tm on';el.textContent=ft(tS);}
+}
+function ft(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+
+// ── TIMELINE ──
+function openTl(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  document.getElementById('tlM').textContent=N+' · '+F;
+  document.getElementById('tS1').textContent=g1;
+  document.getElementById('tS2').textContent=g2;
+  document.getElementById('tDur').textContent=ft(tS)+' jugados';
+  const bd=document.getElementById('tlBd'),notable=EV.filter(e=>e.type==='goal'||e.type==='autogoal'||e.type==='posts'||e.type==='salvadas');
+  if(!notable.length){bd.innerHTML='<div class="tl-emp">No hay eventos todavia</div>';document.getElementById('tlBg').classList.add('on');return;}
+  let r1=0,r2=0,h='';
+  notable.forEach(g=>{
+    const isOg=g.type==='autogoal';
+    const isGoal=g.type==='goal'||isOg;
+    const isPost=g.type==='posts';
+    const isSalvada=g.type==='salvadas';
+    if(isGoal){
+      const scoringTeam=isOg?(g.team==='t1'?'t2':'t1'):g.team;
+      if(scoringTeam==='t1')r1++;else r2++;
+      const ast=g.astBy?`<div class="tl-a">Ast. ${g.astBy.split(' ')[0]}</div>`:'';
+      const label=isOg?`${g.player} (AG)`:`${g.player}`;
+      h+=`<div class="tl-r ${scoringTeam}"><div class="tl-dt"></div><div class="tl-c">
+        <div class="tl-m">${g.time}'</div><div><div class="tl-p">${label}</div>${ast}</div>
+      </div></div>`;
+      h+=`<div class="tl-rs" style="color:${scoringTeam==='t1'?'#fff':'var(--g)'}">${r1} - ${r2}</div>`;
+    }else if(isPost){
+      h+=`<div class="tl-r ${g.team}"><div class="tl-dt" style="background:#ffa500"></div><div class="tl-c">
+        <div class="tl-m" style="color:#ffa500">${g.time}'</div><div><div class="tl-p" style="color:#ffa500">Palo! ${g.player}</div></div>
+      </div></div>`;
+    }else if(isSalvada){
+      h+=`<div class="tl-r ${g.team}"><div class="tl-dt" style="background:#58a6ff"></div><div class="tl-c">
+        <div class="tl-m" style="color:#58a6ff">${g.time}'</div><div><div class="tl-p" style="color:#58a6ff">Salvada Clave! ${g.player}</div></div>
+      </div></div>`;
+    }
+  });
+  bd.innerHTML=h;
+  document.getElementById('tlBg').classList.add('on');
+}
+function closeTl(){document.getElementById('tlBg').classList.remove('on')}
+
+// ── EXPORT ──
+function openEx(){
+  const t1=P.filter(p=>p.team==='t1'),t2=P.filter(p=>p.team==='t2');
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  let t=`${N} · ${F}\n`;
+  t+=`Resultado: Negro ${g1} - ${g2} Verde\n\n`;
+  t+=`EQUIPO NEGRO\n`;t1.forEach(p=>{t+=pL(p)});
+  t+=`\nEQUIPO VERDE\n`;t2.forEach(p=>{t+=pL(p)});
+  if(EV.length){
+    t+=`\nCRONOLOGIA\n`;
+    EV.forEach(e=>{t+=`${e.time} #${e.num} ${e.player} - ${e.type}`;if(e.astBy)t+=` (ast. ${e.astBy})`;t+='\n';});
+  }
+  document.getElementById('exP').textContent=t;
+  document.getElementById('exBg').classList.add('on');
+}
+function pL(p){
+  let s=[];
+  if(p.goals)s.push(p.goals+'G');if(p.autogoals)s.push(p.autogoals+'AG');if(p.assists)s.push(p.assists+'A');if(p.saves)s.push(p.saves+'T');
+  if(p.shotsOffError)s.push(p.shotsOffError+'TF❌');if(p.shotsOffNeutral)s.push(p.shotsOffNeutral+'TF');if(p.shotsOffGood)s.push(p.shotsOffGood+'TF👍');
+  if(p.posts)s.push(p.posts+'PAL');if(p.salvadas)s.push(p.salvadas+'SAL');if(p.defcon)s.push(p.defcon+'DEF');
+  return `#${p.num} ${p.name}${p.por?' (POR)':''}${s.length?' - '+s.join(' '):''}\n`;
+}
+function closeEx(){document.getElementById('exBg').classList.remove('on')}
+function cpEx(){
+  const t=document.getElementById('exP').textContent;
+  navigator.clipboard.writeText(t).then(()=>{show('Copiado');closeEx();}).catch(()=>prompt('Copia:',t));
+}
+
+// ── TOAST ──
+function show(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1500)}
+
+// ── AUTOGOL ──
+function doAutogoal(){
+  const p=P.find(x=>x.id===sel);if(!p)return;
+  p.autogoals++;
+  addEv('autogoal',p);
+  updSc();draw();
+  // ask who from opposing team "assisted" the own goal
+  goalP=p;
+  const opp=P.filter(x=>x.team!==p.team);
+  document.getElementById('astG').innerHTML=opp.map(x=>
+    `<div class="ast-b" onclick="doOgAst('${x.id}')"><div class="ast-j ${x.team}">${x.num}</div><div class="ast-n">${x.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('astBg').querySelector('.ast-t').textContent='Autogol! Quien provoco?';
+  document.getElementById('astBg').querySelector('.ast-no').textContent='Nadie / No se';
+  document.getElementById('astBg').querySelector('.ast-no').setAttribute('onclick',"doOgAst(null)");
+  document.getElementById('astBg').classList.add('on');
+  if(navigator.vibrate)navigator.vibrate([15,50,15]);
+}
+function doOgAst(id){
+  document.getElementById('astBg').classList.remove('on');
+  // restore assist overlay text for normal goals
+  document.getElementById('astBg').querySelector('.ast-t').textContent='Gol! Quien asistio?';
+  document.getElementById('astBg').querySelector('.ast-no').textContent='Sin asistencia';
+  document.getElementById('astBg').querySelector('.ast-no').setAttribute('onclick',"doAst(null)");
+  if(id&&goalP){
+    const a=P.find(p=>p.id===id);
+    if(a){
+      a.assists++;
+      addEv('assists',a);
+      const lg=[...EV].reverse().find(e=>e.type==='autogoal'&&e.pid===goalP.id);
+      if(lg)lg.astBy=a.name;
+    }
+  }
+  show('Autogol registrado'+(id?' + asistencia':''));
+  goalP=null;
+  updSc();draw();saveState();
+  if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
+}
+
+// ── SHOOTER (save follow-up) ──
+function showShooter(keeper){
+  const opp=P.filter(p=>p.team!==keeper.team);
+  document.getElementById('shtG').innerHTML=opp.map(p=>
+    `<div class="ast-b" onclick="doShooter('${p.id}')"><div class="ast-j ${p.team}">${p.num}</div><div class="ast-n">${p.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('shtBg').classList.add('on');
+}
+function doShooter(id){
+  document.getElementById('shtBg').classList.remove('on');
+  if(id&&saveP){
+    const sh=P.find(p=>p.id===id);
+    if(sh){
+      sh.shotsOn++;
+      addEv('shotsOn',sh);
+      const ls=[...EV].reverse().find(e=>e.type==='saves'&&e.pid===saveP.id);
+      if(ls)ls.shotBy=sh.name;
+    }
+  }
+  show('Tapada registrada'+(id?' + tiro al arco':''));
+  saveP=null;
+  updSc();draw();saveState();
+  if(sel){const p=P.find(x=>x.id===sel);if(p)buildPop(p);}
+}
+
+// ── TABLA ──
+function openTabla(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  document.getElementById('tbTi').textContent=N||'Mejenga';
+  document.getElementById('tbSub').textContent=`${ft(tS)} jugados`;
+  const t1p=P.filter(p=>p.team==='t1'),t2p=P.filter(p=>p.team==='t2');
+  const sum=(arr,fn)=>arr.reduce((s,p)=>s+fn(p),0);
+
+  const t1shots=sum(t1p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t2shots=sum(t2p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t1onT=sum(t1p,p=>p.goals+p.shotsOn);
+  const t2onT=sum(t2p,p=>p.goals+p.shotsOn);
+  const t1off=sum(t1p,p=>p.shotsOff);
+  const t2off=sum(t2p,p=>p.shotsOff);
+  const t1posts=sum(t1p,p=>p.posts);
+  const t2posts=sum(t2p,p=>p.posts);
+  const t1saves=sum(t1p,p=>p.saves);
+  const t2saves=sum(t2p,p=>p.saves);
+  const t1ast=sum(t1p,p=>p.assists);
+  const t2ast=sum(t2p,p=>p.assists);
+  const t1salv=sum(t1p,p=>p.salvadas);
+  const t2salv=sum(t2p,p=>p.salvadas);
+  const t1def=sum(t1p,p=>p.defcon||0);
+  const t2def=sum(t2p,p=>p.defcon||0);
+
+  let h='';
+
+  // Score card
+  const gTotal=g1+g2||1;const gP1=Math.round(g1/gTotal*100);
+  h+=`<div class="tb-card">`;
+  h+=`<div class="tb-big">
+    <div class="tb-big-side"><div class="tb-big-dot t1">N</div><div class="tb-big-name">Negro</div></div>
+    <div class="tb-big-sc t1">${g1}</div>
+    <div class="tb-big-sep">-</div>
+    <div class="tb-big-sc t2">${g2}</div>
+    <div class="tb-big-side"><div class="tb-big-dot t2">V</div><div class="tb-big-name">Verde</div></div>
+  </div>`;
+  h+=`<div class="tb-bar"><div class="tb-bar-bl t1" style="width:${gP1}%"></div><div class="tb-bar-bl t2" style="width:${100-gP1}%"></div></div>`;
+  h+=`</div>`;
+
+  // Top stats card
+  h+=`<div class="tb-card">`;
+  h+=`<div class="tb-card-title">Estadísticas</div>`;
+  h+=sRow(g1,g2,'Goles');
+  h+=sRow(t1shots,t2shots,'Tiros totales');
+  h+=sRow(t1onT,t2onT,'Tiros al arco');
+  h+=sRow(t1off,t2off,'Tiros afuera');
+  h+=sRow(t1posts,t2posts,'Palos');
+  h+=sRow(t1saves,t2saves,'Tapadas');
+  h+=sRow(t1ast,t2ast,'Asistencias');
+  h+=sRow(t1salv,t2salv,'Salvadas Clave');
+  h+=sRow(t1def,t2def,'DEF CON');
+  h+=`</div>`;
+
+  // Individuales
+  h+=`<div class="tb-div"><div class="tb-div-line"></div><span class="tb-div-lb">Individuales</span><div class="tb-div-line"></div></div>`;
+
+  const scorers=P.filter(p=>p.goals>0).sort((a,b)=>b.goals-a.goals);
+  const assisters=P.filter(p=>p.assists>0).sort((a,b)=>b.assists-a.assists);
+  const savers=P.filter(p=>p.saves>0).sort((a,b)=>b.saves-a.saves);
+  const salvadores=P.filter(p=>p.salvadas>0).sort((a,b)=>b.salvadas-a.salvadas);
+
+  if(scorers.length||assisters.length||savers.length||salvadores.length){
+    h+=`<div class="tb-card">`;
+    if(scorers.length) h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);
+    if(assisters.length) h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);
+    if(savers.length) h+=tbSection(I.save,'Tapadas','tap',savers,p=>p.saves);
+    if(salvadores.length) h+=tbSection(I.salvada,'Salvadas Clave','sal',salvadores,p=>p.salvadas);
+    h+=`</div>`;
+  }else{
+    h+=`<div class="tb-card"><div class="tb-empty">No hay stats individuales todavía</div></div>`;
+  }
+
+  document.getElementById('tbW').innerHTML=h;
+  document.getElementById('tbBg').classList.add('on');
+}
+function updDeskTabla(){
+  const el=document.getElementById('deskTbW');
+  if(!el||!window.matchMedia('(min-width:768px)').matches)return;
+  document.getElementById('deskTbTi').textContent=N||'Mejenga';
+  document.getElementById('deskTbSub').textContent=`${ft(tS)} jugados`;
+  // Reuse the same tabla content builder
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const t1p=P.filter(p=>p.team==='t1'),t2p=P.filter(p=>p.team==='t2');
+  const sum=(arr,fn)=>arr.reduce((s,p)=>s+fn(p),0);
+  const t1shots=sum(t1p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t2shots=sum(t2p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
+  const t1onT=sum(t1p,p=>p.goals+p.shotsOn);const t2onT=sum(t2p,p=>p.goals+p.shotsOn);
+  const t1off=sum(t1p,p=>p.shotsOff);const t2off=sum(t2p,p=>p.shotsOff);
+  const t1posts=sum(t1p,p=>p.posts);const t2posts=sum(t2p,p=>p.posts);
+  const t1saves=sum(t1p,p=>p.saves);const t2saves=sum(t2p,p=>p.saves);
+  const t1ast=sum(t1p,p=>p.assists);const t2ast=sum(t2p,p=>p.assists);
+  const t1salv=sum(t1p,p=>p.salvadas);const t2salv=sum(t2p,p=>p.salvadas);
+  let h=`<div class="tb-card"><div class="tb-big">
+    <div class="tb-big-side"><div class="tb-big-dot t1">N</div><div class="tb-big-name">Negro</div></div>
+    <div class="tb-big-sc t1">${g1}</div><div class="tb-big-sep">-</div><div class="tb-big-sc t2">${g2}</div>
+    <div class="tb-big-side"><div class="tb-big-dot t2">V</div><div class="tb-big-name">Verde</div></div>
+  </div></div>`;
+  h+=`<div class="tb-card"><div class="tb-card-title">Estadísticas</div>`;
+  h+=sRow(g1,g2,'Goles')+sRow(t1shots,t2shots,'Tiros totales')+sRow(t1onT,t2onT,'Al arco');
+  h+=sRow(t1off,t2off,'Afuera')+sRow(t1posts,t2posts,'Palos')+sRow(t1saves,t2saves,'Tapadas');
+  h+=sRow(t1ast,t2ast,'Asistencias')+sRow(t1salv,t2salv,'Salvadas Clave')+`</div>`;
+  const scorers=P.filter(p=>p.goals>0).sort((a,b)=>b.goals-a.goals);
+  const assisters=P.filter(p=>p.assists>0).sort((a,b)=>b.assists-a.assists);
+  if(scorers.length||assisters.length){
+    h+=`<div class="tb-card">`;
+    if(scorers.length) h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);
+    if(assisters.length) h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);
+    h+=`</div>`;
+  }
+  el.innerHTML=h;
+}
+function sRow(v1,v2,label){
+  const w1=v1>v2?' win':'';
+  const w2=v2>v1?' win':'';
+  return `<div class="tb-sr">
+    <div class="tb-sv t1${w1}">${v1}</div>
+    <div class="tb-sl">${label}</div>
+    <div class="tb-sv t2${w2}">${v2}</div>
+  </div>`;
+}
+function tbSection(icon,label,cls,players,valFn){
+  let h=`<div class="tb-sec"><div class="tb-sec-hd"><span class="tb-sec-ico">${icon}</span><span class="tb-sec-lb ${cls}">${label}</span></div>`;
+  if(!players.length){h+=`<div class="tb-empty">Nada todavía</div>`;h+=`</div>`;return h;}
+  players.forEach((p,i)=>{
+    h+=`<div class="tb-row">
+      <span class="tb-pos">${i+1}</span>
+      <div class="tb-dot ${p.team}">${p.num}</div>
+      <span class="tb-nm">${p.name}</span>
+      <span class="tb-val ${cls}">${valFn(p)}</span>
+    </div>`;
+  });
+  h+=`</div>`;
+  return h;
+}
+function closeTabla(){document.getElementById('tbBg').classList.remove('on')}
+
+// ── FINALIZAR ──
+function finalizar(){
+  if(done){openReport();return;}
+  if(!confirm('¿Finalizar la mejenga?'))return;
+  if(tOn){clearInterval(tI);tOn=false;document.getElementById('tmr').className='sb-tm off';}
+  calcRatings();
+  openPreview();
+}
+function openPreview(){
+  const w=document.getElementById('prevW');
+  let h='';
+  ['t1','t2'].forEach(team=>{
+    const nm=team==='t1'?'Negro':'Verde';
+    h+=`<div class="prev-team"><div class="prev-team-dot ${team}"></div><span class="prev-team-nm">${nm}</span><div class="prev-team-line"></div></div>`;
+    P.filter(p=>p.team===team).forEach(p=>{
+      const rc=p.rating>=7?'high':p.rating>=5?'mid':'low';
+      h+=`<div class="prev-card" id="prc_${p.id}">
+        <div class="prev-card-top">
+          <div class="prev-dot ${p.team}">${p.num}</div>
+          <div style="flex:1"><div class="prev-nm">${p.name}</div><div class="prev-pos">${p.por?'Portero':'Jugador'}</div></div>
+          <span class="prev-rt ${rc}" id="prr_${p.id}">${p.rating.toFixed(1)}</span>
+        </div>
+        <div class="prev-stats">`;
+      const stats=p.por
+        ?[['goals','GOL'],['assists','AST'],['saves','TAP'],['shotsOn','TA'],['shotsOffError','TF ❌'],['shotsOffNeutral','TF ➖'],['shotsOffGood','TF 👍'],['posts','PAL'],['autogoals','AG']]
+        :[['goals','GOL'],['assists','AST'],['defcon','DEF'],['salvadas','SAL'],['shotsOn','TA'],['shotsOffError','TF ❌'],['shotsOffNeutral','TF ➖'],['shotsOffGood','TF 👍'],['posts','PAL'],['autogoals','AG']];
+      stats.forEach(([key,lbl])=>{
+        h+=`<div class="prev-stat">
+          <span class="prev-stat-lb">${lbl}</span>
+          <button class="prev-stat-btn" onclick="prevAdj('${p.id}','${key}',-1)">-</button>
+          <span class="prev-stat-v" id="prv_${p.id}_${key}">${p[key]||0}</span>
+          <button class="prev-stat-btn" onclick="prevAdj('${p.id}','${key}',1)">+</button>
+        </div>`;
+      });
+      h+=`</div></div>`;
+    });
+  });
+  w.innerHTML=h;
+  document.getElementById('prevBg').classList.add('on');
+}
+function prevAdj(pid,key,d){
+  const p=P.find(x=>x.id===pid);if(!p)return;
+  p[key]=Math.max(0,(p[key]||0)+d);
+  document.getElementById('prv_'+pid+'_'+key).textContent=p[key];
+  // Recalc this player's rating
+  calcRatings();
+  const rc=p.rating>=7?'high':p.rating>=5?'mid':'low';
+  const el=document.getElementById('prr_'+pid);
+  el.textContent=p.rating.toFixed(1);
+  el.className='prev-rt '+rc;
+}
+function closePreview(){
+  document.getElementById('prevBg').classList.remove('on');
+}
+function confirmPreview(){
+  done=true;
+  document.getElementById('finBtn').textContent='Ver Reporte';
+  document.getElementById('finBtn').classList.add('done');
+  calcRatings();
+  updSc();draw();
+  saveState();
+  document.getElementById('prevBg').classList.remove('on');
+  show('Guardando...');
+  // Wait for Firebase to finish before opening report
+  if(_syncTimer)clearTimeout(_syncTimer);
+  const data=getStateObj();
+  data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
+  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
+    updateSyncBadge(true);
+    openReport();
+  }).catch(()=>{
+    show('Error guardando, abriendo igual...');
+    openReport();
+  });
+}
+function calcRatings(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const winTeam=g1>g2?'t1':g2>g1?'t2':null;
+  const conceded={t1:g2,t2:g1};
+  P.forEach(p=>{
+    let r=6.0;
+    r+=p.goals*0.8;
+    r+=p.assists*0.5;
+    r+=(p.defcon||0)*0.1;
+    r+=p.salvadas*0.35;
+    r+=(p.por?p.saves*0.2:0);
+    if(p.por)r+=(conceded[p.team]||0)*(-0.2);
+    r+=p.shotsOn*0.1;
+    r+=p.posts*0.05;
+    r+=(p.shotsOffError||0)*(-0.2);
+    r+=(p.shotsOffGood||0)*0.05;
+    r+=p.autogoals*(-1.0);
+    if(winTeam&&p.team===winTeam)r+=0.3;
+    p.rating=Math.round(Math.min(10,Math.max(1,r))*10)/10;
+  });
+  // MVP = highest rated
+  let best=null;
+  P.forEach(p=>{if(!best||p.rating>best.rating)best=p;});
+  MVP=best||null;
+}
+
+// ── REPORT ──
+function openReport(){
+  if(!mejengaId){show('Guardá la mejenga primero');return;}
+  const base=location.href.replace(/\/[^\/]*$/,'/');
+  window.open(base+'reporte.html?id='+mejengaId,'_blank');
+}
+
+
+// ── HOME ──
+function goToSetup(){
+  document.getElementById('home').classList.add('gone');
+  document.getElementById('setup').classList.remove('gone');
+  initS();
+}
+function backToHome(){
+  document.getElementById('setup').classList.add('gone');
+  document.getElementById('home').classList.remove('gone');
+}
+function enterApp(){
+  document.getElementById('home').classList.add('gone');
+  document.getElementById('setup').classList.add('gone');
+  document.getElementById('app').classList.add('on');
+  document.getElementById('tmr').textContent=ft(tS);
+  document.getElementById('tmr').className='sb-tm off';
+  updSc();draw();updIb();
+  if(done){
+    document.getElementById('finBtn').textContent='Ver Reporte';
+    document.getElementById('finBtn').classList.add('done');
+  }
+}
+function loadMejengasList(){
+  db.collection(MEJENGAS_COL).orderBy('ts','desc').limit(20).get().then(snap=>{
+    const list=document.getElementById('hmList');
+    const cnt=document.getElementById('hmCnt');
+    if(snap.empty){
+      list.innerHTML='<div class="hm-empty">No hay mejengas todavía.<br>Creá tu primera mejenga.</div>';
+      cnt.textContent='0';
+      return;
+    }
+    cnt.textContent=snap.size;
+    let h='';
+    snap.forEach(doc=>{
+      const d=doc.data();
+      const g1=calcScore(d.P,'t1');
+      const g2=calcScore(d.P,'t2');
+      const isActive=!d.done;
+      const evCount=(d.EV||[]).length;
+      const date=d.ts?new Date(d.ts):null;
+      const dateStr=date?formatDate(date):'';
+      h+=`<div class="hm-card ${isActive?'active':'done'}">
+        <div onclick="openMejenga('${doc.id}')" style="cursor:pointer">
+          <div class="hm-top">
+            <span class="hm-name">${d.N||'Mejenga'} · ${d.F||''}</span>
+            <span class="hm-badge ${isActive?'live':'fin'}">${isActive?'En vivo':'Finalizada'}</span>
+          </div>
+          <div class="hm-score">
+            <span class="t1c">${g1}</span><span class="sep">-</span><span class="t2c">${g2}</span>
+          </div>
+          <div class="hm-meta">
+            ${d.CA?`<span class="hm-mi"><span>${d.CA}</span></span>`:''}
+            <span class="hm-mi">${ft(d.tS||0)} jugados</span>
+            <span class="hm-mi">${evCount} eventos</span>
+            ${dateStr?`<span class="hm-mi">${dateStr}</span>`:''}
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.04)">
+          <button onclick="deleteMejenga('${doc.id}',event)" style="background:none;border:none;font-family:inherit;font-size:10px;font-weight:600;color:rgba(255,80,80,.5);cursor:pointer;padding:4px 8px">Borrar</button>
+        </div>
+      </div>`;
+    });
+    list.innerHTML=h;
+  }).catch(()=>{
+    document.getElementById('hmList').innerHTML='<div class="hm-empty">No se pudo cargar.<br>Revisá tu conexión.</div>';
+  });
+}
+function calcScore(players,team){
+  if(!players||!players.length)return 0;
+  const opp=team==='t1'?'t2':'t1';
+  return players.filter(p=>p.team===team).reduce((s,p)=>s+(p.goals||0),0)
+       + players.filter(p=>p.team===opp).reduce((s,p)=>s+(p.autogoals||0),0);
+}
+function formatDate(d){
+  const dias=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${dias[d.getDay()]} ${d.getDate()} ${meses[d.getMonth()]}`;
+}
+function deleteMejenga(id,e){
+  e.stopPropagation();
+  if(!confirm('¿Borrar esta mejenga? No se puede deshacer.'))return;
+  db.collection(MEJENGAS_COL).doc(id).delete().then(()=>{
+    show('Mejenga borrada');
+    loadMejengasList();
+  }).catch(()=>{show('Error al borrar');});
+}
+function openMejenga(id){
+  // Load from Firebase
+  db.collection(MEJENGAS_COL).doc(id).get().then(doc=>{
+    if(!doc.exists){show('Mejenga no encontrada');return;}
+    const d=doc.data();
+    N=d.N||'';F=d.F||'';CA=d.CA||'';UB=d.UB||'';ORG=d.ORG||'';
+    P=d.P||[];EV=d.EV||[];tS=d.tS||0;MVP=d.MVP||null;done=d.done||false;
+    mejengaId=id;
+    _firstSync=false;
+    P.forEach(p=>{if(p.rating===undefined)p.rating=0;if(p.defcon===undefined)p.defcon=0;if(p.shotsOffError===undefined)p.shotsOffError=0;if(p.shotsOffGood===undefined)p.shotsOffGood=0;if(p.shotsOffNeutral===undefined)p.shotsOffNeutral=0;});
+    saveState(); // save to localStorage
+    if(done){
+      // Finished game — open report directly
+      openReport();
+    }else{
+      // Active game — enter tracking
+      enterApp();
+    }
+  }).catch(()=>{show('Error al cargar');});
+}
+
+// ── RECOVERY FLOW ──
+function showRecovery(){
+  const g1=teamScore('t1'),g2=teamScore('t2');
+  const evCount=EV.length;
+  const status=done?'Finalizada':'En progreso';
+  let h='';
+  h+=`<div class="rec-row"><span class="rec-lbl">Partido</span><span class="rec-val">${N} · ${F}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Marcador</span><span class="rec-val g">Negro ${g1} - ${g2} Verde</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Tiempo</span><span class="rec-val">${ft(tS)}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Eventos</span><span class="rec-val">${evCount}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Estado</span><span class="rec-val">${status}</span></div>`;
+  h+=`<div class="rec-row"><span class="rec-lbl">Backup</span><span class="rec-val" style="color:${mejengaId?'rgba(167,238,67,.7)':'rgba(255,180,60,.7)'}">☁️ ${mejengaId?'Guardada en Firebase':'Solo local'}</span></div>`;
+  document.getElementById('recInfo').innerHTML=h;
+  document.getElementById('recBg').classList.add('on');
+}
+function resumeState(){
+  document.getElementById('recBg').classList.remove('on');
+  enterApp();
+}
+function discardState(){
+  clearState();
+  document.getElementById('recBg').classList.remove('on');
+  N='';F='';CA='';UB='';ORG='';P=[];EV=[];sel=null;tOn=false;tS=0;MVP=null;done=false;mejengaId=null;
+  document.getElementById('home').classList.remove('gone');
+}
+
+// ── BACK TO HOME (from tracking) ──
+function resetMejenga(){
+  if(!confirm('¿Volver al inicio?\nLa mejenga queda guardada en Firebase.'))return;
+  clearState();
+  N='';F='';CA='';UB='';ORG='';P=[];EV=[];sel=null;tOn=false;tS=0;MVP=null;done=false;mejengaId=null;
+  if(tOn){clearInterval(tI);tOn=false;}
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('home').classList.remove('gone');
+  loadMejengasList();
+}
+
+// INIT
+if(loadState()){
+  document.getElementById('home').classList.add('gone');
+  showRecovery();
+}else{
+  loadMejengasList();
+}
+</script>
+</body>
+</html>
