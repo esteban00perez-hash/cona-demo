@@ -403,6 +403,32 @@
             }
         }
 
+        function copyInviteLink() {
+            const mejengaId = currentMejengaData?.id;
+            if (!mejengaId) return;
+            const base = window.location.origin + window.location.pathname;
+            const link = base + '?mejenga=' + mejengaId;
+            navigator.clipboard.writeText(link).then(() => {
+                const toast = document.getElementById('successToast');
+                toast.innerHTML = '📋 Link copiado al portapapeles';
+                toast.classList.remove('banca-toast');
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }).catch(() => {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = link;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                const toast = document.getElementById('successToast');
+                toast.innerHTML = '📋 Link copiado';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            });
+        }
+
         ['nameInput','whatsappInput'].forEach(id => {
             document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') registerPlayer(); });
             document.getElementById(id)?.addEventListener('input',   e => { e.target.classList.remove('error'); });

@@ -193,8 +193,16 @@ function renderEquipoList(players) {
   const active  = players.filter(p => !p.banca);
   const porteros = active.filter(p => p.position === 'portero');
   const jugadores = active.filter(p => p.position === 'jugador');
+  const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
 
   let html = '';
+
+  if (unassigned.length > 0) {
+    html += '<div class="equipo-warning">⚠️ ' + unassigned.length + ' jugador' +
+            (unassigned.length > 1 ? 'es' : '') + ' sin equipo asignado</div>';
+  } else if (active.length > 0) {
+    html += '<div class="equipo-ready">✓ Todos los jugadores asignados</div>';
+  }
 
   if (porteros.length > 0) {
     html += '<div class="panel-section-label">Porteros</div>';
@@ -260,6 +268,17 @@ function goToOrganizador() {
 
   jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
     const players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const active = players.filter(p => !p.banca);
+    const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
+
+    if (unassigned.length > 0) {
+      const names = unassigned.map(p => p.name).join(', ');
+      alert('⚠️ Faltan ' + unassigned.length + ' jugador' + (unassigned.length > 1 ? 'es' : '') +
+            ' sin equipo asignado:\n\n' + names +
+            '\n\nAsigná todos los jugadores a Negro o Verde antes de iniciar.');
+      return;
+    }
+
     // Activate the organizador screen first
     _origNavigate('organizador');
     // Then immediately launch the live match — no timeout needed

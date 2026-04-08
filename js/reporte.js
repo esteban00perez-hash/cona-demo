@@ -1,3 +1,4 @@
+
 /* ── SVG Icons ── */
 const IC = {
   goal: `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" fill="#25D366" fill-opacity="0.07"/><path d="M9 0.5C13.6944 0.5 17.5 4.30558 17.5 9C17.5 13.6944 13.6944 17.5 9 17.5C4.30558 17.5 0.5 13.6944 0.5 9C0.5 4.30558 4.30558 0.5 9 0.5Z" stroke="#E8E8E8"/><g clip-path="url(#rcg)"><mask id="rmg" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="2" y="2" width="14" height="14"><path d="M16 2H2V16H16V2Z" fill="white"/></mask><g mask="url(#rmg)"><path d="M9 14.25C11.8995 14.25 14.25 11.8995 14.25 9C14.25 6.10051 11.8995 3.75 9 3.75C6.10051 3.75 3.75 6.10051 3.75 9C3.75 11.8995 6.10051 14.25 9 14.25Z" fill="white"/><path d="M10.8828 11.497C10.7201 11.497 10.5573 11.4859 10.3946 11.4696C10.3424 11.4595 10.2935 11.4369 10.2519 11.4038C10.2104 11.3707 10.1775 11.328 10.156 11.2794C9.988 10.6552 9.82525 10.0637 9.66775 9.48858C9.6388 9.41343 9.63706 9.33052 9.66285 9.25423C9.68863 9.17794 9.74031 9.11308 9.80892 9.07091L11.1763 7.84591C11.2334 7.7961 11.3067 7.76865 11.3825 7.76865C11.4583 7.76865 11.5315 7.7961 11.5887 7.84591C12.0474 8.09633 12.4588 8.42503 12.8043 8.81716C12.8827 8.91412 12.9266 9.03436 12.9292 9.15899C12.932 9.84171 12.7287 10.5094 12.3458 11.0747C12.342 11.0905 12.3346 11.1052 12.3243 11.1178C12.253 11.2147 12.1577 11.2913 12.0478 11.3401C11.6705 11.4493 11.2791 11.5024 10.8863 11.4976L10.8828 11.497Z" fill="#142029"/><path d="M6.46584 10.1728C6.40038 10.1734 6.33693 10.1502 6.28734 10.1075C5.85925 9.84832 5.48656 9.50715 5.19067 9.10358C5.14231 9.03529 5.11586 8.95391 5.11484 8.87024C5.11458 8.23357 5.28305 7.60821 5.60309 7.05783C5.60723 7.03788 5.61894 7.02032 5.63575 7.00883C5.68407 6.96581 5.74151 6.93429 5.80375 6.91666C6.17914 6.77018 6.57855 6.69501 6.9815 6.69499C7.1061 6.68414 7.23141 6.68414 7.356 6.69499C7.42674 6.70258 7.49274 6.73415 7.54304 6.78445C7.59335 6.83475 7.62492 6.90076 7.6325 6.97149C7.72992 7.39499 7.83842 7.82899 7.94167 8.26299L8.02334 8.61299C8.03691 8.666 8.036 8.72167 8.02071 8.77421C8.00542 8.82674 7.97631 8.87421 7.93642 8.91166L6.67234 10.097C6.64603 10.1233 6.61472 10.1441 6.58026 10.1581C6.5458 10.1721 6.50888 10.1791 6.47167 10.1787H6.46584V10.1728Z" fill="#142029"/><path d="M8.99984 3.16699C7.84612 3.16699 6.7183 3.50911 5.75901 4.15009C4.79973 4.79106 4.05205 5.7021 3.61054 6.76801C3.16903 7.83391 3.05351 9.0068 3.27859 10.1384C3.50367 11.2699 4.05924 12.3093 4.87505 13.1251C5.69086 13.9409 6.73026 14.4965 7.86181 14.7216C8.99337 14.9467 10.1663 14.8311 11.2322 14.3896C12.2981 13.9481 13.2091 13.2004 13.8501 12.2412C14.4911 11.2819 14.8332 10.1541 14.8332 9.00033C14.8332 7.45323 14.2186 5.9695 13.1246 4.87554C12.0307 3.78157 10.5469 3.16699 8.99984 3.16699ZM9.07042 13.3304L9.03776 13.2137C9.02663 13.134 8.98701 13.0609 8.92622 13.008C8.86543 12.9552 8.78757 12.9261 8.70701 12.9262C8.03797 12.915 7.38769 12.7032 6.84034 12.3183C6.78464 12.2907 6.72343 12.2759 6.66126 12.2752C6.62301 12.2718 6.58447 12.2763 6.54804 12.2884C6.51162 12.3006 6.47808 12.3201 6.44951 12.3457L6.05342 12.7202C5.29755 12.1246 4.74097 11.313 4.45775 10.3933C4.17453 9.47354 4.1781 8.48938 4.46798 7.57174C4.75785 6.6541 5.3203 5.84649 6.08047 5.25638C6.84063 4.66626 7.76248 4.32163 8.72334 4.26833L8.78167 4.47424C8.82056 4.58819 8.85303 4.70213 8.87909 4.81608C8.89714 4.869 8.92709 4.91708 8.96663 4.95662C9.00617 4.99616 9.05425 5.02611 9.10717 5.04416H9.15617C9.80616 5.14238 10.4374 5.33908 11.0281 5.62749C11.0696 5.65019 11.117 5.65975 11.164 5.65491C11.2287 5.65539 11.2924 5.63847 11.3483 5.60591L11.8803 5.23141C12.6579 5.82155 13.2341 6.63761 13.53 7.56787C13.826 8.49813 13.8271 9.49711 13.5333 10.428C13.2396 11.359 12.6652 12.1764 11.889 12.7683C11.1127 13.3602 10.1725 13.6977 9.19701 13.7347L9.07042 13.3304Z" fill="#142029"/></g></g><defs><clipPath id="rcg"><rect width="14" height="14" fill="white" transform="translate(2 2)"/></clipPath></defs></svg>`,
@@ -16,7 +17,7 @@ const IC = {
 };
 
 /* ── Helpers ── */
-function teamScoreR(players, team) {
+function teamScore(players, team) {
   const own = team === 't1' ? 't2' : 't1';
   let g = 0;
   players.forEach(p => {
@@ -40,6 +41,7 @@ function formatDate(ts) {
 }
 
 function ratingClass(r) {
+  if (r >= 9.5) return 'mvp';
   if (r >= 7) return 'high';
   if (r >= 5) return 'mid';
   return 'low';
@@ -56,9 +58,9 @@ function getFormation(players, isTop) {
   // Goal area: 1.5%–6.5% | Penalty box: 1.5%–15.5% | Halfway: 50%
   // Bottom penalty box: 84.5%–98.5% | Bottom goal: 93.5%–98.5%
   const GK_Y  = isTop ? 5  : 95;  // inside goal area
-  const DEF_Y = isTop ? 18 : 82;  // just past penalty line
-  const MID_Y = isTop ? 33 : 67;  // middle of half
-  const ATK_Y = isTop ? 44 : 56;  // near halfway line
+  const DEF_Y = isTop ? 20 : 80;  // just past penalty line
+  const MID_Y = isTop ? 32 : 68;  // middle of half
+  const ATK_Y = isTop ? 43 : 57;  // near halfway line
 
   const pts = [[50, GK_Y]];
   const f = n - 1;
@@ -138,37 +140,105 @@ function teamStat(players, team, key) {
 function render(D) {
   const $=s=>document.getElementById(s);
 
-  // Reset state (handles both direct render and initReporteFromId paths)
-  const loadEl = $('loading'); if (loadEl) loadEl.classList.add('hidden');
-  const errEl  = $('error');   if (errEl)  errEl.classList.add('hidden');
-
-
   // Header
   $('game-name').textContent = D.N || 'Mejenga';
   $('format-badge').textContent = D.F || '';
-  $('meta-date').textContent = formatDate(D.ts) + (D.HO ? ' · ' + D.HO : '');
+  $('meta-date').textContent = formatDate(D.ts);
   $('meta-location').textContent = [D.CA, D.UB].filter(Boolean).join(' - ');
   $('meta-org').textContent = D.ORG ? 'Org: ' + D.ORG : '';
 
-  // Support both formats: named map (new) and array (old legacy data)
-  const P = D.players && !Array.isArray(D.players)
-    ? Object.values(D.players)
-    : (D.P || []);
+  const P = D.P || [];
 
+  // Recalculate raw scores from stats (same formula as organizador index.html)
+  // then normalize with dynamic floor based on game intensity.
+  // Display-only — raw Firebase data is never modified.
+  (function normalizeRatings(players) {
+    if (players.length < 2) return;
+    const g1 = teamScore(players,'t1'), g2 = teamScore(players,'t2');
+    const totalGoals = g1 + g2;
+    const winTeam = g1>g2?'t1':g2>g1?'t2':null;
+    const conceded = {t1:g2, t2:g1};
+    // Step 1: recalculate raw scores from stats (no clamp)
+    players.forEach(p => {
+      let r = 6.0;
+      r += (p.goals||0)*0.8;
+      r += (p.assists||0)*0.5;
+      r += (p.defcon||0)*0.1;
+      // DEFCON threshold bonus
+      if((p.defcon||0)>=12)r+=1.5;
+      else if((p.defcon||0)>=8)r+=1.0;
+      else if((p.defcon||0)>=5)r+=0.5;
+      r += (p.salvadas||0)*0.35;
+      r += (p.por ? (p.saves||0)*0.2 : 0);
+      if (p.por) r += (conceded[p.team]||0)*(-0.2);
+      if (!p.por) r += (conceded[p.team]||0)*(-0.05);
+      r += (p.shotsOn||0)*0.1;
+      r += (p.posts||0)*0.05;
+      // Tiros afuera son neutros (0 puntos)
+      r += (p.autogoals||0)*(-1.0);
+      if (winTeam && p.team===winTeam) r += 0.5;
+      p._raw = r;
+    });
+    // Step 2: normalize — elite group above 9.0, rest between 6.5-9.0
+    const sorted = [...players].sort((a,b) => b._raw - a._raw);
+    const rawMin = Math.min(...players.map(p => p._raw));
+    const FLOOR = 6.5;
+    // Elite group: anyone whose raw exceeds the average by ≥50%
+    const avg = players.reduce((s,p) => s + p._raw, 0) / players.length;
+    const eliteThreshold = avg * 1.5;
+    const elite = sorted.filter(p => p._raw >= eliteThreshold);
+    const nonElite = sorted.filter(p => p._raw < eliteThreshold);
+    // Flexible ceiling: 9.4 when no elite, 9.0 when elite exists
+    const CEIL = elite.length > 0 ? 9.0 : 9.4;
+    // Normalize non-elite against the best non-elite (or best elite if none)
+    const normMax = nonElite.length ? Math.max(...nonElite.map(p=>p._raw)) : sorted[sorted.length-1]._raw;
+    const normRange = normMax - rawMin || 1;
+    nonElite.forEach(p => {
+      const t = Math.pow(Math.min(1, (p._raw - rawMin) / normRange), 0.75);
+      p.rating = FLOOR + t * (CEIL - FLOOR);
+    });
+    // Rate elite: distribute between 9.0 and up
+    if (elite.length > 0) {
+      const best = elite[0];
+      const full10 = (best.goals||0) >= 3 && (best.assists||0) >= 3 && (best.defcon||0) >= 3;
+      const bestRating = full10 ? 10.0 : 9.5;
+      if (elite.length === 1) {
+        best.rating = bestRating;
+      } else {
+        const eliteMin = elite[elite.length-1]._raw;
+        const eliteRange = best._raw - eliteMin || 1;
+        elite.forEach(p => {
+          if (p === best) { p.rating = bestRating; }
+          else { p.rating = CEIL + ((p._raw - eliteMin) / eliteRange) * (bestRating - CEIL); }
+        });
+      }
+    }
+    // Clamp and round
+    players.forEach(p => {
+      p.rating = Math.round(Math.min(10, Math.max(1, p.rating)) * 10) / 10;
+      delete p._raw;
+    });
+  })(P);
 
-  const s1 = teamScoreR(P, 't1');
-  const s2 = teamScoreR(P, 't2');
+  const s1 = teamScore(P, 't1');
+  const s2 = teamScore(P, 't2');
 
   // Score
   $('score-t1').textContent = s1;
   $('score-t2').textContent = s2;
-  if (s1 > s2) $('winner-wrap').innerHTML = '<div class="winner-badge">Negro Gana</div>';
-  else if (s2 > s1) $('winner-wrap').innerHTML = '<div class="winner-badge">Verde Gana</div>';
-  else $('winner-wrap').innerHTML = '<div class="winner-badge draw">Empate</div>';
+  // Show "Ganador" label next to winning score
+  if (s1 > s2) {
+    $('score-t1').innerHTML = s1 + ' <span style="font-size:10px;font-weight:800;color:var(--g);vertical-align:middle;letter-spacing:.06em">GANADOR</span>';
+    $('winner-wrap').innerHTML = '';
+  } else if (s2 > s1) {
+    $('score-t2').innerHTML = s2 + ' <span style="font-size:10px;font-weight:800;color:var(--g);vertical-align:middle;letter-spacing:.06em">GANADOR</span>';
+    $('winner-wrap').innerHTML = '';
+  } else {
+    $('winner-wrap').innerHTML = '<div class="winner-badge draw">Empate</div>';
+  }
 
-  // Pitch — clear player nodes but keep field markings (.fm elements)
+  // Pitch
   const pitch = $('pitch');
-  Array.from(pitch.querySelectorAll('.pn')).forEach(n=>n.remove());
   const t1p = P.filter(p => p.team === 't1');
   const t2p = P.filter(p => p.team === 't2');
   // MVP = highest ranked player after normalization (rating 10.0)
@@ -196,11 +266,8 @@ function render(D) {
       const r = p.rating ? parseFloat(p.rating).toFixed(1) : null;
       const icons = statIcons(p);
       node.innerHTML = `
-        <div class="pn-top">
-          ${r ? `<span class="rating ${ratingClass(parseFloat(r))}">${r}</span>` : ''}
-          ${icons ? `<div class="stats-row">${icons}</div>` : ''}
-        </div>
-        <div class="bl">${p.num || ''}</div>
+        ${icons ? `<div class="pn-top"><div class="stats-row">${icons}</div></div>` : ''}
+        <div class="bl">${p.por ? '−' : (p.num || '')}${r ? `<span class="rating ${ratingClass(parseFloat(r))}">${r}</span>` : ''}</div>
         <div class="lb">${(p.name || '').split(' ')[0]}</div>
       `;
       pitch.appendChild(node);
@@ -227,7 +294,7 @@ function render(D) {
   let cmpHtml = '';
 
   // Goles bar (regular)
-  const g1=teamScoreR(P,'t1'), g2=teamScoreR(P,'t2'), gT=g1+g2;
+  const g1=teamScore(P,'t1'), g2=teamScore(P,'t2'), gT=g1+g2;
   const gP1=gT>0?Math.round(g1/gT*100):50;
   cmpHtml += `<div class="cmp-row"><div class="cmp-lb">Goles</div><div class="cmp-bar-wrap"><div class="cmp-bar t1${g1>g2?' win':''}" style="flex:${gP1}">${g1}</div><div class="cmp-bar t2${g2>g1?' win':''}" style="flex:${100-gP1}">${g2}</div></div></div>`;
 
@@ -247,8 +314,8 @@ function render(D) {
       <div class="shots-goal">
         <div class="shots-net"></div>
         <div class="shots-on-row">
-          <div class="shots-on-t1" style="flex:${onP1}">${shotsOn1}</div>
-          <div class="shots-on-t2" style="flex:${onP2}">${shotsOn2}</div>
+          <div class="shots-on-t1">${shotsOn1}</div>
+          <div class="shots-on-t2">${shotsOn2}</div>
           <span class="shots-on-label">Al arco</span>
         </div>
       </div>
@@ -280,75 +347,98 @@ function render(D) {
   });
   $('stats-cmp').innerHTML = cmpHtml;
 
-  // Timeline
+  // Timeline — goals, autogoals, and posts
   const EV = D.EV || [];
-  const notable = EV.filter(e => e.type === 'goal' || e.type === 'autogoal' || e.type === 'posts' || e.type === 'salvadas' || e.type === 'saves');
-  if (!notable.length) {
+  const tlEvents = EV.filter(e => e.type === 'goal' || e.type === 'autogoal' || e.type === 'posts');
+  if (!tlEvents.length) {
     $('timeline').innerHTML = '<div class="tl-empty">Sin eventos registrados</div>';
   } else {
     let running1 = 0, running2 = 0;
     let tlHtml = '';
-    notable.forEach(ev => {
-      const isGoal = ev.type === 'goal' || ev.type === 'autogoal';
-      const isPost = ev.type === 'posts';
-      const isSalvada = ev.type === 'salvadas';
-      const isSave = ev.type === 'saves';
-      if (isGoal) {
-        const isAuto = ev.type === 'autogoal';
-        if (ev.type === 'goal') {
-          if (ev.team === 't1') running1++; else running2++;
-        } else {
-          if (ev.team === 't1') running2++; else running1++;
-        }
-        const displayTeam = isAuto ? (ev.team === 't1' ? 't2' : 't1') : ev.team;
-        const ico = isAuto ? IC.autogoal : IC.goal;
-        const icoColor = isAuto ? '#ff6b6b' : (displayTeam === 't1' ? '#fff' : '#A7EE43');
-        tlHtml += `<div class="tl-row ${displayTeam}"><div class="tl-dot"></div><div class="tl-content">
-          <span class="tl-ico" style="color:${icoColor}">${ico}</span>
-          <div class="tl-min">${ev.time || ''}'</div>
-          <div><div class="tl-player">${ev.player || ''}${isAuto ? ' <span class="tl-autogoal">AG</span>' : ''}</div>${ev.astBy && !isAuto ? `<div class="tl-assist">ast. ${ev.astBy}</div>` : ''}</div>
-        </div></div>`;
-        const scoreColor = displayTeam === 't1' ? '#fff' : 'var(--g)';
-        tlHtml += `<div class="tl-score-row" style="color:${scoreColor}">${running1} - ${running2}</div>`;
-      } else if (isPost) {
+    tlEvents.forEach(ev => {
+      if (ev.type === 'posts') {
         tlHtml += `<div class="tl-row ${ev.team}"><div class="tl-dot" style="background:#ffa500"></div><div class="tl-content">
           <span class="tl-ico" style="color:#ffa500">${IC.post}</span>
           <div class="tl-min" style="color:#ffa500">${ev.time || ''}'</div>
           <div class="tl-player" style="color:#ffa500">${ev.player || ''}</div>
         </div></div>`;
-      } else if (isSalvada) {
-        tlHtml += `<div class="tl-row ${ev.team}"><div class="tl-dot" style="background:#58a6ff"></div><div class="tl-content">
-          <span class="tl-ico" style="color:#58a6ff">${IC.shield}</span>
-          <div class="tl-min" style="color:#58a6ff">${ev.time || ''}'</div>
-          <div class="tl-player" style="color:#58a6ff">${ev.player || ''}</div>
-        </div></div>`;
-      } else if (isSave) {
-        tlHtml += `<div class="tl-row ${ev.team}"><div class="tl-dot" style="background:#fbbf24"></div><div class="tl-content">
-          <span class="tl-ico" style="color:#fbbf24">${IC.save}</span>
-          <div class="tl-min" style="color:#fbbf24">${ev.time || ''}'</div>
-          <div class="tl-player" style="color:#fbbf24">${ev.player || ''}</div>
-        </div></div>`;
+        return;
       }
+      const isAuto = ev.type === 'autogoal';
+      if (!isAuto) {
+        if (ev.team === 't1') running1++; else running2++;
+      } else {
+        if (ev.team === 't1') running2++; else running1++;
+      }
+      const displayTeam = isAuto ? (ev.team === 't1' ? 't2' : 't1') : ev.team;
+      const ico = isAuto ? IC.autogoal : IC.goal;
+      const icoColor = isAuto ? '#ff6b6b' : (displayTeam === 't1' ? '#fff' : '#A7EE43');
+      tlHtml += `<div class="tl-row ${displayTeam}"><div class="tl-dot"></div><div class="tl-content">
+        <span class="tl-ico" style="color:${icoColor}">${ico}</span>
+        <div class="tl-min">${ev.time || ''}'</div>
+        <div><div class="tl-player">${ev.player || ''}${isAuto ? ' <span class="tl-autogoal">AG</span>' : ''}</div>${ev.astBy && !isAuto ? `<div class="tl-assist">ast. ${ev.astBy}</div>` : ''}</div>
+      </div></div>`;
+      const scoreColor = displayTeam === 't1' ? '#fff' : 'var(--g)';
+      tlHtml += `<div class="tl-score-row" style="color:${scoreColor}">${running1} - ${running2}</div>`;
     });
     $('timeline').innerHTML = tlHtml;
   }
 
-  // Player tables
-  function playerTable(players, team) {
-    const teamName = team === 't1' ? 'Negro' : 'Verde';
-    const dotClass = team === 't1' ? 't1' : 't2';
-    const sorted = [...players].sort((a,b) => (b.rating||0)-(a.rating||0));
-    let html = `<div class="pt-header"><div class="th"><div class="th-dot ${dotClass}"></div><span class="th-name">${teamName}</span></div></div>`;
-    html += `<table class="pt"><thead><tr><th>#</th><th>Jugador</th><th>Gol</th><th>Ast</th><th>Rating</th></tr></thead><tbody>`;
-    sorted.forEach(p => {
-      const r = p.rating ? parseFloat(p.rating).toFixed(1) : '-';
-      const rc = p.rating ? ratingClass(parseFloat(p.rating)) : '';
-      html += `<tr><td>${p.num||''}</td><td>${p.name||''}</td><td>${p.goals||0}</td><td>${p.assists||0}</td><td><span class="rt ${rc}">${r}</span></td></tr>`;
-    });
-    html += '</tbody></table>';
-    return html;
-  }
-  $('player-tables').innerHTML = playerTable(t1p, 't1') + '<div class="pt-sep"></div>' + playerTable(t2p, 't2');
+  // Unified ranking — all players sorted by rating, winner team breaks ties
+  const winTeam = s1>s2?'t1':s2>s1?'t2':null;
+  const allSorted = [...P].sort((a,b) => {
+    const diff = (b.rating||0) - (a.rating||0);
+    if (diff !== 0) return diff;
+    // Tie: winner team goes first
+    if (winTeam) {
+      if (a.team === winTeam && b.team !== winTeam) return -1;
+      if (b.team === winTeam && a.team !== winTeam) return 1;
+    }
+    return 0;
+  });
+
+  // Find max values for each stat column
+  const maxGol = Math.max(...allSorted.map(p => p.goals||0));
+  const maxAst = Math.max(...allSorted.map(p => p.assists||0));
+  const maxTir = Math.max(...allSorted.filter(p=>!p.por).map(p => (p.shotsOn||0)+(p.goals||0)));
+  const maxDef = Math.max(...allSorted.filter(p=>!p.por).map(p => p.defcon||0));
+  const maxTap = Math.max(...allSorted.map(p => p.por ? (p.saves||0) : (p.salvadas||0)));
+  const circle = v => `<span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;border:2px solid var(--g);font-weight:800">${v}</span>`;
+
+  let ptHtml = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table class="pt"><thead><tr>
+    <th style="width:24px">Pos</th><th style="width:20px">Eq</th><th>Jugador</th><th>Gol</th><th>Ast</th><th>T.Arco</th><th>Def</th><th>Atj</th><th>Rat</th>
+  </tr></thead><tbody>`;
+  allSorted.forEach((p, i) => {
+    const r = p.rating ? parseFloat(p.rating).toFixed(1) : '-';
+    const rc = p.rating ? ratingClass(parseFloat(p.rating)) : '';
+    const dotColor = p.team === 't1'
+      ? 'background:rgba(20,20,25,.85);border:2px solid rgba(255,255,255,.55)'
+      : 'background:rgba(167,238,67,.88)';
+    const porTag = p.por ? ' <span style="font-size:8px;color:var(--w4);font-weight:600">POR</span>' : '';
+    const rank = i + 1;
+    const isMvp = rank === 1;
+    const rankStyle = isMvp ? 'color:#fbbf24;font-weight:800' : 'color:var(--w4);font-weight:700';
+
+    const gVal = p.goals||0;
+    const aVal = p.assists||0;
+    const tVal = p.por ? 0 : ((p.shotsOn||0)+(p.goals||0));
+    const dVal = p.por ? 0 : (p.defcon||0);
+    const tapVal = p.por ? (p.saves||0) : (p.salvadas||0);
+
+    ptHtml += `<tr onclick="openPP('${p.id}')" style="cursor:pointer">
+      <td style="${rankStyle}">${rank}</td>
+      <td><div style="width:10px;height:10px;border-radius:4px;${dotColor};margin:0 auto"></div></td>
+      <td>${p.name||''}${porTag}</td>
+      <td>${gVal > 0 && gVal === maxGol ? circle(gVal) : (gVal||'-')}</td>
+      <td>${aVal > 0 && aVal === maxAst ? circle(aVal) : (aVal||'-')}</td>
+      <td>${p.por ? '-' : (tVal > 0 && tVal === maxTir ? circle(tVal) : (tVal||'-'))}</td>
+      <td>${p.por ? '-' : (dVal > 0 && dVal === maxDef ? circle(dVal) : (dVal||'-'))}</td>
+      <td>${tapVal > 0 && tapVal === maxTap ? circle(tapVal) : (tapVal||'-')}</td>
+      <td><span class="rt ${rc}">${r}</span></td>
+    </tr>`;
+  });
+  ptHtml += '</tbody></table></div>';
+  $('player-tables').innerHTML = ptHtml;
 
   // MVP — always the highest ranked player after normalization
   if (mvpPlayer) {
@@ -396,11 +486,10 @@ function render(D) {
   }
 
 
-  // Show report, store id for share button
+  // Show report
   document.getElementById('loading').classList.add('hidden');
-  const reportEl = document.getElementById('report');
-  if (D.mejengaId) reportEl.dataset.mejengaId = D.mejengaId;
-  reportEl.classList.remove('hidden');
+  document.getElementById('report').classList.remove('hidden');
+  document.getElementById('report').dataset.mejengaId = D.id || '';
 }
 
 /* ── Player Popup ── */
@@ -431,7 +520,8 @@ function openPP(id) {
   };
   let sh = '<div class="pp-sg">';
   stats.forEach(s => {
-    const v = p[s.k] || 0;
+    // "Al arco" = shotsOn + goals (every goal is a shot on target)
+    const v = s.k === 'shotsOn' ? (p.shotsOn||0) + (p.goals||0) : (p[s.k] || 0);
     sh += `<div class="pp-si ${s.c}"><span class="pp-si-ico">${icons[s.k]||''}</span><span class="pp-si-lb">${s.l}</span><span class="pp-si-v">${v}</span></div>`;
   });
   sh += '</div>';
@@ -440,26 +530,31 @@ function openPP(id) {
   // Rating breakdown tab
   const winTeam = window._winTeam;
   const lines = [];
+  const allP = window._allPlayers || [];
+  const s1 = teamScore(allP,'t1'), s2 = teamScore(allP,'t2');
+  const gc = p.team === 't1' ? s2 : s1;
+
   lines.push({l:'Base', stat:'', pts:6.0});
   if (p.goals) lines.push({l:'Goles', stat:'x'+p.goals, pts:p.goals*0.8});
   if (p.assists) lines.push({l:'Asistencias', stat:'x'+p.assists, pts:p.assists*0.5});
   if (p.por && p.saves) lines.push({l:'Tapadas', stat:'x'+p.saves, pts:p.saves*0.2});
-  const allP = window._allPlayers || [];
-  const s1r = teamScoreR(allP,'t1'), s2r = teamScoreR(allP,'t2');
-  const gc = p.team === 't1' ? s2r : s1r;
-  if (p.por) {
-    if (gc) lines.push({l:'Goles recibidos (POR)', stat:'x'+gc, pts:gc*(-0.2)});
-  } else {
-    if (gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.05)});
+  if (p.por && gc) lines.push({l:'Goles recibidos (GK)', stat:'x'+gc, pts:gc*(-0.2)});
+  if (!p.por && gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.05)});
+  if (p.defcon) {
+    lines.push({l:'DEF CON', stat:'x'+p.defcon, pts:p.defcon*0.1});
+    const defBonus=(p.defcon>=12)?1.5:(p.defcon>=8)?1.0:(p.defcon>=5)?0.5:0;
+    if(defBonus)lines.push({l:'Bonus DEF CON ('+p.defcon+')', stat:'≥'+(p.defcon>=12?12:p.defcon>=8?8:5), pts:defBonus});
   }
-  if (p.defcon) lines.push({l:'DEF CON', stat:'x'+p.defcon, pts:p.defcon*0.1});
   if (p.salvadas) lines.push({l:'Salvadas Clave', stat:'x'+p.salvadas, pts:p.salvadas*0.35});
   if (p.shotsOn) lines.push({l:'Tiros al arco', stat:'x'+p.shotsOn, pts:p.shotsOn*0.1});
   if (p.posts) lines.push({l:'Palos', stat:'x'+p.posts, pts:p.posts*0.05});
-  if (p.shotsOffError) lines.push({l:'Tiro afuera (error)', stat:'x'+p.shotsOffError, pts:p.shotsOffError*(-0.2)});
-  if (p.shotsOffGood) lines.push({l:'Tiro afuera (buen tiro)', stat:'x'+p.shotsOffGood, pts:p.shotsOffGood*0.05});
+  if (p.shotsOffError) lines.push({l:'TF Error', stat:'x'+p.shotsOffError, pts:0});
+  if (p.shotsOffGood) lines.push({l:'TF Buen tiro', stat:'x'+p.shotsOffGood, pts:0});
   if (p.autogoals) lines.push({l:'Autogoles', stat:'x'+p.autogoals, pts:p.autogoals*(-1.0)});
   if (winTeam && p.team === winTeam) lines.push({l:'Equipo ganador', stat:'', pts:0.5});
+
+  // Calculate raw total
+  const rawTotal = lines.reduce((s, ln) => s + ln.pts, 0);
 
   let bh = '<div class="pp-brk">';
   lines.forEach(ln => {
@@ -471,6 +566,36 @@ function openPP(id) {
       <span class="pp-br-pts ${cls}">${sign}${ln.pts.toFixed(2)}</span>
     </div>`;
   });
+
+  // Raw subtotal
+  bh += `<div class="pp-br" style="border-top:1px solid rgba(255,255,255,.08);margin-top:4px;padding-top:10px">
+    <span class="pp-br-lb" style="color:var(--w7);font-weight:700">Puntaje raw</span>
+    <span class="pp-br-stat"></span>
+    <span class="pp-br-pts pp-br-base">${rawTotal.toFixed(2)}</span>
+  </div>`;
+
+  // Factor Cona
+  const factorCona = parseFloat(r) > 0 ? (parseFloat(r) / rawTotal) : 1;
+  bh += `<div class="pp-br" style="background:rgba(167,238,67,.04);border-radius:8px;margin-top:4px;padding:10px 12px;border-bottom:none">
+    <span class="pp-br-lb" style="color:var(--g);font-weight:800;display:flex;align-items:center;gap:6px">
+      Factor Cona
+      <span onclick="event.stopPropagation();document.getElementById('conaInfo').classList.toggle('on')" style="width:16px;height:16px;border-radius:50%;background:rgba(167,238,67,.15);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;font-size:9px;font-weight:800;color:var(--g);flex-shrink:0">i</span>
+    </span>
+    <span class="pp-br-stat" style="color:var(--g);font-weight:700">x${factorCona.toFixed(2)}</span>
+    <span class="pp-br-pts" style="color:var(--g)">${rawTotal.toFixed(2)} → ${r}</span>
+  </div>`;
+
+  // Factor Cona info (hidden by default)
+  bh += `<div id="conaInfo" style="display:none;padding:10px 12px;margin-top:2px;background:rgba(167,238,67,.04);border-radius:8px;border:1px solid rgba(167,238,67,.1)">
+    <p style="font-size:10px;color:var(--w7);line-height:1.6;margin:0">
+      El <strong style="color:var(--g)">Factor Cona</strong> normaliza los puntajes para que sean comparables entre mejengas. Toma en cuenta la intensidad del partido (total de goles) y la distribucion de rendimiento. El objetivo: crear un sistema de ranking consistente a traves de todas las mejengas que organizamos.
+    </p>
+    <div style="margin-top:8px;text-align:center">
+      <a href="factor-cona.html" style="display:inline-block;background:rgba(167,238,67,.1);border:1px solid rgba(167,238,67,.2);border-radius:8px;padding:6px 14px;font-size:10px;font-weight:700;color:var(--g);text-decoration:none;margin-right:6px">Conoce el Factor Cona →</a>
+      <button onclick="document.getElementById('fbModal').classList.add('on')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 14px;font-family:inherit;font-size:10px;font-weight:700;color:var(--w4);cursor:pointer">Feedback</button>
+    </div>
+  </div>`;
+
   bh += '</div>';
   bh += `<div class="pp-br-total"><span class="pp-br-total-lb">Rating Final</span><span class="pp-br-total-v">${r}</span></div>`;
   $('ppBreak').innerHTML = bh;
@@ -502,6 +627,51 @@ function closePP() {
     }
   }, {passive:true});
 })();
+
+/* ── Feedback ── */
+async function sendFeedback() {
+  const text = document.getElementById('fbText').value.trim();
+  if (!text) return;
+  const btn = document.getElementById('fbSend');
+  btn.textContent = 'Enviando...';
+  btn.disabled = true;
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const url = 'https://firestore.googleapis.com/v1/projects/cona-demo-organizador/databases/(default)/documents/feedback';
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        fields: {
+          mejengaId: {stringValue: params.get('id') || ''},
+          mensaje: {stringValue: text},
+          ts: {timestampValue: new Date().toISOString()},
+          userAgent: {stringValue: navigator.userAgent}
+        }
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || res.status);
+    }
+    btn.textContent = 'Enviado!';
+    btn.style.background = 'rgba(167,238,67,.3)';
+    btn.style.color = 'var(--g)';
+    document.getElementById('fbText').value = '';
+    setTimeout(() => {
+      document.getElementById('fbModal').classList.remove('on');
+      btn.textContent = 'Enviar feedback';
+      btn.style.background = '';
+      btn.style.color = '';
+      btn.disabled = false;
+    }, 1500);
+  } catch(e) {
+    btn.textContent = 'Error: ' + e.message;
+    btn.style.fontSize = '10px';
+    btn.disabled = false;
+    console.error(e);
+  }
+}
 
 /* ── Init ── */
 async function initReporteFromId(id) {
@@ -541,12 +711,12 @@ window.renderReporte = render;
   if (id) initReporteFromId(id);
 })();
 
+
 function goBack(){
   navigate('home');
 }
 
 function shareReport(){
-  // Build shareable URL with the mejenga ID
   const reportEl=document.getElementById('report');
   const id=reportEl?reportEl.dataset.mejengaId:'';
   const base=location.href.replace(/\?.*$/,'');
@@ -555,9 +725,8 @@ function shareReport(){
     navigator.share({title:'Reporte de Mejenga — Cona',url:url}).catch(()=>{});
   }else{
     navigator.clipboard.writeText(url).then(()=>{
-      const btn=document.querySelector('.share-btn');
-      btn.textContent='Link copiado!';
-      setTimeout(()=>{btn.textContent='Compartir';},2000);
+      const btn=document.querySelector('.share-icon-btn');
+      if(btn){btn.style.color='#A7EE43';setTimeout(()=>{btn.style.color='';},2000);}
     }).catch(()=>{prompt('Copia el link:',url);});
   }
 }

@@ -69,4 +69,8 @@ function checkPassword() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => navigate('home'));
+document.addEventListener('DOMContentLoaded', () => {
+  navigate('home');
+  // Check for deep link (?mejenga=ID) after home loads
+  setTimeout(() => { if (typeof checkDeepLink === 'function') checkDeepLink(); }, 500);
+});

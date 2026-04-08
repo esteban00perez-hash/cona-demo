@@ -96,6 +96,27 @@ function viewFinishedReport() {
   if (typeof initReporteFromId === 'function') initReporteFromId(id);
 }
 
+// ── Deep link: ?mejenga=ID auto-navigates to that mejenga ───────────────
+function checkDeepLink() {
+  const params = new URLSearchParams(window.location.search);
+  const mejengaId = params.get('mejenga');
+  if (!mejengaId) return;
+  // Clean URL without reloading
+  window.history.replaceState({}, '', window.location.pathname);
+  // Fetch mejenga data and navigate
+  db.collection('mejengas').doc(mejengaId).get().then(doc => {
+    if (!doc.exists) return;
+    const data = { id: doc.id, ...doc.data() };
+    if (data.finalizado && data.reporteId) {
+      navigate('reporte');
+      if (typeof initReporteFromId === 'function') initReporteFromId(data.reporteId);
+    } else {
+      try { initRegistro(data); } catch(e) { console.error(e); }
+      navigate('registro');
+    }
+  }).catch(err => console.error('Deep link error:', err));
+}
+
 // ── Crear screen ─────────────────────────────────────────────────────────
 let nextMejengaNumero = 1;
 

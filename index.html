@@ -128,6 +128,46 @@
      SCREEN: ORGANIZADOR (live tracker)
 ════════════════════════════════════════════════════════ -->
 <div id="screen-organizador" class="screen">
+
+<!-- Help overlay -->
+<div class="help-bg" id="helpBg" onclick="closeHelp()">
+<div class="help-card" onclick="event.stopPropagation()">
+  <div class="help-hd">
+    <span class="help-ti">Manual del Organizador</span>
+    <button class="help-x" onclick="closeHelp()">&#10005;</button>
+  </div>
+  <div class="help-bd" id="helpBd"></div>
+  <button class="help-ok" onclick="closeHelp()">Entendido</button>
+</div>
+</div>
+
+<!-- Frozen / Pre-game -->
+<div class="frozen-overlay" id="frozenBg" onclick="showStartConfirm()">
+  <div class="frozen-msg">
+    <div class="fm-big">Esperando inicio</div>
+    Toca la pantalla cuando empiece la mejenga
+  </div>
+  <button class="frozen-back" onclick="event.stopPropagation();goBackToSetup()">Volver</button>
+</div>
+<div class="start-confirm" id="startConfirm">
+  <div class="start-box">
+    <div class="sb-title">Se mueve la redonda?</div>
+    <div class="sb-desc">El cronometro arranca y se empiezan a registrar las estadisticas.</div>
+    <button class="sb-go" onclick="startMatch()">Arranca!</button>
+    <button class="sb-wait" onclick="cancelStart()">Todavia no</button>
+  </div>
+</div>
+
+<!-- Onboarding -->
+<div class="ob-bg" id="obBg">
+  <div class="ob-slides"><div class="ob-track" id="obTrack"></div></div>
+  <div class="ob-dots" id="obDots"></div>
+  <div class="ob-nav">
+    <button class="ob-skip" onclick="closeOb()">Saltar</button>
+    <button class="ob-next" id="obNext" onclick="obNext()">Siguiente</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- APP -->
@@ -142,49 +182,38 @@
     <div class="sb-sc t2" id="s2">0</div>
     <div class="sb-nm t2">Verde</div>
   </div>
-  <div class="sb-tm" style="visibility:hidden">00:00</div>
+  <button class="vm-help" onclick="openHelp()">?</button>
 </div>
-
-<!-- View tabs -->
-<div class="vt">
-  <button class="vt-btn active" id="vt-pitch" onclick="setView('pitch')">Cancha</button>
-  <button class="vt-btn" id="vt-grid" onclick="setView('grid')">Cuadrícula</button>
-  <button class="vt-btn" id="vt-stats" onclick="setView('stats')">Stats</button>
+<div class="vm-bar" id="vmBar">
+  <button class="vm-btn on" data-vm="field" onclick="setView('field')">Cancha</button>
+  <button class="vm-btn" data-vm="grid" onclick="setView('grid')">Grid</button>
+  <button class="vm-btn" data-vm="event" onclick="setView('event')">Evento</button>
 </div>
-
-<!-- PITCH VIEW -->
-<div class="pitch" id="pitchView">
-  <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc"></div><div class="fm cd"></div>
+<div class="lp-bar" id="lpBar"><span class="lp-info" id="lpInfo"></span><div class="lp-track"><div class="lp-fill" id="lpFill"></div></div></div>
+<div class="pitch" id="viewField">
+  <div class="fm bd"></div><div class="fm hl"></div><div class="fm cc" id="ccCircle"><div class="cc-fill" id="ccFill"></div><div class="cc-label" id="ccLabel"><span class="cc-stat" id="ccStat"></span><span class="cc-who" id="ccWho"></span></div></div><div class="fm cd"></div>
   <div class="fm bt"></div><div class="fm bb"></div><div class="fm gt"></div><div class="fm gb"></div>
   <div id="nd"></div>
+  <div class="ib">
+    <div class="ib-ev" id="ec">0</div>
+    <div class="ib-btn" onclick="openBanca()">Banca</div>
+    <div class="ib-btn" onclick="openTabla()">Tabla</div>
+    <div class="ib-btn" onclick="openTl()">Timeline</div>
+    <div class="ib-btn" onclick="openEx()">Datos</div>
+    <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
+    <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
+  </div>
   <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);z-index:10"><span id="syncBadge" style="font-size:8px;font-weight:600;transition:color .3s"></span></div>
   <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
 </div>
-
-<!-- STATS VIEW -->
-<div class="alt-view" id="statsView" style="display:none">
-  <div id="statsContent"></div>
-</div>
-
-<!-- GRID VIEW -->
-<div class="alt-view" id="gridView" style="display:none">
-  <div id="gridContent"></div>
-</div>
-
-<!-- Action sidebar (always visible) -->
-<div class="ib">
-  <div class="ib-ev" id="ec">0</div>
-  <div class="ib-btn" onclick="openTabla()">Tabla</div>
-  <div class="ib-btn" onclick="openTl()">Timeline</div>
-  <div class="ib-btn" onclick="openEx()">Datos</div>
-  <button class="fin-btn" id="finBtn" onclick="finalizar()">Finalizar</button>
-  <button class="ib-btn" onclick="resetMejenga()" style="color:rgba(255,100,100,.8);border-color:rgba(255,60,60,.2);background:rgba(255,60,60,.06);font-size:8px;padding:5px 6px">Inicio</button>
-</div>
+<div class="vl" id="viewList" style="display:none"></div>
+<div class="vg" id="viewGrid" style="display:none"></div>
+<div class="ve" id="viewEvent" style="display:none"></div>
 </div>
 <!-- Desktop sidebar -->
 <div class="app-right" id="deskTabla">
   <div class="desk-tb-hd">
-    <div class="tb-ti" id="deskTbTi">Estadísticas</div>
+    <div class="tb-ti" id="deskTbTi">Estadisticas</div>
     <div class="tb-sub" id="deskTbSub"></div>
   </div>
   <div class="desk-tb-w" id="deskTbW"></div>
@@ -197,7 +226,7 @@
   <div class="pop-hd">
     <div class="pop-j" id="pJ"></div>
     <div style="flex:1"><div class="pop-nm" id="pN"></div><div class="pop-ps" id="pP"></div></div>
-    <button class="pop-x" onclick="closePop()">✕</button>
+    <button class="pop-x" onclick="closePop()">&#10005;</button>
   </div>
   <div class="pop-bd" id="pB"></div>
 </div>
@@ -206,43 +235,67 @@
 <!-- ASSIST -->
 <div class="ast-bg" id="astBg">
 <div class="ast-sh">
-  <div class="ast-t">Gol! Quien asistio?</div>
+  <div class="ast-t" id="astTitle">Gol! Quien asistio?</div>
   <div class="ast-g" id="astG"></div>
   <button class="ast-no" onclick="doAst(null)">Sin asistencia</button>
 </div>
 </div>
 
-<!-- SHOOTER (save → who shot?) -->
+<!-- SHOOTER (save -> who shot?) -->
 <div class="sht-bg" id="shtBg">
 <div class="sht-sh">
-  <div class="sht-t">Tapada! Quien tiro?</div>
+  <div class="sht-t" id="shtTitle">Tapada! Quien tiro?</div>
   <div class="ast-g" id="shtG"></div>
   <button class="ast-no" onclick="doShooter(null)">No se</button>
 </div>
 </div>
 
-<!-- STAT ASSIGN (stats view → pick player) -->
-<div class="sta-bg" id="staBg" onclick="closeStatAssign()">
-<div class="sta-sh" onclick="event.stopPropagation()">
-  <div class="sta-t" id="staTitle">Asignar</div>
-  <div class="ast-g" id="staG"></div>
-  <button class="ast-no" onclick="closeStatAssign()">Cancelar</button>
+<!-- EVENT PLAYER PICK -->
+<div class="ast-bg" id="evPickBg">
+<div class="ast-sh" id="evPickG"></div>
+</div>
+
+<!-- SUB PICK (who does the new player replace?) -->
+<div class="ast-bg" id="subPickBg">
+<div class="ast-sh">
+  <div class="ast-t" id="subPickTitle">A quien sustituye?</div>
+  <div class="ast-g" id="subPickG"></div>
+  <button class="ast-no" onclick="doSubPick(null)">Nadie (es extra)</button>
 </div>
 </div>
 
 <!-- TABLA -->
 <div class="tb-bg" id="tbBg">
-<button class="tl-x" onclick="closeTabla()">✕</button>
+<button class="tl-x" onclick="closeTabla()">&#10005;</button>
 <div class="tb-hd">
-  <div class="tb-ti" id="tbTi">Estadísticas</div>
+  <div class="tb-ti" id="tbTi">Estadisticas</div>
   <div class="tb-sub" id="tbSub"></div>
 </div>
 <div class="tb-w" id="tbW"></div>
 </div>
 
+<!-- BANCA PANEL -->
+<div class="add-player-bg" id="bancaBg" onclick="closeBanca()">
+<div class="add-player-box" onclick="event.stopPropagation()" style="max-height:85vh;overflow-y:auto">
+  <h3>Banca</h3>
+  <div id="bancaList"></div>
+  <div style="height:1px;background:rgba(255,255,255,.06);margin:14px 0"></div>
+  <h3 style="font-size:12px;margin-bottom:10px">Agregar jugador nuevo</h3>
+  <div class="ap-row"><div class="ap-lbl">Nombre</div><input class="ap-input" id="apName" placeholder="Nombre del jugador" autocomplete="off" oninput="checkApReady()"></div>
+  <div class="ap-row"><div class="ap-lbl">Numero</div><input class="ap-input" id="apNum" placeholder="#" style="width:80px" autocomplete="off"></div>
+  <div class="ap-lbl">Equipo</div>
+  <div class="ap-teams">
+    <button class="ap-team-btn t1" id="apT1" onclick="pickApTeam('t1')">Negro</button>
+    <button class="ap-team-btn t2" id="apT2" onclick="pickApTeam('t2')">Verde</button>
+  </div>
+  <button class="ap-go" id="apGo" onclick="doAddPlayer()" disabled>Agregar</button>
+  <button class="ap-cancel" onclick="closeBanca()">Cerrar</button>
+</div>
+</div>
+
 <!-- TIMELINE -->
 <div class="tl-bg" id="tlBg">
-<button class="tl-x" onclick="closeTl()">✕</button>
+<button class="tl-x" onclick="closeTl()">&#10005;</button>
 <div class="tl-w">
   <div class="tl-hd">
     <div class="tl-mn" id="tlM"></div>
@@ -262,7 +315,7 @@
 <div class="rec-box">
   <div class="rec-ico">&#9917;</div>
   <div class="rec-title">Mejenga en progreso</div>
-  <div class="rec-sub">Se encontró una mejenga guardada.<br>¿Querés continuar o empezar una nueva?</div>
+  <div class="rec-sub">Se encontro una mejenga guardada.<br>Queres continuar o empezar una nueva?</div>
   <div class="rec-info" id="recInfo"></div>
   <div class="rec-btns">
     <button class="rec-btn cont" onclick="resumeState()">Continuar mejenga</button>
@@ -271,13 +324,13 @@
 </div>
 </div>
 
-<!-- SHOT TYPE (afuera → error/neutro/buen tiro) -->
+<!-- SHOT TYPE (afuera -> error/neutro/buen tiro) -->
 <div class="sty-bg" id="styBg">
 <div class="sty-sh">
   <div class="sty-t">Tipo de tiro afuera</div>
   <div class="sty-opts">
-    <button class="sty-opt err" onclick="doShotType('error')"><span class="sty-emoji sty-svg" id="styIcoErr"></span><div><div>Se la comió</div><div class="sty-desc">Error clave: chance clara fallada, mano a mano</div></div></button>
-    <button class="sty-opt neu" onclick="doShotType('neutral')"><span class="sty-emoji sty-svg" id="styIcoNeu"></span><div><div>Tiro y nada</div><div class="sty-desc">Tiro afuera normal, no pasó nada</div></div></button>
+    <button class="sty-opt err" onclick="doShotType('error')"><span class="sty-emoji sty-svg" id="styIcoErr"></span><div><div>Se la comio</div><div class="sty-desc">Error clave: chance clara fallada, mano a mano</div></div></button>
+    <button class="sty-opt neu" onclick="doShotType('neutral')"><span class="sty-emoji sty-svg" id="styIcoNeu"></span><div><div>Tiro y nada</div><div class="sty-desc">Tiro afuera normal, no paso nada</div></div></button>
     <button class="sty-opt good" onclick="doShotType('good')"><span class="sty-emoji sty-svg" id="styIcoGood"></span><div><div>Uff, estuvo cerca</div><div class="sty-desc">Buen tiro, casi entra</div></div></button>
   </div>
 </div>
@@ -292,7 +345,7 @@
 <div class="prev-w" id="prevW"></div>
 <div class="prev-ft">
   <button class="prev-go" onclick="confirmPreview()">Confirmar y Ver Reporte</button>
-  <button class="prev-back" onclick="closePreview()">← Volver a editar</button>
+  <button class="prev-back" onclick="closePreview()">&#8592; Volver a editar</button>
 </div>
 </div>
 
@@ -319,6 +372,10 @@
 
         <!-- Header -->
         <div class="header">
+            <button class="invite-btn" id="inviteBtn" onclick="copyInviteLink()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 002 2h12a2 2 0 002-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+              Invitar
+            </button>
             <div class="logo" style="position:absolute;left:50%;transform:translateX(-50%)">
                 <svg height="22" viewBox="0 0 1880 632" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M212.8 483.8C191.467 483.8 171.733 479.933 153.6 472.2C135.733 464.467 120 453.667 106.4 439.8C93.0667 425.933 82.6667 409.667 75.2 391C67.7333 372.333 64 351.933 64 329.8C64 307.667 67.6 287.267 74.8 268.6C82.2667 249.667 92.6667 233.4 106 219.8C119.6 205.933 135.467 195.267 153.6 187.8C171.733 180.067 191.467 176.2 212.8 176.2C234.133 176.2 253.2 179.8 270 187C287.067 194.2 301.467 203.8 313.2 215.8C324.933 227.533 333.333 240.467 338.4 254.6L289.6 277.4C284 262.467 274.533 250.2 261.2 240.6C247.867 230.733 231.733 225.8 212.8 225.8C194.133 225.8 177.6 230.2 163.2 239C149.067 247.8 138 259.933 130 275.4C122.267 290.867 118.4 309 118.4 329.8C118.4 350.6 122.267 368.867 130 384.6C138 400.067 149.067 412.2 163.2 421C177.6 429.8 194.133 434.2 212.8 434.2C231.733 434.2 247.867 429.4 261.2 419.8C274.533 409.933 284 397.533 289.6 382.6L338.4 405.4C333.333 419.533 324.933 432.6 313.2 444.6C301.467 456.333 287.067 465.8 270 473C253.2 480.2 234.133 483.8 212.8 483.8ZM480.659 483.8C459.326 483.8 439.859 478.867 422.259 469C404.926 459.133 391.059 445.667 380.659 428.6C370.526 411.533 365.459 392.067 365.459 370.2C365.459 348.333 370.526 328.867 380.659 311.8C391.059 294.733 404.926 281.267 422.259 271.4C439.593 261.533 459.059 256.6 480.659 256.6C501.993 256.6 521.326 261.533 538.659 271.4C555.993 281.267 569.726 294.733 579.859 311.8C590.259 328.6 595.459 348.067 595.459 370.2C595.459 392.067 590.259 411.533 579.859 428.6C569.459 445.667 555.593 459.133 538.259 469C520.926 478.867 501.726 483.8 480.659 483.8ZM480.659 435.8C492.393 435.8 502.659 433 511.459 427.4C520.526 421.8 527.593 414.067 532.659 404.2C537.993 394.067 540.659 382.733 540.659 370.2C540.659 357.4 537.993 346.2 532.659 336.6C527.593 326.733 520.526 319 511.459 313.4C502.659 307.533 492.393 304.6 480.659 304.6C468.659 304.6 458.126 307.533 449.059 313.4C439.993 319 432.793 326.733 427.459 336.6C422.393 346.2 419.859 357.4 419.859 370.2C419.859 382.733 422.393 394.067 427.459 404.2C432.793 414.067 439.993 421.8 449.059 427.4C458.126 433 468.659 435.8 480.659 435.8ZM635.197 479V261.4H684.397V304.2L680.397 296.6C685.464 283.533 693.73 273.667 705.197 267C716.93 260.067 730.53 256.6 745.997 256.6C761.997 256.6 776.13 260.067 788.397 267C800.93 273.933 810.664 283.667 817.597 296.2C824.53 308.467 827.997 322.733 827.997 339V479H775.597V351.4C775.597 341.8 773.73 333.533 769.997 326.6C766.264 319.667 761.064 314.333 754.397 310.6C747.997 306.6 740.397 304.6 731.597 304.6C723.064 304.6 715.464 306.6 708.797 310.6C702.13 314.333 696.93 319.667 693.197 326.6C689.464 333.533 687.597 341.8 687.597 351.4V479H635.197ZM938.306 483.8C923.106 483.8 909.906 481.267 898.706 476.2C887.506 471.133 878.84 463.933 872.706 454.6C866.573 445 863.506 433.933 863.506 421.4C863.506 409.4 866.173 398.733 871.506 389.4C876.84 379.8 885.106 371.8 896.306 365.4C907.506 359 921.64 354.467 938.706 351.8L1009.91 340.2V380.2L948.706 390.6C938.306 392.467 930.573 395.8 925.506 400.6C920.44 405.4 917.906 411.667 917.906 419.4C917.906 426.867 920.706 432.867 926.306 437.4C932.173 441.667 939.373 443.8 947.906 443.8C958.84 443.8 968.44 441.533 976.706 437C985.24 432.2 991.773 425.667 996.306 417.4C1001.11 409.133 1003.51 400.067 1003.51 390.2V334.2C1003.51 324.867 999.773 317.133 992.306 311C985.106 304.6 975.506 301.4 963.506 301.4C952.306 301.4 942.306 304.467 933.506 310.6C924.973 316.467 918.706 324.333 914.706 334.2L871.906 313.4C876.173 301.933 882.84 292.067 891.906 283.8C901.24 275.267 912.173 268.6 924.706 263.8C937.24 259 950.84 256.6 965.506 256.6C983.373 256.6 999.106 259.933 1012.71 266.6C1026.31 273 1036.84 282.067 1044.31 293.8C1052.04 305.267 1055.91 318.733 1055.91 334.2V479H1006.31V441.8L1017.51 441C1011.91 450.333 1005.24 458.2 997.506 464.6C989.773 470.733 980.973 475.533 971.106 479C961.24 482.2 950.306 483.8 938.306 483.8Z" fill="#A7EE43"/>
@@ -711,6 +768,37 @@
     </div>
     </div>
 
+    <!-- Rating explanation -->
+    <details>
+      <summary>Como se calcula el rating</summary>
+      <div style="padding:12px 16px 16px">
+        <p style="font-size:11px;color:var(--w7);line-height:1.6;margin-bottom:12px">
+          Cada jugador arranca con una base de 6.0 puntos. Durante la mejenga se suman o restan puntos segun las acciones registradas:
+        </p>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(167,238,67,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Gol</span><span style="font-size:12px;font-weight:800;color:var(--g)">+0.8</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(88,166,255,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Asistencia</span><span style="font-size:12px;font-weight:800;color:#58a6ff">+0.5</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(167,238,67,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Equipo ganador</span><span style="font-size:12px;font-weight:800;color:var(--g)">+0.5</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(88,166,255,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Salvada clave</span><span style="font-size:12px;font-weight:800;color:#58a6ff">+0.35</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(167,238,67,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Atajada (portero)</span><span style="font-size:12px;font-weight:800;color:var(--g)">+0.2</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(88,166,255,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Accion defensiva</span><span style="font-size:12px;font-weight:800;color:#58a6ff">+0.1</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(167,238,67,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Tiro al arco</span><span style="font-size:12px;font-weight:800;color:var(--g)">+0.1</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(88,166,255,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Palo / Tiro afuera bueno</span><span style="font-size:12px;font-weight:800;color:#58a6ff">+0.05</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,107,107,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Gol recibido (portero)</span><span style="font-size:12px;font-weight:800;color:#ff6b6b">-0.2</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,107,107,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Gol recibido (campo)</span><span style="font-size:12px;font-weight:800;color:#ff6b6b">-0.05</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,107,107,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Tiro afuera malo</span><span style="font-size:12px;font-weight:800;color:#ff6b6b">-0.2</span></div>
+          <div style="display:flex;justify-content:space-between;padding:6px 10px;background:rgba(255,107,107,.06);border-radius:8px"><span style="font-size:11px;color:var(--w7)">Autogol</span><span style="font-size:12px;font-weight:800;color:#ff6b6b">-1.0</span></div>
+        </div>
+        <p style="font-size:10px;color:var(--w4);line-height:1.5;margin-top:12px">
+          Despues de calcular los puntos raw, se normalizan con el <strong style="color:var(--g)">Factor Cona</strong> para que los ratings queden entre 6.5 y 9.0. Si un jugador se destaca claramente del resto, puede llegar a 10.0.
+        </p>
+      </div>
+    </details>
+
+    <div style="text-align:center;padding:16px 10px 0">
+      <button onclick="document.getElementById('fbModal').classList.add('on')" style="background:var(--g2);border:1px solid rgba(167,238,67,.2);border-radius:12px;padding:10px 24px;font-family:inherit;font-size:12px;font-weight:700;color:var(--g);cursor:pointer">Danos tu feedback</button>
+    </div>
+
     <!-- Footer -->
     <div class="ftr">
       <p class="tagline">"Porque no todos los cracks juegan en primera... pero todos merecen cancha."</p>
@@ -718,11 +806,22 @@
     </div>
 
     <div class="rp-org-wrap">
-      <button class="rp-org-btn" onclick="openPasswordGate('home')">← Volver al inicio</button>
+      <button class="rp-org-btn" onclick="navigate('home')">← Volver al inicio</button>
     </div>
 
   </div>
 </div>
+</div>
+
+<!-- Feedback Modal -->
+<div id="fbModal" style="position:fixed;inset:0;z-index:200;display:none;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:rgba(10,20,13,.97);border:1px solid rgba(255,255,255,.08);border-radius:20px;width:90%;max-width:400px;padding:24px 20px;position:relative">
+    <button onclick="document.getElementById('fbModal').classList.remove('on')" style="position:absolute;top:12px;right:12px;background:rgba(255,255,255,.06);border:none;border-radius:8px;width:28px;height:28px;color:var(--w4);font-size:14px;cursor:pointer;font-family:inherit">✕</button>
+    <p style="font-size:16px;font-weight:800;color:var(--w);margin-bottom:4px">Tu opinion importa</p>
+    <p style="font-size:11px;color:var(--w4);margin-bottom:16px">Ayudanos a mejorar la experiencia de las mejengas Cona</p>
+    <textarea id="fbText" placeholder="Que te parecio la mejenga? Algun comentario sobre los stats, el rating, la organizacion..." style="width:100%;min-height:120px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;font-family:inherit;font-size:13px;color:var(--w);resize:vertical;outline:none" onfocus="this.style.borderColor='rgba(167,238,67,.4)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'"></textarea>
+    <button id="fbSend" onclick="sendFeedback()" style="margin-top:12px;width:100%;padding:12px;background:var(--g);border:none;border-radius:12px;font-family:inherit;font-size:13px;font-weight:800;color:#0a1a10;cursor:pointer">Enviar feedback</button>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
