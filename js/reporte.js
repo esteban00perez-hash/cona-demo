@@ -150,7 +150,10 @@ function render(D) {
   $('meta-location').textContent = [D.CA, D.UB].filter(Boolean).join(' - ');
   $('meta-org').textContent = D.ORG ? 'Org: ' + D.ORG : '';
 
-  const P = D.P || [];
+  // Support both formats: named map (new) and array (old legacy data)
+  const P = D.players && !Array.isArray(D.players)
+    ? Object.values(D.players)
+    : (D.P || []);
 
 
   const s1 = teamScoreR(P, 't1');

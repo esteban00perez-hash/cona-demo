@@ -26,6 +26,17 @@ let _syncTimer=null;
 function getStateObj(){
   return {N,F,CA,UB,ORG,HO,P,EV,tS,MVP,done,mejengaId,registroMejengaId,ts:Date.now()};
 }
+// Transform state for Firebase: store players as a name-keyed map instead of array
+function toFirebaseDoc(state){
+  const doc=Object.assign({},state);
+  if(Array.isArray(doc.P)){
+    const pm={};
+    doc.P.forEach(p=>{pm[p.name]=p;});
+    doc.players=pm;
+    delete doc.P;
+  }
+  return doc;
+}
 function saveState(){
   try{
     localStorage.setItem(LS_KEY,JSON.stringify(getStateObj()));
@@ -39,7 +50,7 @@ function saveState(){
 let _firstSync=true;
 function syncToFirebase(){
   if(!mejengaId||!P.length)return;
-  const data=getStateObj();
+  const data=toFirebaseDoc(getStateObj());
   data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
   if(_firstSync){
     data.createdAt=firebase.firestore.FieldValue.serverTimestamp();
@@ -171,40 +182,82 @@ function startFromRegistro(mejengaData, players) {
 let currentView='pitch';
 function setView(v){
   currentView=v;
-  ['pitch','list','grid'].forEach(id=>{
+  ['pitch','grid','stats'].forEach(id=>{
     const btn=document.getElementById('vt-'+id);
     if(btn)btn.classList.toggle('active',id===v);
   });
   const pitchEl=document.getElementById('pitchView');
-  const listEl=document.getElementById('listView');
+  const statsEl=document.getElementById('statsView');
   const gridEl=document.getElementById('gridView');
   if(pitchEl)pitchEl.style.display=v==='pitch'?'':'none';
-  if(listEl)listEl.style.display=v==='list'?'':'none';
+  if(statsEl)statsEl.style.display=v==='stats'?'':'none';
   if(gridEl)gridEl.style.display=v==='grid'?'':'none';
-  if(v==='list')drawList();
+  if(v==='stats')drawStats();
   if(v==='grid')drawGrid();
 }
 
-function drawList(){
-  const sort=arr=>[...arr].sort((a,b)=>(b.por?1:0)-(a.por?1:0));
-  const t1=sort(P.filter(p=>p.team==='t1'));
-  const t2=sort(P.filter(p=>p.team==='t2'));
-  function row(p){
-    const goals=p.goals>0?`<span class="lv-stat gol">${p.goals} gol</span>`:'';
-    const saves=p.por&&p.saves>0?`<span class="lv-stat sav">${p.saves} tap</span>`:'';
-    const stat=goals||saves||'';
-    return `<div class="lv-row" onclick="tap('${p.id}')">
-      <div class="lv-num ${p.team}">${p.num}</div>
-      <div class="lv-info">
-        <div class="lv-name">${p.name.split(' ')[0]}</div>
-        <div class="lv-pos">${p.por?'Portero':'Jugador'}</div>
-      </div>${stat}</div>`;
-  }
-  document.getElementById('listContent').innerHTML=
-    `<div class="lv-teams">
-      <div class="lv-col"><div class="lv-hd t1">Negro</div>${t1.map(row).join('')}</div>
-      <div class="lv-col"><div class="lv-hd t2">Verde</div>${t2.map(row).join('')}</div>
+let statType=null;
+function drawStats(){
+  const el=document.getElementById('statsContent');if(!el)return;
+  const cats=[
+    {k:'goals',    lbl:'Gol',          ico:I.goal},
+    {k:'assists',  lbl:'Asistencia',   ico:I.assist},
+    {k:'saves',    lbl:'Tapada',        ico:I.save,   porOnly:true},
+    {k:'salvadas', lbl:'Salvada',       ico:I.save,   porOnly:true},
+    {k:'defcon',   lbl:'DEF CON',       ico:I.defcon, fieldOnly:true},
+    {k:'shotsOff', lbl:'Tiro afuera',  ico:I.shotOff},
+    {k:'autogoals',lbl:'Autogol',      ico:I.autogoal},
+  ];
+  el.innerHTML=cats.map(c=>{
+    const scored=P.filter(p=>(p[c.k]||0)>0).sort((a,b)=>(b[c.k]||0)-(a[c.k]||0));
+    const sumHtml=scored.length
+      ?scored.map(p=>`<span class="sv-name"><span class="sv-dot ${p.team}"></span>${p.name.split(' ')[0]} <b>${p[c.k]}</b></span>`).join('')
+      :'<span style="color:rgba(255,255,255,.18);font-size:10px">—</span>';
+    return `<div class="sv-row">
+      <div class="sv-left">
+        <div class="sv-ico">${c.ico}</div>
+        <div class="sv-info">
+          <div class="sv-label">${c.lbl}</div>
+          <div class="sv-sum">${sumHtml}</div>
+        </div>
+      </div>
+      <button class="sv-add" onclick="openStatAssign('${c.k}')">+</button>
     </div>`;
+  }).join('');
+}
+function openStatAssign(type){
+  statType=type;
+  const labels={goals:'Gol — ¿a quién?',assists:'Asistencia — ¿quién?',saves:'Tapada — ¿quién tapó?',defcon:'DEF CON — ¿quién?',shotsOff:'Tiro afuera — ¿quién?',autogoals:'Autogol — ¿quién?'};
+  document.getElementById('staTitle').textContent=labels[type]||type;
+  let players=type==='saves'?P.filter(p=>p.por):type==='defcon'?P.filter(p=>!p.por):P;
+  const sort=arr=>[...arr].sort((a,b)=>(b.por?1:0)-(a.por?1:0));
+  document.getElementById('staG').innerHTML=sort(players).map(p=>
+    `<div class="ast-b" onclick="doStatAssign('${p.id}')"><div class="ast-j ${p.team}">${p.num}</div><div class="ast-n">${p.name.split(' ')[0]}</div></div>`
+  ).join('');
+  document.getElementById('staBg').classList.add('on');
+}
+function doStatAssign(pid){
+  document.getElementById('staBg').classList.remove('on');
+  const p=P.find(x=>x.id===pid);if(!p)return;
+  if(statType==='goals'){
+    p.goals++;addEv('goal',p);goalP=p;
+    updSc();draw();saveState();showAst(p);statType=null;return;
+  }
+  if(statType==='saves'){
+    p.saves++;addEv('saves',p);saveP=p;
+    updSc();draw();saveState();showShooter(p);statType=null;return;
+  }
+  if(statType==='assists')   {p.assists=(p.assists||0)+1;addEv('assist',p);}
+  else if(statType==='defcon')     {p.defcon=(p.defcon||0)+1;addEv('defcon',p);}
+  else if(statType==='autogoals')  {p.autogoals=(p.autogoals||0)+1;addEv('autogoal',p);}
+  else if(statType==='salvadas')   {p.salvadas=(p.salvadas||0)+1;addEv('salvadas',p);}
+  else if(statType==='shotsOff')   {p.shotsOff=(p.shotsOff||0)+1;addEv('shotsOff',p);}
+  statType=null;
+  calcRatings();updSc();draw();saveState();
+}
+function closeStatAssign(){
+  document.getElementById('staBg').classList.remove('on');
+  statType=null;
 }
 
 function drawGrid(){
@@ -235,7 +288,7 @@ function draw(){
   t1.forEach((p,i)=>{h+=node(p,f1[i])});
   t2.forEach((p,i)=>{h+=node(p,f2[i])});
   nd.innerHTML=h;
-  if(currentView==='list')drawList();
+  if(currentView==='stats')drawStats();
   if(currentView==='grid')drawGrid();
 }
 function form(n,top){
@@ -262,7 +315,7 @@ function node(p,xy){
   if(!xy)xy=[50,50];
   const gb=p.goals>0?`<div class="badge bg">${p.goals}</div>`:'';
   const sb=p.por&&p.saves>0?`<div class="badge bs">${p.saves}</div>`:'';
-  return `<div class="pn ${p.team}${p.por?' por':''}" id="pn_${p.id}" style="left:${xy[0]}%;top:${xy[1]}%;transform:translate(-50%,-50%)" onpointerdown="holdStart(event,'${p.id}')" onpointerup="holdEnd(event,'${p.id}')" onpointercancel="holdCancel()" oncontextmenu="return false">
+  return `<div class="pn ${p.team}${p.por?' por':''}" id="pn_${p.id}" style="left:${xy[0]}%;top:${xy[1]}%;transform:translate(-50%,-50%)" onpointerdown="holdStart(event,'${p.id}')" onpointerup="holdEnd(event,'${p.id}')" onpointercancel="holdCancel()" onclick="holdClick('${p.id}')" oncontextmenu="return false">
     <div class="bl">${p.num}${gb}${sb}</div>
     <div class="lb">${p.name.split(' ')[0]}</div>
   </div>`;
@@ -281,15 +334,7 @@ function tap(id){
 }
 function buildPop(p){
   let h='';
-  const totalOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
-  const shotOffBtn=`<div class="sc tir">
-    <div class="sc-top"><span class="sc-ico">${I.shotOff}</span><span class="sc-lb">Tiro afuera</span></div>
-    <div class="sc-row">
-      <button class="sc-btn mn" onclick="undoShotOff()">-</button>
-      <div class="sc-v">${totalOff}</div>
-      <button class="sc-btn" onclick="openShotType()">+</button>
-    </div>
-  </div>`;
+  const shotOffBtn=sc('shotsOff',I.shotOff,'Tiro afuera','tir',p.shotsOff||0);
   if(p.por){
     h+=sc('saves',I.save,'Tapadas','tap',p.saves,true,'Sostener 1s = tapada rápida');
     h+=sc('goals',I.goal,'Goles','gol',p.goals);
@@ -367,20 +412,25 @@ function adj(t,d){
 function closePop(){document.getElementById('popBg').classList.remove('on');sel=null;}
 
 // ── HOLD INTERACTION (1 s hold = DEF CON para jugadores, Tapada para porteros) ──
-let _holdTimer=null;
+let _holdTimer=null,_holdActivated=false;
 function holdStart(e,id){
-  e.preventDefault();
+  _holdActivated=false;
   const el=document.getElementById('pn_'+id);
   if(el)el.classList.add('holding');
   _holdTimer=setTimeout(()=>{
     _holdTimer=null;
+    _holdActivated=true;
     const el=document.getElementById('pn_'+id);
     if(el)el.classList.remove('holding');
     const p=P.find(x=>x.id===id);if(!p)return;
     if(p.por){
       p.saves++;
       addEv('saves',p);
-      show('Tapada rápida!');
+      saveP=p;
+      calcRatings();updSc();draw();saveState();
+      if(navigator.vibrate)navigator.vibrate([30,50,30]);
+      showShooter(p);
+      return;
     }else{
       p.defcon=(p.defcon||0)+1;
       addEv('defcon',p);
@@ -393,11 +443,15 @@ function holdStart(e,id){
 function holdEnd(e,id){
   const el=document.getElementById('pn_'+id);
   if(el)el.classList.remove('holding');
-  if(_holdTimer){clearTimeout(_holdTimer);_holdTimer=null;tap(id);}
+  if(_holdTimer){clearTimeout(_holdTimer);_holdTimer=null;}
 }
 function holdCancel(){
   document.querySelectorAll('.pn.holding').forEach(el=>el.classList.remove('holding'));
   if(_holdTimer){clearTimeout(_holdTimer);_holdTimer=null;}
+}
+function holdClick(id){
+  if(_holdActivated){_holdActivated=false;return;}
+  tap(id);
 }
 
 // ── SHOT TYPE ──
@@ -781,7 +835,7 @@ function confirmPreview(){
   show('Guardando...');
   // Wait for Firebase to finish before opening report
   if(_syncTimer)clearTimeout(_syncTimer);
-  const data=getStateObj();
+  const data=toFirebaseDoc(getStateObj());
   data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
   const saves=[db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true})];
   if(registroMejengaId){

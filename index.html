@@ -148,8 +148,8 @@
 <!-- View tabs -->
 <div class="vt">
   <button class="vt-btn active" id="vt-pitch" onclick="setView('pitch')">Cancha</button>
-  <button class="vt-btn" id="vt-list" onclick="setView('list')">Lista</button>
   <button class="vt-btn" id="vt-grid" onclick="setView('grid')">Cuadrícula</button>
+  <button class="vt-btn" id="vt-stats" onclick="setView('stats')">Stats</button>
 </div>
 
 <!-- PITCH VIEW -->
@@ -161,9 +161,9 @@
   <div class="ib-last" id="le" style="position:absolute;bottom:4px;left:8px;font-size:9px;font-weight:600;color:var(--w4);z-index:10;max-width:50%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Toca un jugador</div>
 </div>
 
-<!-- LIST VIEW -->
-<div class="alt-view" id="listView" style="display:none">
-  <div id="listContent"></div>
+<!-- STATS VIEW -->
+<div class="alt-view" id="statsView" style="display:none">
+  <div id="statsContent"></div>
 </div>
 
 <!-- GRID VIEW -->
@@ -218,6 +218,15 @@
   <div class="sht-t">Tapada! Quien tiro?</div>
   <div class="ast-g" id="shtG"></div>
   <button class="ast-no" onclick="doShooter(null)">No se</button>
+</div>
+</div>
+
+<!-- STAT ASSIGN (stats view → pick player) -->
+<div class="sta-bg" id="staBg" onclick="closeStatAssign()">
+<div class="sta-sh" onclick="event.stopPropagation()">
+  <div class="sta-t" id="staTitle">Asignar</div>
+  <div class="ast-g" id="staG"></div>
+  <button class="ast-no" onclick="closeStatAssign()">Cancelar</button>
 </div>
 </div>
 
