@@ -49,32 +49,43 @@ function checkOrgPass() {
 // Jump to organizador for a live mejenga (fetches state from Firestore)
 function jumpToLiveFromPassword(mejenga) {
   _origNavigate('organizador');
-  // Try localStorage first, then Firestore
+  // Try localStorage first
   if (typeof loadState === 'function' && loadState()) {
-    if (typeof showRecovery === 'function') showRecovery();
+    if (typeof resumeState === 'function') resumeState();
     return;
   }
-  // Fetch from Firestore
-  if (mejenga.organizadorMejengaId) {
-    db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).get()
-      .then(doc => {
-        if (!doc.exists) {
-          alert('No se encontró el estado de la mejenga en vivo. Iniciá una nueva.');
-          _origNavigate('home');
-          return;
-        }
-        if (typeof loadStateFromFirestore === 'function') {
-          loadStateFromFirestore(doc.data());
-          if (typeof resumeState === 'function') resumeState();
-        }
-      })
-      .catch(err => {
-        console.error('Error loading live state:', err);
-        alert('Error cargando la mejenga en vivo.');
+  // Fetch from Firestore — try direct ref first, then search
+  const tryDirect = mejenga.organizadorMejengaId
+    ? db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).get()
+        .then(doc => doc.exists ? doc : null)
+    : Promise.resolve(null);
+
+  tryDirect.then(doc => {
+    if (doc) return doc;
+    // Fallback: search by registroMejengaId field (no orderBy to avoid needing composite index)
+    return db.collection('mejengas_organizador')
+      .where('registroMejengaId', '==', mejenga.id)
+      .get()
+      .then(snap => {
+        if (snap.empty) return null;
+        // Pick the most recent by ts field
+        const docs = snap.docs.sort((a,b) => (b.data().ts||0) - (a.data().ts||0));
+        return docs[0];
       });
-  } else {
-    alert('Esta mejenga está marcada como en vivo pero no tiene datos del organizador.');
-  }
+  }).then(doc => {
+    if (!doc) {
+      alert('No se encontró el estado de esta mejenga en vivo en Firebase. Podés iniciar una nueva desde Equipos.');
+      _origNavigate('registro');
+      return;
+    }
+    if (typeof loadStateFromFirestore === 'function') {
+      loadStateFromFirestore(doc.data());
+      if (typeof resumeState === 'function') resumeState();
+    }
+  }).catch(err => {
+    console.error('Error loading live state:', err);
+    alert('Error cargando la mejenga en vivo: ' + (err.message || err));
+  });
 }
 
 // Restore organizer mode on page reload within same session

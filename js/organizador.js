@@ -543,7 +543,12 @@ function doSubPick(outId){
   _subNewId=null;draw();saveState();
 }
 
-function updIb(){document.getElementById('ec').textContent=EV.length;if(EV.length){const l=EV[EV.length-1];document.getElementById('le').textContent=l.time+' '+l.player;}}
+function updIb(){
+  const ec=document.getElementById('ec');
+  if(ec)ec.textContent=EV.length;
+  const le=document.getElementById('le');
+  if(le&&EV.length){const l=EV[EV.length-1];le.textContent=l.time+' '+l.player;}
+}
 function updSc(){
   const t1g=P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.autogoals,0);
   const t2g=P.filter(p=>p.team==='t2').reduce((s,p)=>s+p.goals,0)+P.filter(p=>p.team==='t1').reduce((s,p)=>s+p.autogoals,0);
@@ -561,6 +566,7 @@ function ft(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).
 
 // ── TIMELINE ──
 function openTl(){
+  try {
   const g1=teamScore('t1'),g2=teamScore('t2');
   document.getElementById('tlM').textContent=N+' · '+F;document.getElementById('tS1').textContent=g1;document.getElementById('tS2').textContent=g2;document.getElementById('tDur').textContent=ft(tS)+' jugados';
   const bd=document.getElementById('tlBd'),notable=EV.filter(e=>e.type==='goal'||e.type==='autogoal'||e.type==='posts'||e.type==='salvadas'||e.type==='sub_in'||e.type==='sub_out'||e.type==='player_added');
@@ -576,15 +582,18 @@ function openTl(){
     else if(g.type==='player_added'){const teamName=g.team==='t1'?'Negro':'Verde';h+='<div class="tl-r '+g.team+'"><div class="tl-dt" style="background:var(--w4)"></div><div class="tl-c"><div class="tl-m" style="color:var(--w7)">'+g.time+"'</div><div><div class=\"tl-p\" style=\"color:var(--w7)\">+ Nuevo: #"+g.num+' '+g.player+' ('+teamName+')</div></div></div></div>';}
   });
   bd.innerHTML=h;document.getElementById('tlBg').classList.add('on');
+  } catch(err) { console.error('openTl error:', err); show('Error: ' + (err.message||err)); }
 }
 function closeTl(){document.getElementById('tlBg').classList.remove('on')}
 
 // ── EXPORT ──
 function openEx(){
+  try {
   const t1=P.filter(p=>p.team==='t1'),t2=P.filter(p=>p.team==='t2');const g1=teamScore('t1'),g2=teamScore('t2');
   let t=N+' · '+F+'\n';t+='Resultado: Negro '+g1+' - '+g2+' Verde\n\n';t+='EQUIPO NEGRO\n';t1.forEach(p=>{t+=pL(p)});t+='\nEQUIPO VERDE\n';t2.forEach(p=>{t+=pL(p)});
   if(EV.length){t+='\nCRONOLOGIA\n';EV.forEach(e=>{t+=e.time+' #'+e.num+' '+e.player+' - '+e.type;if(e.astBy)t+=' (ast. '+e.astBy+')';t+='\n';});}
   document.getElementById('exP').textContent=t;document.getElementById('exBg').classList.add('on');
+  } catch(err) { console.error('openEx error:', err); show('Error: ' + (err.message||err)); }
 }
 function pL(p){let s=[];if(p.goals)s.push(p.goals+'G');if(p.autogoals)s.push(p.autogoals+'AG');if(p.assists)s.push(p.assists+'A');if(p.saves)s.push(p.saves+'T');if(p.shotsOffError)s.push(p.shotsOffError+'TF err');if(p.shotsOffNeutral)s.push(p.shotsOffNeutral+'TF');if(p.shotsOffGood)s.push(p.shotsOffGood+'TF good');if(p.posts)s.push(p.posts+'PAL');if(p.salvadas)s.push(p.salvadas+'SAL');if(p.defcon)s.push(p.defcon+'DEF');if(p.faltas)s.push(p.faltas+'FLT');return '#'+p.num+' '+p.name+(p.por?' (POR)':'')+(s.length?' - '+s.join(' '):'')+'\n';}
 function closeEx(){document.getElementById('exBg').classList.remove('on')}
@@ -646,6 +655,7 @@ function doShooter(id){
 
 // ── TABLA ──
 function openTabla(){
+  try {
   const g1=teamScore('t1'),g2=teamScore('t2');document.getElementById('tbTi').textContent=N||'Mejenga';document.getElementById('tbSub').textContent=ft(tS)+' jugados';
   const t1p=P.filter(p=>p.team==='t1'),t2p=P.filter(p=>p.team==='t2');const sum=(arr,fn)=>arr.reduce((s,p)=>s+fn(p),0);
   const t1shots=sum(t1p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);const t2shots=sum(t2p,p=>p.goals+p.shotsOn+p.shotsOff+p.posts);
@@ -666,6 +676,7 @@ function openTabla(){
   if(scorers.length||assisters.length||savers.length||salvadores.length){h+='<div class="tb-card">';if(scorers.length)h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);if(assisters.length)h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);if(savers.length)h+=tbSection(I.save,'Tapadas','tap',savers,p=>p.saves);if(salvadores.length)h+=tbSection(I.salvada,'Salvadas Clave','sal',salvadores,p=>p.salvadas);h+='</div>';}
   else{h+='<div class="tb-card"><div class="tb-empty">No hay stats individuales todavia</div></div>';}
   document.getElementById('tbW').innerHTML=h;document.getElementById('tbBg').classList.add('on');
+  } catch(err) { console.error('openTabla error:', err); show('Error: ' + (err.message||err)); }
 }
 function updDeskTabla(){
   const el=document.getElementById('deskTbW');if(!el||!window.matchMedia('(min-width:768px)').matches)return;
@@ -695,25 +706,36 @@ function closeTabla(){document.getElementById('tbBg').classList.remove('on')}
 
 // ── FINALIZAR ──
 function finalizar(){
-  if(done){openReport();return;}
-  if(!confirm('Finalizar la mejenga?'))return;
-  if(tOn){clearInterval(tI);tOn=false;document.getElementById('tmr').className='sb-tm off';}
-  calcRatings();openPreview();
+  try {
+    if(done){openReport();return;}
+    if(!P || P.length===0){show('No hay jugadores en la mejenga');return;}
+    if(tOn){clearInterval(tI);tOn=false;document.getElementById('tmr').className='sb-tm off';}
+    calcRatings();
+    openPreview();
+  } catch(err) {
+    console.error('finalizar error:', err);
+    show('Error al finalizar: ' + (err.message||err));
+  }
 }
 function openPreview(){
-  const w=document.getElementById('prevW');let h='';
+  const w=document.getElementById('prevW');
+  const bg=document.getElementById('prevBg');
+  if(!w||!bg){console.error('Preview modal elements missing');return;}
+  let h='';
   ['t1','t2'].forEach(team=>{
     const nm=team==='t1'?'Negro':'Verde';
     h+='<div class="prev-team"><div class="prev-team-dot '+team+'"></div><span class="prev-team-nm">'+nm+'</span><div class="prev-team-line"></div></div>';
     P.filter(p=>p.team===team).forEach(p=>{
-      const rc=p.rating>=7?'high':p.rating>=5?'mid':'low';
-      h+='<div class="prev-card" id="prc_'+p.id+'"><div class="prev-card-top"><div class="prev-dot '+p.team+'">'+p.num+'</div><div style="flex:1"><div class="prev-nm">'+p.name+'</div><div class="prev-pos">'+(p.por?'Portero':'Jugador')+'</div></div><span class="prev-rt '+rc+'" id="prr_'+p.id+'">'+p.rating.toFixed(1)+'</span></div><div class="prev-stats">';
+      const rating=p.rating||0;
+      const rc=rating>=7?'high':rating>=5?'mid':'low';
+      h+='<div class="prev-card" id="prc_'+p.id+'"><div class="prev-card-top"><div class="prev-dot '+p.team+'">'+p.num+'</div><div style="flex:1"><div class="prev-nm">'+p.name+'</div><div class="prev-pos">'+(p.por?'Portero':'Jugador')+'</div></div><span class="prev-rt '+rc+'" id="prr_'+p.id+'">'+rating.toFixed(1)+'</span></div><div class="prev-stats">';
       const stats=p.por?[['goals','GOL'],['assists','AST'],['saves','TAP'],['defcon','DEF'],['salvadas','SAL'],['shotsOffError','TF err'],['shotsOffNeutral','TF'],['shotsOffGood','TF good'],['posts','PAL'],['faltas','FLT'],['autogoals','AG']]:[['goals','GOL'],['assists','AST'],['defcon','DEF'],['salvadas','SAL'],['shotsOffError','TF err'],['shotsOffNeutral','TF'],['shotsOffGood','TF good'],['posts','PAL'],['faltas','FLT'],['autogoals','AG']];
       stats.forEach(([key,lbl])=>{h+='<div class="prev-stat"><span class="prev-stat-lb">'+lbl+'</span><button class="prev-stat-btn" onclick="prevAdj(\''+p.id+"','"+key+"',-1)\">-</button><span class=\"prev-stat-v\" id=\"prv_"+p.id+'_'+key+'">'+(p[key]||0)+'</span><button class="prev-stat-btn" onclick="prevAdj(\''+p.id+"','"+key+"',1)\">+</button></div>";});
       h+='</div></div>';
     });
   });
-  w.innerHTML=h;document.getElementById('prevBg').classList.add('on');
+  w.innerHTML=h;
+  bg.classList.add('on');
 }
 function prevAdj(pid,key,d){
   const p=P.find(x=>x.id===pid);if(!p)return;p[key]=Math.max(0,(p[key]||0)+d);document.getElementById('prv_'+pid+'_'+key).textContent=p[key];
@@ -744,11 +766,12 @@ function confirmPreview(){
 
 // ── CALC RATINGS (Factor Cona) ──
 function calcRatings(){
+  if(!P||P.length===0){MVP=null;return;}
   const g1=teamScore('t1'),g2=teamScore('t2');const totalGoals=g1+g2;const winTeam=g1>g2?'t1':g2>g1?'t2':null;const conceded={t1:g2,t2:g1};
-  P.forEach(p=>{let r=6.0;r+=p.goals*0.8;r+=p.assists*0.5;r+=(p.defcon||0)*0.1;
+  P.forEach(p=>{let r=6.0;r+=(p.goals||0)*0.8;r+=(p.assists||0)*0.5;r+=(p.defcon||0)*0.1;
     if((p.defcon||0)>=12)r+=1.5;else if((p.defcon||0)>=8)r+=1.0;else if((p.defcon||0)>=5)r+=0.5;
-    r+=p.salvadas*0.35;r+=(p.por?p.saves*0.2:0);if(p.por)r+=(conceded[p.team]||0)*(-0.2);if(!p.por)r+=(conceded[p.team]||0)*(-0.05);
-    r+=p.shotsOn*0.1;r+=p.posts*0.05;r+=p.autogoals*(-1.0);if(winTeam&&p.team===winTeam)r+=0.5;p._raw=r;
+    r+=(p.salvadas||0)*0.35;r+=(p.por?(p.saves||0)*0.2:0);if(p.por)r+=(conceded[p.team]||0)*(-0.2);if(!p.por)r+=(conceded[p.team]||0)*(-0.05);
+    r+=(p.shotsOn||0)*0.1;r+=(p.posts||0)*0.05;r+=(p.autogoals||0)*(-1.0);if(winTeam&&p.team===winTeam)r+=0.5;p._raw=r;
   });
   const sorted=[...P].sort((a,b)=>b._raw-a._raw);const rawMin=Math.min(...P.map(p=>p._raw));const rawMax=sorted[0]._raw;
   const avg=P.reduce((s,p)=>s+p._raw,0)/P.length;const eliteThreshold=avg*1.5;
