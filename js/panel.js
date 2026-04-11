@@ -204,11 +204,6 @@ window.navigate = function(screen) {
   _origNavigate(screen);
   if (screen === 'pagos')  initPagos();
   if (screen === 'equipo') initEquipo();
-  // Reset organizer mode when leaving the stepper screens
-  if (screen === 'home') {
-    window.isOrganizer = false;
-    sessionStorage.removeItem('cona_org_mode');
-  }
   updateOrgStepper();
 };
 

@@ -49,6 +49,19 @@ function syncToFirebase(){
   }
   db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
     updateSyncBadge(true);
+    // Also write a lightweight live summary to the registro mejenga doc
+    // so the home list can show live score/time without extra reads
+    if(registroMejengaId){
+      const g1=P.reduce((s,p)=>s+(p.team==='t1'?(p.goals||0):0)+(p.team==='t2'?(p.autogoals||0):0),0);
+      const g2=P.reduce((s,p)=>s+(p.team==='t2'?(p.goals||0):0)+(p.team==='t1'?(p.autogoals||0):0),0);
+      db.collection('mejengas').doc(registroMejengaId).update({
+        liveScore1: g1,
+        liveScore2: g2,
+        liveTime: tS,
+        liveEvents: EV.length,
+        liveUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(()=>{/* non-critical */});
+    }
   }).catch(e=>{
     console.warn('Firebase sync failed:',e.message);
     updateSyncBadge(false);

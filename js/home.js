@@ -68,10 +68,21 @@ function renderMejengaCard(m, state) {
 
   let badge = '';
   let cardClass = '';
+  let liveInfo = '';
 
   if (state === 'vivo') {
     badge = `<span class="sh-game-badge live"><span class="sh-game-live-dot"></span>En vivo</span>`;
     cardClass = ' sh-game-card-live';
+    // Show live score/time if available
+    if (typeof m.liveScore1 === 'number' || typeof m.liveScore2 === 'number') {
+      const s1 = m.liveScore1 || 0;
+      const s2 = m.liveScore2 || 0;
+      const timeStr = formatLiveTime(m.liveTime || 0);
+      liveInfo = `<div class="sh-live-strip">
+        <span class="sh-live-score">${s1} <span class="sh-live-dash">-</span> ${s2}</span>
+        <span class="sh-live-time">${timeStr}</span>
+      </div>`;
+    }
   } else if (state === 'final') {
     badge = `<span class="sh-game-badge fin">Finalizada</span>`;
     cardClass = ' sh-game-card-done';
@@ -86,11 +97,18 @@ function renderMejengaCard(m, state) {
       <div class="sh-game-info">
         <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
         <div class="sh-game-meta">${meta || '&mdash;'}</div>
+        ${liveInfo}
       </div>
       <div class="sh-game-arrow">&#8250;</div>
     </div>
     <button type="button" class="sh-game-del" data-action="delete">Borrar</button>
   </div>`;
+}
+
+function formatLiveTime(seconds) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
 }
 
 // Event delegation: single listener on homeList catches all clicks

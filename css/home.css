@@ -491,6 +491,34 @@ body.public-mode .sh-game-tap { cursor: default; }
   border-color: rgba(255,68,68,0.3);
   color: #ff6b6b;
 }
+.sh-live-strip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding: 4px 0 0;
+}
+.sh-live-score {
+  font-size: 15px;
+  font-weight: 800;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.sh-live-dash {
+  color: rgba(255,255,255,0.3);
+  font-weight: 400;
+  margin: 0 3px;
+}
+.sh-live-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: #ff6b6b;
+  background: rgba(255,68,68,0.12);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-variant-numeric: tabular-nums;
+}
 
 .sh-org-btn {
   margin-top: 6px;
