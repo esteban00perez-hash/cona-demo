@@ -234,12 +234,29 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .ast-no{width:100%;padding:14px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);cursor:pointer;text-align:center;font-size:13px;font-weight:700;color:var(--w4);margin-top:10px;font-family:inherit;-webkit-appearance:none}
 .ast-no:active{background:rgba(255,255,255,.08)}
 
-/* ═══ INFO BAR (right side) ═══ */
-.ib{position:absolute;right:4px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);backdrop-filter:blur(10px);border:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10}
-.ib-ev{font-size:8px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 6px;border-radius:4px}
+/* Sync badge — positioned above the bottom .ib bar on mobile */
+.sync-badge-wrap{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);z-index:10;pointer-events:none}
+@media(min-width:768px){
+  .sync-badge-wrap{bottom:4px}
+}
+
+/* ═══ INFO BAR ═══ */
+/* Mobile: horizontal bar at bottom, full width */
+.ib{position:fixed;left:0;right:0;bottom:0;top:auto;transform:none;display:flex;flex-direction:row;align-items:center;justify-content:space-around;gap:4px;padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));background:rgba(10,26,16,.96);backdrop-filter:blur(14px);border:none;border-top:1px solid rgba(167,238,67,.15);border-radius:0;z-index:25}
+.ib-ev{display:none}
 .ib-last{display:none}
-.ib-btn{padding:7px 8px;border-radius:8px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.12);font-family:inherit;font-size:9px;font-weight:700;color:var(--g);cursor:pointer;white-space:nowrap}
+.ib-btn{padding:9px 4px;border-radius:10px;background:rgba(167,238,67,.06);border:1px solid rgba(167,238,67,.12);font-family:inherit;font-size:10px;font-weight:700;color:var(--g);cursor:pointer;white-space:nowrap;flex:1;text-align:center;-webkit-appearance:none;min-width:0}
 .ib-btn:active{background:rgba(167,238,67,.15)}
+.ib-inicio{color:rgba(255,120,120,.9)!important;border-color:rgba(255,60,60,.22)!important;background:rgba(255,60,60,.06)!important}
+.ib-inicio:active{background:rgba(255,60,60,.15)!important}
+.fin-btn{flex:1.2;padding:9px 4px;border-radius:10px;font-family:inherit;font-size:11px;font-weight:800;color:#fff;background:rgba(167,238,67,.2);border:1px solid rgba(167,238,67,.5);cursor:pointer;-webkit-appearance:none;min-width:0}
+.fin-btn:active{background:rgba(167,238,67,.3)}
+.fin-btn.done{background:rgba(167,238,67,.3);border-color:var(--g)}
+/* Reserve bottom space in pitch/views so content doesn't hide behind .ib */
+.pitch,.vl,.vg,.ve{padding-bottom:62px!important}
+@supports(padding:max(0px)){
+  .pitch,.vl,.vg,.ve{padding-bottom:max(62px,calc(52px + env(safe-area-inset-bottom,0px)))!important}
+}
 
 /* ═══ TIMELINE ═══ */
 .tl-bg{position:fixed;inset:0;z-index:100;display:none;background:rgba(6,16,10,.95);flex-direction:column}
@@ -427,7 +444,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
   .app.on{flex-direction:row;height:100dvh}
   .sb{flex-shrink:0;width:100%;position:absolute;top:0;left:0;right:0;z-index:20}
   .app-left{display:flex;flex-direction:column;flex:1;min-width:0;position:relative}
+  .pitch,.vl,.vg,.ve{padding-bottom:0!important}
   .pitch{flex:1}
+  /* Restore .ib as right sidebar on desktop */
+  .ib{position:absolute;right:4px;top:50%;left:auto;bottom:auto;transform:translateY(-50%);flex-direction:column;justify-content:flex-start;gap:5px;padding:8px 4px;background:rgba(10,26,16,.85);border:1px solid rgba(167,238,67,.1);border-top:1px solid rgba(167,238,67,.1);border-radius:12px;z-index:10}
+  .ib-ev{display:block;font-size:8px;font-weight:700;color:var(--g);background:rgba(167,238,67,.1);padding:2px 6px;border-radius:4px}
+  .ib-btn{padding:7px 8px;font-size:9px;flex:initial;text-align:center}
+  .fin-btn{flex:initial}
   .app-right{display:none;width:360px;flex-shrink:0;background:rgba(6,16,10,.95);border-left:1px solid rgba(167,238,67,.08);overflow-y:auto}
   .app.on .app-right{display:block}
   .desk-tb-hd{padding:16px;text-align:center;border-bottom:1px solid rgba(255,255,255,.06)}
