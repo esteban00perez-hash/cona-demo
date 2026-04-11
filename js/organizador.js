@@ -158,8 +158,10 @@ function startMatch(){
 function goBackToSetup(){
   document.getElementById('frozenBg').classList.remove('on');
   document.getElementById('app').classList.remove('on');
-  P=[];EV=[];mejengaId=null;tS=0;
-  clearState();
+  // Keep state in localStorage so organizer can re-enter the live mejenga
+  if(tI){clearInterval(tI);tI=null;}
+  tOn=false;
+  saveState();
   navigate('home');
 }
 
@@ -743,8 +745,19 @@ function showRecovery(){
 function resumeState(){
   document.getElementById('recBg').classList.remove('on');
   document.getElementById('app').classList.add('on');
-  document.getElementById('tmr').textContent=ft(tS);document.getElementById('tmr').className='sb-tm off';
+  const tmr=document.getElementById('tmr');
+  tmr.textContent=ft(tS);
+  if(!done){
+    // Resume the timer where we left off
+    if(tI){clearInterval(tI);tI=null;}
+    tI=setInterval(()=>{tS++;tmr.textContent=ft(tS);if(tS%10===0)saveState();},1000);
+    tOn=true;tmr.className='sb-tm on';
+  } else {
+    tmr.className='sb-tm off';
+  }
+  setView('field');
   updSc();draw();updIb();
+  syncToFirebase();
   if(done){document.getElementById('finBtn').textContent='Ver Reporte';document.getElementById('finBtn').classList.add('done');}
 }
 function discardState(){
@@ -798,8 +811,15 @@ try{
   document.getElementById('styIcoGood').innerHTML=I.tfGood;
 }catch(e){}
 
-// INIT — check for saved state recovery
-if(loadState()){
-  showRecovery();
+// ── RECOVERY CHECK (called on page load AND on every navigate to organizador) ──
+function checkOrgRecovery(){
+  // If app is already on (mejenga in progress in memory), don't re-trigger
+  if(document.getElementById('app')?.classList.contains('on'))return;
+  // If recovery already showing, don't re-trigger
+  if(document.getElementById('recBg')?.classList.contains('on'))return;
+  if(loadState()){
+    showRecovery();
+  }
 }
-// If no saved state, the screen just shows nothing until startFromRegistro() is called
+// Check on page load
+checkOrgRecovery();

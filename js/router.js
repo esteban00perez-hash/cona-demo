@@ -39,6 +39,7 @@ function navigate(screen) {
   }
 
   if (screen === 'home' && typeof initHome === 'function') initHome();
+  if (screen === 'organizador' && typeof checkOrgRecovery === 'function') checkOrgRecovery();
 }
 
 // Password gate
