@@ -181,13 +181,13 @@
                 badge.style.borderColor = 'rgba(148,163,184,0.25)';
                 badge.style.background  = 'rgba(148,163,184,0.08)';
                 dot.style.background    = '#94a3b8';
-                text.textContent        = 'Banca Disponible';
+                text.textContent        = 'Banca';
             } else {
                 badge.style.color       = '#A7EE43';
                 badge.style.borderColor = 'rgba(167,238,67,0.2)';
                 badge.style.background  = 'rgba(167,238,67,0.1)';
                 dot.style.background    = '#A7EE43';
-                text.textContent        = 'Lista Abierta';
+                text.textContent        = 'Abierta';
             }
         }
 

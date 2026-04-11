@@ -176,8 +176,25 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.3);
-  margin-bottom: 10px;
-  display: block;
+  margin: 18px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sh-section-label:first-child { margin-top: 0; }
+.sh-live-label {
+  color: #ff4444;
+}
+.sh-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff4444;
+  animation: sh-pulse 1.5s ease-in-out infinite;
+}
+@keyframes sh-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
 }
 
 .sh-list {
@@ -277,6 +294,26 @@
   color: rgba(148,163,184,0.7);
   border: 1px solid rgba(148,163,184,0.2);
 }
+.sh-game-badge.live {
+  background: rgba(255,68,68,0.12);
+  color: #ff6b6b;
+  border: 1px solid rgba(255,68,68,0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.sh-game-live-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #ff4444;
+  animation: sh-pulse 1.5s ease-in-out infinite;
+}
+.sh-game-badge.open {
+  background: rgba(167,238,67,0.12);
+  color: #A7EE43;
+  border: 1px solid rgba(167,238,67,0.25);
+}
 
 .sh-game-card-done .sh-game-num {
   background: rgba(148,163,184,0.08);
@@ -286,6 +323,21 @@
 .sh-game-card-done:active {
   background: rgba(148,163,184,0.06);
   border-color: rgba(148,163,184,0.2);
+}
+
+.sh-game-card-live {
+  background: rgba(255,68,68,0.04);
+  border-color: rgba(255,68,68,0.2);
+}
+.sh-game-card-live:hover { background: rgba(255,68,68,0.08); }
+.sh-game-card-live:active {
+  background: rgba(255,68,68,0.1);
+  border-color: rgba(255,68,68,0.35);
+}
+.sh-game-card-live .sh-game-num {
+  background: rgba(255,68,68,0.12);
+  border-color: rgba(255,68,68,0.3);
+  color: #ff6b6b;
 }
 
 .sh-org-btn {

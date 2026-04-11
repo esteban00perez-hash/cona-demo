@@ -37,40 +37,95 @@ function renderHomeList(mejengas) {
     return;
   }
 
-  list.innerHTML = mejengas.map(m => {
-    const parts = [];
-    if (m.fecha) parts.push(formatFechaHome(m.fecha));
-    if (m.lugar) parts.push(m.lugar);
-    const meta = parts.map(p => escapeH(p)).join(' · ');
-    const isFinished = !!m.finalizado;
-    const badge = isFinished
-      ? `<span class="sh-game-badge fin">Finalizada</span>`
-      : '';
-    const actionBtn = isFinished && m.reporteId
-      ? `<button class="sh-report-btn" onclick="event.stopPropagation();selectMejengaRegistro('${m.id}')">Ver Reporte</button>`
-      : '';
-    return `<div class="sh-game-card${isFinished ? ' sh-game-card-done' : ''}" onclick="selectMejengaRegistro('${m.id}')">
-      <div class="sh-game-num">${m.numero || '?'}</div>
-      <div class="sh-game-info">
-        <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
-        <div class="sh-game-meta">${meta || '&mdash;'}</div>
-        ${actionBtn}
-      </div>
-      <div class="sh-game-arrow">&#8250;</div>
-    </div>`;
-  }).join('');
+  // Group by state
+  const enVivo = mejengas.filter(m => m.enCurso === true && !m.finalizado);
+  const activas = mejengas.filter(m => !m.enCurso && !m.finalizado);
+  const finalizadas = mejengas.filter(m => m.finalizado === true);
+
+  let html = '';
+
+  if (enVivo.length > 0) {
+    html += '<div class="sh-section-label sh-live-label"><span class="sh-live-dot"></span>En Vivo</div>';
+    html += enVivo.map(m => renderMejengaCard(m, 'vivo')).join('');
+  }
+  if (activas.length > 0) {
+    html += '<div class="sh-section-label">Próximas</div>';
+    html += activas.map(m => renderMejengaCard(m, 'activa')).join('');
+  }
+  if (finalizadas.length > 0) {
+    html += '<div class="sh-section-label">Finalizadas</div>';
+    html += finalizadas.map(m => renderMejengaCard(m, 'final')).join('');
+  }
+
+  list.innerHTML = html;
+}
+
+function renderMejengaCard(m, state) {
+  const parts = [];
+  if (m.fecha) parts.push(formatFechaHome(m.fecha));
+  if (m.lugar) parts.push(m.lugar);
+  const meta = parts.map(p => escapeH(p)).join(' · ');
+
+  let badge = '';
+  let cardClass = '';
+  let action = '';
+
+  if (state === 'vivo') {
+    badge = `<span class="sh-game-badge live"><span class="sh-game-live-dot"></span>En vivo</span>`;
+    cardClass = ' sh-game-card-live';
+    action = `onclick="jumpToLiveOrganizador('${m.id}')"`;
+  } else if (state === 'final') {
+    badge = `<span class="sh-game-badge fin">Finalizada</span>`;
+    cardClass = ' sh-game-card-done';
+    action = `onclick="viewMejengaReport('${m.id}')"`;
+  } else {
+    badge = `<span class="sh-game-badge open">Abierta</span>`;
+    action = `onclick="selectMejengaRegistro('${m.id}')"`;
+  }
+
+  return `<div class="sh-game-card${cardClass}" ${action}>
+    <div class="sh-game-num">${m.numero || '?'}</div>
+    <div class="sh-game-info">
+      <div class="sh-game-name">${escapeH(m.nombre || 'Mejenga')}${badge}</div>
+      <div class="sh-game-meta">${meta || '&mdash;'}</div>
+    </div>
+    <div class="sh-game-arrow">&#8250;</div>
+  </div>`;
 }
 
 function selectMejengaRegistro(id) {
   const mejenga = mejengasCache.find(m => m.id === id);
   if (!mejenga) { console.warn('Mejenga not found in cache:', id); return; }
-  if (mejenga.finalizado && mejenga.reporteId) {
-    navigate('reporte');
-    if (typeof initReporteFromId === 'function') initReporteFromId(mejenga.reporteId);
-    return;
-  }
   try { initRegistro(mejenga); } catch(e) { console.error('initRegistro error:', e); }
   navigate('registro');
+}
+
+function viewMejengaReport(id) {
+  const mejenga = mejengasCache.find(m => m.id === id);
+  if (!mejenga) return;
+  if (mejenga.reporteId) {
+    navigate('reporte');
+    if (typeof initReporteFromId === 'function') initReporteFromId(mejenga.reporteId);
+  } else {
+    alert('Esta mejenga no tiene reporte disponible.');
+  }
+}
+
+// Direct jump to organizador for a live mejenga (bypasses registro/pagos/equipo)
+function jumpToLiveOrganizador(id) {
+  const mejenga = mejengasCache.find(m => m.id === id);
+  if (!mejenga) return;
+  // Set the current mejenga context so panel.js functions work
+  if (typeof initRegistro === 'function') {
+    try { initRegistro(mejenga); } catch(e) { console.error(e); }
+  }
+  // Open password gate → navigates to organizador on success,
+  // and checkOrgRecovery() auto-fires from router to show recovery dialog
+  if (typeof openPasswordGate === 'function') {
+    openPasswordGate('organizador');
+  } else {
+    navigate('organizador');
+  }
 }
 
 
@@ -111,6 +166,7 @@ function checkDeepLink() {
       navigate('reporte');
       if (typeof initReporteFromId === 'function') initReporteFromId(data.reporteId);
     } else {
+      // Always go to registro for deep links (invited players)
       try { initRegistro(data); } catch(e) { console.error(e); }
       navigate('registro');
     }

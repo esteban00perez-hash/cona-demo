@@ -140,6 +140,14 @@ function startFromRegistro(mejengaData, players) {
 
   saveState();
   syncToFirebase();
+
+  // Mark mejenga as in-progress so it shows up in "En Vivo" on home
+  if(registroMejengaId){
+    db.collection('mejengas').doc(registroMejengaId).update({
+      enCurso:true,
+      organizadorMejengaId:mejengaId
+    }).catch(e=>console.warn('Mark enCurso:',e.message));
+  }
 }
 
 // ── PRE-GAME FROZEN STATE ──
@@ -697,11 +705,25 @@ function prevAdj(pid,key,d){
 }
 function closePreview(){document.getElementById('prevBg').classList.remove('on');}
 function confirmPreview(){
-  done=true;document.getElementById('finBtn').textContent='Ver Reporte';document.getElementById('finBtn').classList.add('done');
+  done=true;
+  if(tI){clearInterval(tI);tI=null;}
+  tOn=false;
+  document.getElementById('finBtn').textContent='Ver Reporte';document.getElementById('finBtn').classList.add('done');
   calcRatings();updSc();draw();saveState();document.getElementById('prevBg').classList.remove('on');show('Guardando...');
   if(_syncTimer)clearTimeout(_syncTimer);
   const data=getStateObj();data.updatedAt=firebase.firestore.FieldValue.serverTimestamp();
-  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{updateSyncBadge(true);openReport();}).catch(()=>{show('Error guardando, abriendo igual...');openReport();});
+  db.collection(MEJENGAS_COL).doc(mejengaId).set(data,{merge:true}).then(()=>{
+    updateSyncBadge(true);
+    // Link the report back to the registro mejenga and mark as finalized
+    if(registroMejengaId){
+      db.collection('mejengas').doc(registroMejengaId).update({
+        finalizado:true,
+        enCurso:false,
+        reporteId:mejengaId
+      }).catch(e=>console.warn('Update mejenga finalize:',e.message));
+    }
+    openReport();
+  }).catch(()=>{show('Error guardando, abriendo igual...');openReport();});
 }
 
 // ── CALC RATINGS (Factor Cona) ──
