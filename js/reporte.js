@@ -677,6 +677,15 @@ window.openFbModal = openFbModal;
 window.closeFbModal = closeFbModal;
 window.sendFeedback = sendFeedback;
 
+// Back button behavior — public mode hides it, organizer goes to home
+function reportBack() {
+  if (window.isOrganizer) {
+    navigate('home');
+  }
+  // Public mode: do nothing (the back button is hidden via CSS)
+}
+window.reportBack = reportBack;
+
 /* ── Init ── */
 async function initReporteFromId(id) {
   // Reset state for re-use within SPA

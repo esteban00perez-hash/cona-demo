@@ -1,4 +1,130 @@
 /* ═══════════════════════════════════════════════════════
+   SCREEN: GATE (organizer password)
+════════════════════════════════════════════════════════ */
+#screen-gate {
+  background: #0e1a22;
+  min-height: 100vh;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  display: none;
+}
+#screen-gate.active {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.gate-wrap {
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+.gate-hero { margin-bottom: 30px; }
+.gate-logo {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 20px;
+}
+.gate-logo span { color: #A7EE43; }
+.gate-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+.gate-sub {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+  line-height: 1.5;
+}
+.gate-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.gate-input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 16px;
+  outline: none;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.gate-input:focus {
+  border-color: rgba(167,238,67,0.4);
+}
+.gate-error {
+  font-size: 12px;
+  color: #ff6b6b;
+  min-height: 16px;
+  font-weight: 600;
+}
+.gate-btn {
+  background: #A7EE43;
+  color: #0a1a10;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.gate-btn:active { opacity: 0.85; }
+.gate-help {
+  margin-top: 22px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.5;
+}
+
+/* Public mode: hide organizer-only UI */
+body.public-mode .footer-org-btn,
+body.public-mode .invite-btn,
+body.public-mode .org-stepper,
+body.public-mode .sh-new-btn,
+body.public-mode .sh-game-del,
+body.public-mode .panel-back,
+body.public-mode .rp-org-wrap,
+body.public-mode #reportBackBtn { display: none !important; }
+body.public-mode .sh-game-card { pointer-events: none; }
+body.public-mode .sh-game-tap { cursor: default; }
+
+/* Home header: add logout button */
+.sh-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 16px;
+  padding-bottom: 4px;
+}
+.sh-logout-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  -webkit-appearance: none;
+}
+.sh-logout-btn:active { background: rgba(255,255,255,0.08); }
+
+/* ═══════════════════════════════════════════════════════
    SCREEN: HOME (mejengas list)
 ════════════════════════════════════════════════════════ */
 #screen-home,

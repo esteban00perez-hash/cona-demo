@@ -62,11 +62,15 @@ function updateSyncBadge(ok){
   el.style.color=ok?'rgba(167,238,67,.6)':'rgba(255,180,60,.7)';
   if(ok){clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent='';},2500);}
 }
-function loadState(){
+function loadState(expectedRegistroId){
   try{
     const raw=localStorage.getItem(LS_KEY);
     if(!raw)return false;
     const s=JSON.parse(raw);
+    // If caller specified a mejenga, only match that one
+    if(expectedRegistroId && s.registroMejengaId !== expectedRegistroId){
+      return false;
+    }
     _applyState(s);
     return P.length>0;
   }catch(e){return false;}
@@ -892,6 +896,8 @@ try{
 
 // ── RECOVERY CHECK (called on page load AND on every navigate to organizador) ──
 function checkOrgRecovery(){
+  // Suppressed by caller (e.g. jumpToLiveFromPassword does its own load)
+  if(window._suppressOrgRecovery)return;
   // If app is already on (mejenga in progress in memory), don't re-trigger
   if(document.getElementById('app')?.classList.contains('on'))return;
   // If recovery already showing, don't re-trigger

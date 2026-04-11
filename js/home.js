@@ -174,7 +174,12 @@ function jumpToLiveOrganizador(id) {
   if (typeof initRegistro === 'function') {
     try { initRegistro(mejenga); } catch(e) { console.error(e); }
   }
-  // Open the org password modal — checkOrgPass will detect enCurso and jump directly
+  // Already organizer (home is gated) — skip password and go directly
+  if (window.isOrganizer && typeof jumpToLiveFromPassword === 'function') {
+    jumpToLiveFromPassword(mejenga);
+    return;
+  }
+  // Fallback (shouldn't happen since home is gated)
   if (typeof openOrgPanel === 'function') {
     openOrgPanel();
   } else {
@@ -205,27 +210,7 @@ function viewFinishedReport() {
   if (typeof initReporteFromId === 'function') initReporteFromId(id);
 }
 
-// ── Deep link: ?mejenga=ID auto-navigates to that mejenga ───────────────
-function checkDeepLink() {
-  const params = new URLSearchParams(window.location.search);
-  const mejengaId = params.get('mejenga');
-  if (!mejengaId) return;
-  // Clean URL without reloading
-  window.history.replaceState({}, '', window.location.pathname);
-  // Fetch mejenga data and navigate
-  db.collection('mejengas').doc(mejengaId).get().then(doc => {
-    if (!doc.exists) return;
-    const data = { id: doc.id, ...doc.data() };
-    if (data.finalizado && data.reporteId) {
-      navigate('reporte');
-      if (typeof initReporteFromId === 'function') initReporteFromId(data.reporteId);
-    } else {
-      // Always go to registro for deep links (invited players)
-      try { initRegistro(data); } catch(e) { console.error(e); }
-      navigate('registro');
-    }
-  }).catch(err => console.error('Deep link error:', err));
-}
+// Deep link handling moved to router.js
 
 // ── Crear screen ─────────────────────────────────────────────────────────
 let nextMejengaNumero = 1;

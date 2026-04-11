@@ -48,13 +48,18 @@ function checkOrgPass() {
 
 // Jump to organizador for a live mejenga (fetches state from Firestore)
 function jumpToLiveFromPassword(mejenga) {
+  // Suppress auto-recovery check so it doesn't use stale localStorage
+  window._suppressOrgRecovery = true;
   _origNavigate('organizador');
-  // Try localStorage first
-  if (typeof loadState === 'function' && loadState()) {
+  window._suppressOrgRecovery = false;
+
+  // Try localStorage FIRST — but only if it matches this specific mejenga
+  if (typeof loadState === 'function' && loadState(mejenga.id)) {
     if (typeof resumeState === 'function') resumeState();
     return;
   }
-  // Fetch from Firestore — try direct ref first, then search
+
+  // Fetch from Firestore — try direct ref first, then search by registroMejengaId
   const tryDirect = mejenga.organizadorMejengaId
     ? db.collection('mejengas_organizador').doc(mejenga.organizadorMejengaId).get()
         .then(doc => doc.exists ? doc : null)
@@ -74,8 +79,10 @@ function jumpToLiveFromPassword(mejenga) {
       });
   }).then(doc => {
     if (!doc) {
-      alert('No se encontró el estado de esta mejenga en vivo en Firebase. Podés iniciar una nueva desde Equipos.');
-      _origNavigate('registro');
+      // No saved state — offer to start fresh from equipos
+      alert('Esta mejenga no tiene sesión en vivo guardada todavía. Te llevamos a Equipos para iniciarla.');
+      _origNavigate('equipo');
+      if (typeof initEquipo === 'function') initEquipo();
       return;
     }
     if (typeof loadStateFromFirestore === 'function') {

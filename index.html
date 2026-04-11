@@ -33,6 +33,25 @@
 <body>
 
 <!-- ═══════════════════════════════════════════════════════
+     SCREEN: GATE (organizer password)
+════════════════════════════════════════════════════════ -->
+<div id="screen-gate" class="screen">
+  <div class="gate-wrap">
+    <div class="gate-hero">
+      <div class="gate-logo">CONA <span>Futbol</span></div>
+      <h1 class="gate-title">Acceso Organizador</h1>
+      <p class="gate-sub">Ingresá la contraseña para acceder al panel de organizador.</p>
+    </div>
+    <div class="gate-card">
+      <input id="gatePass" type="password" class="gate-input" placeholder="Contraseña" autocomplete="off">
+      <div class="gate-error" id="gateError"></div>
+      <button class="gate-btn" onclick="tryGate()">Entrar</button>
+    </div>
+    <p class="gate-help">Si te compartieron un link de una mejenga, abrilo desde ahí — no necesitás contraseña.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
      SCREEN: HOME (mejengas list)
 ════════════════════════════════════════════════════════ -->
 <div id="screen-home" class="screen">
@@ -54,8 +73,9 @@
       </div>
     </div>
 
-    <div class="sh-header">
+    <div class="sh-top-bar">
       <span class="sh-logo-text">CONA Futbol</span>
+      <button class="sh-logout-btn" onclick="logoutOrganizer()">Cerrar sesión</button>
     </div>
     <div class="sh-hero">
       <h1 class="sh-title">Mejengas <span>2026</span></h1>
@@ -654,7 +674,7 @@
 
     <!-- Back bar -->
     <div class="back-bar">
-      <button class="back-btn" onclick="navigate('home')">&#8592; Volver</button>
+      <button class="back-btn" id="reportBackBtn" onclick="reportBack()">&#8592; Volver</button>
       <div style="flex:1"></div>
       <button class="share-btn" onclick="shareReport()">Compartir</button>
     </div>
