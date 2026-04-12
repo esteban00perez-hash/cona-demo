@@ -693,13 +693,40 @@ function alSwapTeam(playerId) {
 function alChangeNum(playerId) {
   const p = _alistarPlayers.find(x => x.id === playerId);
   if (!p) return;
-  const newNum = prompt('Nuevo número para ' + p.name + ':', p.numero || '');
-  if (newNum === null) return;
-  const n = parseInt(newNum);
-  if (isNaN(n) || n < 1 || n > 99) {
-    alert('Número inválido (1-99)');
-    return;
+  closeAlAction();
+  // Get used numbers for this team (excluding this player)
+  const usedNums = new Set(
+    _alistarPlayers
+      .filter(x => x.id !== playerId && x.equipo === p.equipo && x.position !== 'portero' && x.numero)
+      .map(x => x.numero)
+  );
+  // Build number picker grid (1-12)
+  let html = '<div class="al-numpick-title">Numero para ' + escapePanel(p.name) + '</div>';
+  html += '<div class="al-numpick-grid">';
+  for (let n = 1; n <= 12; n++) {
+    const taken = usedNums.has(n);
+    const current = p.numero === n;
+    const cls = current ? ' current' : (taken ? ' taken' : '');
+    const takenBy = taken ? _alistarPlayers.find(x => x.id !== playerId && x.equipo === p.equipo && x.numero === n) : null;
+    const label = takenBy ? escapePanel(takenBy.name.split(' ')[0]) : '';
+    html += `<button type="button" class="al-numpick-btn${cls}" ${taken && !current ? 'data-swap="' + takenBy.id + '"' : ''} onclick="alPickNum('${playerId}',${n})">
+      <span class="al-numpick-n">${n}</span>
+      ${label ? '<span class="al-numpick-who">' + label + '</span>' : ''}
+    </button>`;
   }
+  html += '</div>';
+  html += '<button type="button" class="al-action-cancel" onclick="closeNumPicker()">Cancelar</button>';
+
+  const sheet = document.querySelector('#alActionBg .al-action-sheet');
+  sheet.innerHTML = html;
+  document.getElementById('alActionBg').classList.add('on');
+}
+
+function alPickNum(playerId, n) {
+  const p = _alistarPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  if (p.numero === n) { closeNumPicker(); return; } // same number, do nothing
+
   // Check for conflict — swap with whoever has it
   const conflict = _alistarPlayers.find(x =>
     x.id !== playerId &&
@@ -715,9 +742,22 @@ function alChangeNum(playerId) {
   batch.commit().then(() => {
     if (conflict) conflict.numero = p.numero || null;
     p.numero = n;
-    closeAlAction();
+    closeNumPicker();
     renderAlistar();
-  }).catch(err => console.error('alChangeNum error:', err));
+  }).catch(err => console.error('alPickNum error:', err));
+}
+
+function closeNumPicker() {
+  document.getElementById('alActionBg').classList.remove('on');
+  // Restore the action sheet HTML for next use
+  const sheet = document.querySelector('#alActionBg .al-action-sheet');
+  sheet.innerHTML = `
+    <div class="al-action-title" id="alActionTitle">Jugador</div>
+    <button class="al-action-btn" id="alActionSwap">Cambiar de equipo</button>
+    <button class="al-action-btn" id="alActionNum">Cambiar numero</button>
+    <button class="al-action-btn danger" id="alActionRemove">Quitar del equipo</button>
+    <button class="al-action-cancel" onclick="closeAlAction()">Cancelar</button>
+  `;
 }
 
 function alRemove(playerId) {
