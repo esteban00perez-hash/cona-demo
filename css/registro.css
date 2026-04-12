@@ -1140,6 +1140,189 @@
             text-align: center;
             margin-top: 12px;
         }
+
+        /* ── Alistar screen (pre-game) ── */
+        .al-info {
+            font-size: 11px;
+            color: rgba(255,255,255,0.35);
+            text-align: center;
+            margin: 6px 0 14px;
+            padding: 8px 12px;
+            background: rgba(167,238,67,0.05);
+            border-radius: 10px;
+            border: 1px dashed rgba(167,238,67,0.15);
+        }
+        .al-cols {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        .al-col {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 12px 10px 14px;
+            min-height: 160px;
+        }
+        .al-col.t1 { border-color: rgba(255,255,255,0.2); }
+        .al-col.t2 { border-color: rgba(167,238,67,0.3); background: rgba(167,238,67,0.04); }
+        .al-col-hd {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .al-col-ti {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            flex: 1;
+            color: rgba(255,255,255,0.9);
+        }
+        .al-col.t2 .al-col-ti { color: #A7EE43; }
+        .al-col-list { display: flex; flex-direction: column; gap: 6px; }
+        .al-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            font-family: inherit;
+            border: 1px solid;
+            cursor: pointer;
+            -webkit-appearance: none;
+            text-align: left;
+            transition: transform .1s;
+            width: 100%;
+        }
+        .al-row:active { transform: scale(0.97); }
+        .al-row.t1 {
+            background: rgba(20,20,25,0.85);
+            border-color: rgba(255,255,255,0.28);
+            color: #fff;
+        }
+        .al-row.t2 {
+            background: #A7EE43;
+            border-color: rgba(120,200,30,0.6);
+            color: #0a1a10;
+        }
+        .al-row-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            flex-shrink: 0;
+        }
+        .al-row.t1 .al-row-num {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .al-row.t2 .al-row-num {
+            background: rgba(10,26,16,0.25);
+            color: #0a1a10;
+        }
+        .al-row-num.por {
+            font-size: 9px;
+            background: #ff9500 !important;
+            color: #0a1a10 !important;
+            letter-spacing: 0.05em;
+        }
+        .al-row-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .al-footer {
+            margin-top: 24px;
+            padding-bottom: 32px;
+        }
+        .al-start-btn {
+            width: 100%;
+            padding: 18px;
+            background: #A7EE43;
+            color: #0a1a10;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            -webkit-appearance: none;
+            letter-spacing: 0.02em;
+            box-shadow: 0 6px 24px rgba(167,238,67,0.25);
+        }
+        .al-start-btn:active { opacity: 0.85; transform: scale(0.98); }
+
+        /* ── Alistar: action sheet ── */
+        .al-action-bg {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 500;
+        }
+        .al-action-bg.on { display: flex; }
+        .al-action-sheet {
+            background: rgba(14,26,34,0.98);
+            border-top: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 520px;
+            padding: 20px 16px calc(20px + env(safe-area-inset-bottom,0px));
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .al-action-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 4px;
+        }
+        .al-action-btn {
+            padding: 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        .al-action-btn:active { background: rgba(255,255,255,0.1); }
+        .al-action-btn.danger { color: #ff6b6b; }
+        .al-action-cancel {
+            padding: 14px;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: 4px;
+        }
         .equipo-row {
             display: flex; align-items: center;
             background: rgba(255,255,255,0.04);

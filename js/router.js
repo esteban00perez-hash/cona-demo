@@ -19,7 +19,7 @@ document.body.style.overscrollBehavior = '';
 //     Used when a share link is opened. Hides all organizer UI.
 
 // Screens that REQUIRE organizer mode — public users never reach these
-const ORGANIZER_ONLY = ['home', 'crear', 'pagos', 'equipo', 'organizador'];
+const ORGANIZER_ONLY = ['home', 'crear', 'pagos', 'equipo', 'alistar', 'organizador'];
 // Screens that are public-safe
 const PUBLIC_ALLOWED = ['registro', 'reporte', 'gate'];
 

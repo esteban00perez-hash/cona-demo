@@ -132,7 +132,7 @@ function updateOrgStepper() {
   const activeScreen = document.querySelector('.screen.active');
   if (!activeScreen) return;
   const screenId = activeScreen.id; // screen-registro, screen-pagos, etc.
-  const onStepperScreen = ['screen-registro', 'screen-pagos', 'screen-equipo'].includes(screenId);
+  const onStepperScreen = ['screen-registro', 'screen-pagos', 'screen-equipo', 'screen-alistar'].includes(screenId);
 
   // Remove any existing stepper
   document.querySelectorAll('.org-stepper').forEach(el => el.remove());
@@ -160,9 +160,9 @@ function updateOrgStepper() {
           <div class="org-step-lbl">Equipos</div>
         </div>
         <div class="org-step-sep"></div>
-        <div class="org-step go" onclick="orgStepperStart()">
-          <div class="org-step-num"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-          <div class="org-step-lbl">Iniciar</div>
+        <div class="org-step ${screenId === 'screen-alistar' ? 'active' : ''}" onclick="orgStepperNav('alistar')">
+          <div class="org-step-num">4</div>
+          <div class="org-step-lbl">Alistar</div>
         </div>
       </div>
     </div>
@@ -178,11 +178,8 @@ function orgStepperNav(dest) {
   _origNavigate(dest);
   if (dest === 'pagos') initPagos();
   if (dest === 'equipo') initEquipo();
+  if (dest === 'alistar') initAlistar();
   updateOrgStepper();
-}
-
-function orgStepperStart() {
-  goToOrganizador();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -221,8 +218,9 @@ function closeChoice() { /* deprecated */ }
 const _origNavigate = navigate;
 window.navigate = function(screen) {
   _origNavigate(screen);
-  if (screen === 'pagos')  initPagos();
-  if (screen === 'equipo') initEquipo();
+  if (screen === 'pagos')   initPagos();
+  if (screen === 'equipo')  initEquipo();
+  if (screen === 'alistar') initAlistar();
   updateOrgStepper();
 };
 
@@ -552,6 +550,195 @@ function goToOrganizador() {
     console.error('goToOrganizador error:', err);
     _origNavigate('organizador');
   });
+}
+
+// ── ALISTAR SCREEN (pre-game) ─────────────────────────────────────────────
+
+let _alistarPlayers = [];
+let _alistarSelected = null;
+
+function initAlistar() {
+  const list = document.getElementById('alistarList');
+  if (!list) return;
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) {
+    list.innerHTML = '<div class="panel-empty">Abrí una mejenga primero.</div>';
+    return;
+  }
+  list.innerHTML = '<div class="panel-empty">Cargando...</div>';
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    _alistarPlayers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAlistar();
+  }).catch(() => {
+    list.innerHTML = '<div class="panel-empty">Error al cargar.</div>';
+  });
+}
+
+function renderAlistar() {
+  const list = document.getElementById('alistarList');
+  if (!list) return;
+
+  const active = _alistarPlayers.filter(p => !p.banca);
+  const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
+  const negro = active.filter(p => p.equipo === 1);
+  const verde = active.filter(p => p.equipo === 2);
+
+  // Sort by number (por first, then by number)
+  const byNum = (a, b) => {
+    if (a.position === 'portero' && b.position !== 'portero') return -1;
+    if (b.position === 'portero' && a.position !== 'portero') return 1;
+    return (a.numero || 99) - (b.numero || 99);
+  };
+  negro.sort(byNum);
+  verde.sort(byNum);
+
+  let html = '';
+
+  // Status
+  if (unassigned.length > 0) {
+    html += '<div class="equipo-warning">Faltan ' + unassigned.length + ' sin equipo — volvé a Equipos para asignarlos.</div>';
+  } else {
+    html += '<div class="equipo-ready">Listo para arrancar · ' + negro.length + 'v' + verde.length + '</div>';
+  }
+
+  // Two columns with numbered chips
+  html += '<div class="al-cols">';
+
+  // Negro column
+  html += '<div class="al-col t1"><div class="al-col-hd"><span class="eq-dot t1"></span><span class="al-col-ti">NEGRO</span><span class="eq-count">' + negro.length + '</span></div>';
+  if (negro.length === 0) {
+    html += '<div class="eq-empty">—</div>';
+  } else {
+    html += '<div class="al-col-list">';
+    negro.forEach(p => { html += alistarRow(p, 1); });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // Verde column
+  html += '<div class="al-col t2"><div class="al-col-hd"><span class="eq-dot t2"></span><span class="al-col-ti">VERDE</span><span class="eq-count">' + verde.length + '</span></div>';
+  if (verde.length === 0) {
+    html += '<div class="eq-empty">—</div>';
+  } else {
+    html += '<div class="al-col-list">';
+    verde.forEach(p => { html += alistarRow(p, 2); });
+    html += '</div>';
+  }
+  html += '</div>';
+
+  html += '</div>'; // /al-cols
+
+  list.innerHTML = html;
+}
+
+function alistarRow(p, team) {
+  const numDisplay = p.position === 'portero' ? 'POR' : (p.numero || '-');
+  const numClass = p.position === 'portero' ? 'al-row-num por' : 'al-row-num';
+  return `<button type="button" class="al-row t${team}" onclick="openAlAction('${p.id}')">
+    <div class="${numClass}">${numDisplay}</div>
+    <div class="al-row-name">${escapePanel(p.name)}</div>
+  </button>`;
+}
+
+function openAlAction(playerId) {
+  const p = _alistarPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  _alistarSelected = playerId;
+  const bg = document.getElementById('alActionBg');
+  document.getElementById('alActionTitle').textContent = p.name + (p.position === 'portero' ? ' (POR)' : '');
+  // Swap team button label
+  const swapBtn = document.getElementById('alActionSwap');
+  const otherTeam = p.equipo === 1 ? 2 : 1;
+  const otherName = otherTeam === 1 ? 'Negro' : 'Verde';
+  swapBtn.textContent = 'Pasar a ' + otherName;
+  swapBtn.onclick = () => { alSwapTeam(playerId); };
+  // Change number button (hidden for porteros)
+  const numBtn = document.getElementById('alActionNum');
+  if (p.position === 'portero') {
+    numBtn.style.display = 'none';
+  } else {
+    numBtn.style.display = '';
+    numBtn.onclick = () => { alChangeNum(playerId); };
+  }
+  // Remove button
+  document.getElementById('alActionRemove').onclick = () => { alRemove(playerId); };
+  bg.classList.add('on');
+}
+
+function closeAlAction() {
+  document.getElementById('alActionBg').classList.remove('on');
+  _alistarSelected = null;
+}
+
+function alSwapTeam(playerId) {
+  const p = _alistarPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  const newTeam = p.equipo === 1 ? 2 : 1;
+  // Assign next available number for new team (for field players)
+  const update = { equipo: newTeam };
+  if (p.position !== 'portero') {
+    // Compute next available number against _alistarPlayers
+    const used = new Set(_alistarPlayers.filter(x => x.equipo === newTeam && x.position !== 'portero' && x.id !== p.id && x.numero).map(x => x.numero));
+    let n = 1;
+    while (used.has(n)) n++;
+    update.numero = n;
+  }
+  jugadoresRef.doc(playerId).update(update).then(() => {
+    p.equipo = newTeam;
+    if (update.numero) p.numero = update.numero;
+    closeAlAction();
+    renderAlistar();
+  }).catch(err => console.error('alSwapTeam error:', err));
+}
+
+function alChangeNum(playerId) {
+  const p = _alistarPlayers.find(x => x.id === playerId);
+  if (!p) return;
+  const newNum = prompt('Nuevo número para ' + p.name + ':', p.numero || '');
+  if (newNum === null) return;
+  const n = parseInt(newNum);
+  if (isNaN(n) || n < 1 || n > 99) {
+    alert('Número inválido (1-99)');
+    return;
+  }
+  // Check for conflict — swap with whoever has it
+  const conflict = _alistarPlayers.find(x =>
+    x.id !== playerId &&
+    x.equipo === p.equipo &&
+    x.numero === n &&
+    x.position !== 'portero'
+  );
+  const batch = db.batch();
+  batch.update(jugadoresRef.doc(playerId), { numero: n });
+  if (conflict) {
+    batch.update(jugadoresRef.doc(conflict.id), { numero: p.numero || null });
+  }
+  batch.commit().then(() => {
+    if (conflict) conflict.numero = p.numero || null;
+    p.numero = n;
+    closeAlAction();
+    renderAlistar();
+  }).catch(err => console.error('alChangeNum error:', err));
+}
+
+function alRemove(playerId) {
+  if (!confirm('Quitar a este jugador del equipo?')) return;
+  jugadoresRef.doc(playerId).update({ equipo: 0, numero: null }).then(() => {
+    const p = _alistarPlayers.find(x => x.id === playerId);
+    if (p) { p.equipo = 0; p.numero = null; }
+    closeAlAction();
+    renderAlistar();
+  }).catch(err => console.error('alRemove error:', err));
+}
+
+function startFromAlistar() {
+  const active = _alistarPlayers.filter(p => !p.banca);
+  const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
+  if (unassigned.length > 0) {
+    alert('Hay ' + unassigned.length + ' jugador(es) sin equipo. Volvé a Equipos para asignarlos.');
+    return;
+  }
+  // Use goToOrganizador which handles the final validation and start
+  goToOrganizador();
 }
 
 // ── Util ──────────────────────────────────────────────────────────────────

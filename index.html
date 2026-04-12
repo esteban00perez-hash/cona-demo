@@ -648,8 +648,42 @@
             <div class="panel-empty">Cargando jugadores...</div>
         </div>
         <div class="eq-footer">
-            <button class="eq-go-btn" onclick="goToOrganizador()">Iniciar Mejenga →</button>
+            <button class="eq-go-btn" onclick="navigate('alistar')">Alistar mejenga →</button>
         </div>
+    </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     SCREEN: ALISTAR (pre-game / chalecos)
+════════════════════════════════════════════════════════ -->
+<div id="screen-alistar" class="screen">
+    <div class="panel-wrap">
+        <div class="panel-top">
+            <button class="panel-back" onclick="navigate('equipo')">← Volver</button>
+            <span class="panel-label">Alistar Mejenga</span>
+        </div>
+        <div class="panel-hero">
+            <div class="panel-title">Alistar</div>
+            <div class="panel-sub" id="alistarSubtitle">Repartí chalecos y ajustá lo último antes del kick-off</div>
+        </div>
+        <div class="al-info">Tap en un jugador para swap de número o cambiarlo de equipo</div>
+        <div id="alistarList">
+            <div class="panel-empty">Cargando...</div>
+        </div>
+        <div class="al-footer">
+            <button class="al-start-btn" onclick="startFromAlistar()">Iniciar Mejenga</button>
+        </div>
+    </div>
+</div>
+
+<!-- Alistar: small action menu per player -->
+<div id="alActionBg" class="al-action-bg" onclick="closeAlAction()">
+    <div class="al-action-sheet" onclick="event.stopPropagation()">
+        <div class="al-action-title" id="alActionTitle">Jugador</div>
+        <button class="al-action-btn" id="alActionSwap">Cambiar de equipo</button>
+        <button class="al-action-btn" id="alActionNum">Cambiar número</button>
+        <button class="al-action-btn danger" id="alActionRemove">Quitar del equipo</button>
+        <button class="al-action-cancel" onclick="closeAlAction()">Cancelar</button>
     </div>
 </div>
 
