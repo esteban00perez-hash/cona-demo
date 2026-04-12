@@ -256,18 +256,23 @@ function renderPagosList(players) {
   const list = document.getElementById('pagosList');
   if (!list) return;
 
-  const active = players.filter(p => !p.banca);
-  const banca  = players.filter(p => p.banca);
+  const active    = players.filter(p => !p.banca && !p.retirado);
+  const banca     = players.filter(p => p.banca && !p.retirado);
+  const retirados = players.filter(p => p.retirado);
 
   let html = '';
 
   if (active.length > 0) {
-    html += '<div class="panel-section-label">En lista</div>';
+    html += '<div class="panel-section-label">En lista (' + active.length + ')</div>';
     html += active.map(p => pagosRow(p)).join('');
   }
   if (banca.length > 0) {
-    html += '<div class="panel-section-label">Banca</div>';
+    html += '<div class="panel-section-label">Banca (' + banca.length + ')</div>';
     html += banca.map(p => pagosRow(p)).join('');
+  }
+  if (retirados.length > 0) {
+    html += '<div class="panel-section-label retirados-label">Retirados (' + retirados.length + ')</div>';
+    html += retirados.map(p => retiradoRow(p)).join('');
   }
 
   list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
@@ -281,18 +286,55 @@ function pagosRow(p) {
       <div class="pagos-name">${escapePanel(p.name)}</div>
       <div class="pagos-pos">${pos}</div>
     </div>
-    <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
-            onclick="togglePago('${p.id}', ${paid})">
-      ${paid ? 'Pagado' : 'Pendiente'}
-    </button>
+    <div class="pagos-actions">
+      <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
+              onclick="togglePago('${p.id}', ${paid})">
+        ${paid ? 'Pagado' : 'Pendiente'}
+      </button>
+      <button class="pagos-retirar" onclick="retirarJugador('${p.id}')">Retirar</button>
+    </div>
   </div>`;
+}
+
+function retiradoRow(p) {
+  const pos = p.position === 'portero' ? 'Portero' : 'Jugador';
+  return `<div class="pagos-row retirado-row">
+    <div class="pagos-info">
+      <div class="pagos-name retirado-name">${escapePanel(p.name)}</div>
+      <div class="pagos-pos">${pos} — retirado</div>
+    </div>
+    <button class="pagos-restaurar" onclick="restaurarJugador('${p.id}')">Restaurar</button>
+  </div>`;
+}
+
+function retirarJugador(playerId) {
+  if (!jugadoresRef) return;
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    const p = snap.docs.find(d => d.id === playerId);
+    if (!p) return;
+    const name = p.data().name || 'este jugador';
+    if (!confirm('Retirar a ' + name + ' de la mejenga?')) return;
+    jugadoresRef.doc(playerId).update({
+      retirado: true,
+      retiradoAt: firebase.firestore.FieldValue.serverTimestamp(),
+      equipo: 0,
+      numero: null
+    }).then(() => initPagos());
+  });
+}
+
+function restaurarJugador(playerId) {
+  if (!jugadoresRef) return;
+  jugadoresRef.doc(playerId).update({
+    retirado: false,
+    retiradoAt: null
+  }).then(() => initPagos());
 }
 
 function togglePago(playerId, currentlyPaid) {
   if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
   const newVal = !currentlyPaid;
   jugadoresRef.doc(playerId).update({ paid: newVal }).then(() => {
-    // Re-fetch and re-render
     initPagos();
   }).catch(err => console.error('togglePago error:', err));
 }
@@ -333,7 +375,7 @@ function renderEquipoList(players) {
   const list = document.getElementById('equipoList');
   if (!list) return;
 
-  const active = players.filter(p => !p.banca);
+  const active = players.filter(p => !p.banca && !p.retirado);
   const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
   const negro = active.filter(p => p.equipo === 1);
   const verde = active.filter(p => p.equipo === 2);
@@ -451,7 +493,7 @@ function unassignPlayer(playerId) {
 }
 
 function shareEquipos() {
-  const active = _equipoPlayers.filter(p => !p.banca);
+  const active = _equipoPlayers.filter(p => !p.banca && !p.retirado);
   const negro = active.filter(p => p.equipo === 1);
   const verde = active.filter(p => p.equipo === 2);
   const title = document.getElementById('regSubtitle')?.textContent || 'Mejenga';
@@ -531,7 +573,7 @@ function goToOrganizador() {
 
   jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
     const players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const active = players.filter(p => !p.banca);
+    const active = players.filter(p => !p.banca && !p.retirado);
     const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
 
     if (unassigned.length > 0) {
@@ -577,7 +619,7 @@ function renderAlistar() {
   const list = document.getElementById('alistarList');
   if (!list) return;
 
-  const active = _alistarPlayers.filter(p => !p.banca);
+  const active = _alistarPlayers.filter(p => !p.banca && !p.retirado);
   const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
   const negro = active.filter(p => p.equipo === 1);
   const verde = active.filter(p => p.equipo === 2);
@@ -771,7 +813,7 @@ function alRemove(playerId) {
 }
 
 function startFromAlistar() {
-  const active = _alistarPlayers.filter(p => !p.banca);
+  const active = _alistarPlayers.filter(p => !p.banca && !p.retirado);
   const unassigned = active.filter(p => !p.equipo || (p.equipo !== 1 && p.equipo !== 2));
   if (unassigned.length > 0) {
     alert('Hay ' + unassigned.length + ' jugador(es) sin equipo. Volvé a Equipos para asignarlos.');
