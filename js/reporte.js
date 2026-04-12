@@ -237,8 +237,9 @@ function render(D) {
     $('winner-wrap').innerHTML = '<div class="winner-badge draw">Empate</div>';
   }
 
-  // Pitch
+  // Pitch — clear old player nodes before rendering (SPA re-use fix)
   const pitch = $('pitch');
+  pitch.querySelectorAll('.pn').forEach(n => n.remove());
   const t1p = P.filter(p => p.team === 't1');
   const t2p = P.filter(p => p.team === 't2');
   // MVP = highest ranked player after normalization (rating 10.0)
