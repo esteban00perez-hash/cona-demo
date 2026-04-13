@@ -111,9 +111,10 @@
          * Actualiza los contadores, barras de progreso, y listas visibles.
          */
         function renderUI(players) {
-            const bancaPlayers = players.filter(p => p.banca === true);
-            const porteros     = players.filter(p => p.position === 'portero' && !p.banca);
-            const jugadores    = players.filter(p => p.position === 'jugador'  && !p.banca);
+            const activos      = players.filter(p => !p.retirado);
+            const bancaPlayers = activos.filter(p => p.banca === true);
+            const porteros     = activos.filter(p => p.position === 'portero' && !p.banca);
+            const jugadores    = activos.filter(p => p.position === 'jugador'  && !p.banca);
 
             document.getElementById('porterosCount').textContent  = porteros.length;
             document.getElementById('jugadoresCount').textContent = jugadores.length;
@@ -202,11 +203,10 @@
             }
             listEl.innerHTML = players.map((p, i) => {
                 const confirmed = i < max;
-                const posTag = p.position === 'portero' ? ' <span style="font-size:10px;font-weight:700;color:#fbbf24;background:rgba(251,191,36,.15);padding:1px 6px;border-radius:4px;margin-left:4px">POR</span>' : '';
                 return `<div class="player-item">
                     <div class="player-number ${confirmed ? 'confirmed' : 'waitlist'}">${i + 1}</div>
                     <div class="player-info">
-                        <div class="player-name">${escapeHtml(p.name)}${posTag}</div>
+                        <div class="player-name">${escapeHtml(p.name)}</div>
                     </div>
                     <span class="player-status ${confirmed ? (p.paid ? 'in' : 'pending') : 'wait'}">${confirmed ? (p.paid ? 'Cupo asegurado' : 'Pago pendiente') : 'En espera'}</span>
                 </div>`;
@@ -256,8 +256,8 @@
 
         function updateFormForSelection() {
             if (!selectedPosition) return;
-            const jugadoresActuales = currentPlayers.filter(p => p.position === 'jugador' && !p.banca);
-            const porterosActuales  = currentPlayers.filter(p => p.position === 'portero' && !p.banca);
+            const jugadoresActuales = currentPlayers.filter(p => p.position === 'jugador' && !p.banca && !p.retirado);
+            const porterosActuales  = currentPlayers.filter(p => p.position === 'portero' && !p.banca && !p.retirado);
             const posLlena = selectedPosition === 'jugador'
                 ? jugadoresActuales.length >= MAX_JUGADORES
                 : porterosActuales.length  >= MAX_PORTEROS;
@@ -325,8 +325,8 @@
             btn.disabled = true;
             btn.textContent = 'Guardando...';
 
-            const jugadoresActuales = currentPlayers.filter(p => p.position === 'jugador' && !p.banca);
-            const porterosActuales  = currentPlayers.filter(p => p.position === 'portero' && !p.banca);
+            const jugadoresActuales = currentPlayers.filter(p => p.position === 'jugador' && !p.banca && !p.retirado);
+            const porterosActuales  = currentPlayers.filter(p => p.position === 'portero' && !p.banca && !p.retirado);
             const esBanca = selectedPosition === 'jugador'
                 ? jugadoresActuales.length >= MAX_JUGADORES
                 : porterosActuales.length  >= MAX_PORTEROS;
