@@ -202,19 +202,11 @@
             }
             listEl.innerHTML = players.map((p, i) => {
                 const confirmed = i < max;
-                let timeStr = '';
-                try {
-                    const ts = p.timestamp && typeof p.timestamp.toDate === 'function'
-                        ? p.timestamp.toDate()
-                        : (p.timestamp ? new Date(p.timestamp) : null);
-                    if (ts && !isNaN(ts.getTime())) timeStr = formatTime(ts);
-                } catch(e) { /* skip time display */ }
                 const posTag = p.position === 'portero' ? ' <span style="font-size:10px;font-weight:700;color:#fbbf24;background:rgba(251,191,36,.15);padding:1px 6px;border-radius:4px;margin-left:4px">POR</span>' : '';
                 return `<div class="player-item">
                     <div class="player-number ${confirmed ? 'confirmed' : 'waitlist'}">${i + 1}</div>
                     <div class="player-info">
                         <div class="player-name">${escapeHtml(p.name)}${posTag}</div>
-                        ${timeStr ? '<div class="player-time">' + timeStr + '</div>' : ''}
                     </div>
                     <span class="player-status ${confirmed ? (p.paid ? 'in' : 'pending') : 'wait'}">${confirmed ? (p.paid ? 'Cupo asegurado' : 'Pago pendiente') : 'En espera'}</span>
                 </div>`;
