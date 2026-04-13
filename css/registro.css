@@ -721,11 +721,12 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(167,238,67,0.15);
-            padding: 10px 10px;
-            margin: 0 -20px 12px;
+            padding: 10px 14px 10px 14px;
+            margin: 0 -14px 12px;
             display: flex;
             align-items: center;
             gap: 8px;
+            overflow: visible;
         }
         .org-home-btn {
             flex-shrink: 0;
@@ -822,9 +823,9 @@
             .org-stepper { margin: 0 -80px 20px; }
         }
         /* Registro screen: inject stepper into container padding */
-        #screen-registro .org-stepper { margin: 0 -20px 16px; }
-        @media (min-width: 600px) { #screen-registro .org-stepper { margin: 0 -20px 16px; } }
-        @media (min-width: 900px) { #screen-registro .org-stepper { margin: 0 -20px 20px; } }
+        #screen-registro .org-stepper { margin: 0 -14px 16px; }
+        @media (min-width: 600px) { #screen-registro .org-stepper { margin: 0 -24px 16px; padding-left: 16px; padding-right: 16px; } }
+        @media (min-width: 900px) { #screen-registro .org-stepper { margin: 0 -32px 20px; } }
 
         .panel-wrap {
             width: 100%;
