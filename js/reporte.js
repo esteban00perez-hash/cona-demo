@@ -188,16 +188,20 @@ function render(D) {
     const eliteThreshold = avg * 1.5;
     const elite = sorted.filter(p => p._raw >= eliteThreshold);
     const nonElite = sorted.filter(p => p._raw < eliteThreshold);
-    // Flexible ceiling: 9.4 when no elite, 9.0 when elite exists
-    const CEIL = elite.length > 0 ? 9.0 : 9.4;
+    // Hard ceiling: 9.4 when no elite, 9.0 when elite exists
+    const HARD_CEIL = elite.length > 0 ? 9.0 : 9.4;
     // Normalize non-elite against the best non-elite (or best elite if none)
     const normMax = nonElite.length ? Math.max(...nonElite.map(p=>p._raw)) : sorted[sorted.length-1]._raw;
+    // Non-elite ceiling = raw real del mejor non-elite, capped al hard ceiling.
+    // Evita que el mejor llegue a 9.4 artificialmente cuando su raw no lo amerita.
+    // Se garantiza un techo mínimo de FLOOR+0.5 para no colapsar todos los ratings.
+    const NE_CEIL = Math.min(HARD_CEIL, Math.max(FLOOR + 0.5, normMax));
     const normRange = normMax - rawMin || 1;
     nonElite.forEach(p => {
       const t = Math.pow(Math.min(1, (p._raw - rawMin) / normRange), 0.75);
-      p.rating = FLOOR + t * (CEIL - FLOOR);
+      p.rating = FLOOR + t * (NE_CEIL - FLOOR);
     });
-    // Rate elite: distribute between 9.0 and up
+    // Rate elite: distribute between 9.0 and up (elite sigue usando HARD_CEIL como piso)
     if (elite.length > 0) {
       const best = elite[0];
       const full10 = (best.goals||0) >= 3 && (best.assists||0) >= 3 && (best.defcon||0) >= 3;
@@ -209,7 +213,7 @@ function render(D) {
         const eliteRange = best._raw - eliteMin || 1;
         elite.forEach(p => {
           if (p === best) { p.rating = bestRating; }
-          else { p.rating = CEIL + ((p._raw - eliteMin) / eliteRange) * (bestRating - CEIL); }
+          else { p.rating = HARD_CEIL + ((p._raw - eliteMin) / eliteRange) * (bestRating - HARD_CEIL); }
         });
       }
     }
