@@ -42,12 +42,18 @@
             const horaText = document.getElementById('regHoraText');
             if (horaText && mejengaData.hora) horaText.textContent = mejengaData.hora;
 
-            const horaChip = document.getElementById('regHoraChip');
-            if (horaChip) {
-                const canEdit = !!window.isOrganizer;
-                horaChip.style.cursor = canEdit ? 'pointer' : 'default';
-                horaChip.title = canEdit ? 'Editar hora' : '';
-            }
+            const canEditMeta = !!window.isOrganizer;
+            [
+                ['regHoraChip',   'Editar hora'],
+                ['regFechaChip',  'Editar fecha'],
+                ['regLugarChip',  'Editar lugar'],
+                ['regSubtitle',   'Editar nombre']
+            ].forEach(([elId, tip]) => {
+                const el = document.getElementById(elId);
+                if (!el) return;
+                el.style.cursor = canEditMeta ? 'pointer' : 'default';
+                el.title = canEditMeta ? tip : '';
+            });
 
             // Update spots totals
             const jugTotal = document.getElementById('jugadoresTotalCount');
@@ -443,24 +449,67 @@
             document.getElementById(id)?.addEventListener('input',   e => { e.target.classList.remove('error'); });
         });
 
-        function editHora() {
+        function editMejengaField(field, label, opts) {
             if (!window.isOrganizer) return;
             if (!currentMejengaData || !currentMejengaData.id) return;
-            const current = (currentMejengaData.hora || '').toString();
-            const next = prompt('Editar hora de la mejenga:', current);
+            const current = (currentMejengaData[field] || '').toString();
+            const promptMsg = opts && opts.promptMsg ? opts.promptMsg : ('Editar ' + label + ':');
+            const next = prompt(promptMsg, current);
             if (next === null) return;
             const clean = next.trim();
             if (!clean || clean === current) return;
+            if (opts && typeof opts.validate === 'function' && !opts.validate(clean)) {
+                alert(opts.validateMsg || 'Formato inválido.');
+                return;
+            }
 
             db.collection('mejengas').doc(currentMejengaData.id)
-              .update({ hora: clean })
+              .update({ [field]: clean })
               .then(() => {
-                  currentMejengaData.hora = clean;
-                  const horaText = document.getElementById('regHoraText');
-                  if (horaText) horaText.textContent = clean;
+                  currentMejengaData[field] = clean;
+                  if (opts && typeof opts.onUpdate === 'function') opts.onUpdate(clean);
               })
               .catch(err => {
-                  console.error('editHora error:', err);
-                  alert('No se pudo actualizar la hora.');
+                  console.error('edit' + field + ' error:', err);
+                  alert('No se pudo actualizar el campo ' + label + '.');
               });
+        }
+
+        function editHora() {
+            editMejengaField('hora', 'hora', {
+                onUpdate: v => {
+                    const el = document.getElementById('regHoraText');
+                    if (el) el.textContent = v;
+                }
+            });
+        }
+
+        function editLugar() {
+            editMejengaField('lugar', 'lugar', {
+                onUpdate: v => {
+                    const el = document.getElementById('regLugarText');
+                    if (el) el.textContent = ' ' + v;
+                }
+            });
+        }
+
+        function editNombre() {
+            editMejengaField('nombre', 'nombre', {
+                onUpdate: v => {
+                    const el = document.getElementById('regSubtitle');
+                    if (el) el.textContent = v;
+                }
+            });
+        }
+
+        function editFecha() {
+            editMejengaField('fecha', 'fecha', {
+                promptMsg: 'Editar fecha (formato AAAA-MM-DD):',
+                validate: v => /^\d{4}-\d{2}-\d{2}$/.test(v),
+                validateMsg: 'Usá el formato AAAA-MM-DD (ej: 2026-04-20).',
+                onUpdate: v => {
+                    const el = document.getElementById('regFechaText');
+                    if (el) el.textContent = ' ' + formatFechaReg(v);
+                }
+            });
         }
