@@ -732,6 +732,7 @@
             flex-shrink: 0;
             width: 36px;
             height: 36px;
+            margin-left: 6px;
             border-radius: 10px;
             background: rgba(167,238,67,0.1);
             border: 1px solid rgba(167,238,67,0.25);
