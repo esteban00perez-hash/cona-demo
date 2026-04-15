@@ -39,6 +39,16 @@
             const lugarText = document.getElementById('regLugarText');
             if (lugarText) lugarText.textContent = ' ' + (mejengaData.lugar || '');
 
+            const horaText = document.getElementById('regHoraText');
+            if (horaText && mejengaData.hora) horaText.textContent = mejengaData.hora;
+
+            const horaChip = document.getElementById('regHoraChip');
+            if (horaChip) {
+                const canEdit = !!window.isOrganizer;
+                horaChip.style.cursor = canEdit ? 'pointer' : 'default';
+                horaChip.title = canEdit ? 'Editar hora' : '';
+            }
+
             // Update spots totals
             const jugTotal = document.getElementById('jugadoresTotalCount');
             if (jugTotal) jugTotal.textContent = ' / ' + MAX_JUGADORES;
@@ -432,3 +442,25 @@
             document.getElementById(id)?.addEventListener('keydown', e => { if (e.key === 'Enter') registerPlayer(); });
             document.getElementById(id)?.addEventListener('input',   e => { e.target.classList.remove('error'); });
         });
+
+        function editHora() {
+            if (!window.isOrganizer) return;
+            if (!currentMejengaData || !currentMejengaData.id) return;
+            const current = (currentMejengaData.hora || '').toString();
+            const next = prompt('Editar hora de la mejenga:', current);
+            if (next === null) return;
+            const clean = next.trim();
+            if (!clean || clean === current) return;
+
+            db.collection('mejengas').doc(currentMejengaData.id)
+              .update({ hora: clean })
+              .then(() => {
+                  currentMejengaData.hora = clean;
+                  const horaText = document.getElementById('regHoraText');
+                  if (horaText) horaText.textContent = clean;
+              })
+              .catch(err => {
+                  console.error('editHora error:', err);
+                  alert('No se pudo actualizar la hora.');
+              });
+        }

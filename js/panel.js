@@ -260,15 +260,23 @@ function renderPagosList(players) {
   const banca     = players.filter(p => p.banca && !p.retirado);
   const retirados = players.filter(p => p.retirado);
 
+  const maxJ = (typeof MAX_JUGADORES !== 'undefined' && MAX_JUGADORES) ? MAX_JUGADORES : 12;
+  const maxP = (typeof MAX_PORTEROS  !== 'undefined' && MAX_PORTEROS)  ? MAX_PORTEROS  : 2;
+  const activeJ = active.filter(p => p.position !== 'portero').length;
+  const activeP = active.filter(p => p.position === 'portero').length;
+
   let html = '';
 
   if (active.length > 0) {
     html += '<div class="panel-section-label">En lista (' + active.length + ')</div>';
-    html += active.map(p => pagosRow(p)).join('');
+    html += active.map(p => pagosRow(p, false)).join('');
   }
   if (banca.length > 0) {
     html += '<div class="panel-section-label">Banca (' + banca.length + ')</div>';
-    html += banca.map(p => pagosRow(p)).join('');
+    html += banca.map(p => {
+      const hasSpace = p.position === 'portero' ? activeP < maxP : activeJ < maxJ;
+      return pagosRow(p, true, hasSpace);
+    }).join('');
   }
   if (retirados.length > 0) {
     html += '<div class="panel-section-label retirados-label">Retirados (' + retirados.length + ')</div>';
@@ -278,15 +286,20 @@ function renderPagosList(players) {
   list.innerHTML = html || '<div class="panel-empty">No hay jugadores.</div>';
 }
 
-function pagosRow(p) {
+function pagosRow(p, inBanca, hasSpace) {
   const pos  = p.position === 'portero' ? 'Portero' : 'Jugador';
   const paid = !!p.paid;
+  const meterBtn = inBanca
+    ? `<button class="pagos-meter" ${hasSpace ? '' : 'disabled title="La lista está llena"'}
+               onclick="meterDeBanca('${p.id}')">Meter</button>`
+    : '';
   return `<div class="pagos-row" id="prow-${p.id}">
     <div class="pagos-info">
       <div class="pagos-name">${escapePanel(p.name)}</div>
-      <div class="pagos-pos">${pos}</div>
+      <div class="pagos-pos">${pos}${inBanca ? ' · En banca' : ''}</div>
     </div>
     <div class="pagos-actions">
+      ${meterBtn}
       <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
               onclick="togglePago('${p.id}', ${paid})">
         ${paid ? 'Pagado' : 'Pendiente'}
@@ -296,6 +309,28 @@ function pagosRow(p) {
   </div>`;
 }
 
+function meterDeBanca(playerId) {
+  if (!jugadoresRef) return;
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    const players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const p = players.find(x => x.id === playerId);
+    if (!p) return;
+
+    const maxJ = (typeof MAX_JUGADORES !== 'undefined' && MAX_JUGADORES) ? MAX_JUGADORES : 12;
+    const maxP = (typeof MAX_PORTEROS  !== 'undefined' && MAX_PORTEROS)  ? MAX_PORTEROS  : 2;
+    const active = players.filter(x => !x.banca && !x.retirado);
+    const count  = active.filter(x => x.position === p.position).length;
+    const max    = p.position === 'portero' ? maxP : maxJ;
+
+    if (count >= max) {
+      alert('La lista de ' + (p.position === 'portero' ? 'porteros' : 'jugadores') + ' está llena (' + count + '/' + max + ').');
+      return;
+    }
+
+    jugadoresRef.doc(playerId).update({ banca: false }).then(() => initPagos());
+  });
+}
+
 function retiradoRow(p) {
   const pos = p.position === 'portero' ? 'Portero' : 'Jugador';
   return `<div class="pagos-row retirado-row">
@@ -303,7 +338,10 @@ function retiradoRow(p) {
       <div class="pagos-name retirado-name">${escapePanel(p.name)}</div>
       <div class="pagos-pos">${pos} — retirado</div>
     </div>
-    <button class="pagos-restaurar" onclick="restaurarJugador('${p.id}')">Restaurar</button>
+    <div class="pagos-actions">
+      <button class="pagos-restaurar" onclick="restaurarJugador('${p.id}', 'activo')">A lista</button>
+      <button class="pagos-restaurar-banca" onclick="restaurarJugador('${p.id}', 'banca')">A banca</button>
+    </div>
   </div>`;
 }
 
@@ -323,12 +361,14 @@ function retirarJugador(playerId) {
   });
 }
 
-function restaurarJugador(playerId) {
+function restaurarJugador(playerId, destino) {
   if (!jugadoresRef) return;
-  jugadoresRef.doc(playerId).update({
+  const update = {
     retirado: false,
-    retiradoAt: null
-  }).then(() => initPagos());
+    retiradoAt: null,
+    banca: destino === 'banca'
+  };
+  jugadoresRef.doc(playerId).update(update).then(() => initPagos());
 }
 
 function togglePago(playerId, currentlyPaid) {
