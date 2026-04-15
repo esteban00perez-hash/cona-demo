@@ -420,11 +420,11 @@
 
         <!-- Event Info -->
         <div class="event-section">
-            <div class="event-subtitle" id="regSubtitle">Mejenga</div>
+            <div class="event-subtitle" id="regSubtitle" onclick="editNombre()">Mejenga</div>
             <h1 class="event-title">Cona <span>Fut7</span></h1>
             <div class="event-details">
-                <span class="detail-chip"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2.5" y="3" width="11" height="10.5" rx="1.5"/><path d="M5.5 1.5v3M10.5 1.5v3M2.5 7h11"/></svg><span id="regFechaText"> &mdash;</span></span>
-                <span class="detail-chip"><svg width="10" height="12" viewBox="0 0 12 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 1.5C3.515 1.5 1.5 3.515 1.5 6c0 3.5 4.5 8 4.5 8s4.5-4.5 4.5-8C10.5 3.515 8.485 1.5 6 1.5z" stroke-linejoin="round"/><circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none"/></svg><span id="regLugarText"> &mdash;</span></span>
+                <span class="detail-chip" id="regFechaChip" onclick="editFecha()"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2.5" y="3" width="11" height="10.5" rx="1.5"/><path d="M5.5 1.5v3M10.5 1.5v3M2.5 7h11"/></svg><span id="regFechaText"> &mdash;</span></span>
+                <span class="detail-chip" id="regLugarChip" onclick="editLugar()"><svg width="10" height="12" viewBox="0 0 12 15" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 1.5C3.515 1.5 1.5 3.515 1.5 6c0 3.5 4.5 8 4.5 8s4.5-4.5 4.5-8C10.5 3.515 8.485 1.5 6 1.5z" stroke-linejoin="round"/><circle cx="6" cy="6" r="1.5" fill="currentColor" stroke="none"/></svg><span id="regLugarText"> &mdash;</span></span>
                 <span class="detail-chip"><svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="8" cy="8" r="6.5"/><path d="M8 4.5 5.5 7l1.5 3h2l1.5-3L8 4.5z" stroke-width="1.2" stroke-linejoin="round"/><path d="M5.5 7 3 6M10.5 7l2.5-1M7 10l-1.5 2.5M9 10l1.5 2.5" stroke-linecap="round" stroke-width="1"/></svg> 7 vs 7</span>
                 <span class="detail-chip" id="regHoraChip" onclick="editHora()"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="8" cy="8" r="6.5"/><path d="M8 5v3.5l2.5 2"/></svg> <span id="regHoraText">7:00 &ndash; 9:00 PM</span></span>
                 <span class="detail-chip"><svg width="11" height="12" viewBox="0 0 13 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="6.5" cy="5" r="2.8"/><path d="M1 14c0-3.038 2.462-5.5 5.5-5.5S12 10.962 12 14"/></svg> Org: Equipo Cona</span>
