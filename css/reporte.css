@@ -197,7 +197,7 @@ details[open] summary::after{transform:rotate(180deg)}
 .mvp-stat{display:flex;flex-direction:column;align-items:center;gap:4px}
 .mvp-stat svg{width:18px;height:18px}
 .mvp-stat-v{font-size:16px;font-weight:800}
-.mvp-stat-l{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.06em}
+.mvp-stat-l{font-size:8px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.06em;max-width:72px;text-align:center;line-height:1.25}
 .mvp-reason{font-size:12px;color:rgba(255,255,255,.55);font-weight:600;margin-top:4px;line-height:1.5}
 
 /* Player popup */

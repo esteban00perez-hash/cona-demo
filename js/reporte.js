@@ -456,12 +456,13 @@ function render(D) {
     const onWinner = winTeam && m.team === winTeam;
 
     const mvpStats = [
-      {k:'goals',    l:'Goles',       ic:IC.goal},
-      {k:'assists',  l:'Asistencias', ic:IC.assist},
-      {k:'defcon',   l:'DEF CON',     ic:IC.defcon},
-      {k:'salvadas', l:'Salvadas',    ic:IC.shield},
-      {k:'saves',    l:'Tapadas',     ic:IC.glove}
-    ].map(s => `<div class="mvp-stat">${s.ic}<div class="mvp-stat-v">${m[s.k]||0}</div><div class="mvp-stat-l">${s.l}</div></div>`).join('');
+      {k:'goals',    l:'Goles',                    ic:IC.goal},
+      {k:'assists',  l:'Asistencias',              ic:IC.assist},
+      {k:'defcon',   l:'Contribuciones defensivas',ic:IC.defcon},
+      {k:'salvadas', l:'Salvadas',                 ic:IC.shield},
+      {k:'saves',    l:'Tapadas',                  ic:IC.glove}
+    ].filter(s => (m[s.k]||0) > 0)
+     .map(s => `<div class="mvp-stat">${s.ic}<div class="mvp-stat-v">${m[s.k]}</div><div class="mvp-stat-l">${s.l}</div></div>`).join('');
 
     const videoBase = location.href.replace(/\/[^\/]*$/,'/');
     $('mvp-section').innerHTML = `
