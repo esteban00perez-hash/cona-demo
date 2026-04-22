@@ -66,7 +66,7 @@
 .pn.t1 .bl{background:rgba(20,20,25,.92);border:2.5px solid rgba(255,255,255,.5);color:#fff}
 .pn.t2 .bl{background:var(--g);border:2.5px solid rgba(120,200,30,.6);color:var(--ver-c)}
 .pn.por .bl{border-style:dashed}
-.pn.mvp .bl{border-color:#fbbf24;box-shadow:0 0 18px rgba(251,191,36,.45),0 4px 14px rgba(0,0,0,.6)}
+.pn.mvp .bl{background:linear-gradient(145deg,#fbbf24,#f59e0b);border-color:#fbbf24;color:#0a1a10;box-shadow:0 0 20px rgba(251,191,36,.55),0 4px 14px rgba(0,0,0,.6)}
 .pn .lb{font-size:8px;font-weight:700;color:rgba(255,255,255,.8);margin-top:3px;text-shadow:0 1px 4px rgba(0,0,0,.9);max-width:65px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pn .rating{position:absolute;top:-9px;left:50%;transform:translateX(-50%);font-size:9px;font-weight:800;padding:2px 6px;border-radius:20px;line-height:1.3;white-space:nowrap;z-index:7}
 .pn .rating.mvp{background:#fbbf24;color:#0a1a10}
