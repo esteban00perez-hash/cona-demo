@@ -252,6 +252,18 @@ function initPagos() {
   });
 }
 
+// Refresh en el mismo lugar, sin resetear scroll ni pasar por "Cargando...".
+// Usar despues de toggles/acciones cuando ya estamos en la pagina renderizada.
+function refreshPagos() {
+  if (typeof jugadoresRef === 'undefined' || !jugadoresRef) return;
+  const y = window.scrollY;
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    if (snap.empty) return;
+    renderPagosList(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    window.scrollTo(0, y);
+  }).catch(err => console.error('refreshPagos error:', err));
+}
+
 function renderPagosList(players) {
   const list = document.getElementById('pagosList');
   if (!list) return;
@@ -333,7 +345,7 @@ function togglePosicion(playerId) {
       }
     }
 
-    jugadoresRef.doc(playerId).update({ position: newPos }).then(() => initPagos());
+    jugadoresRef.doc(playerId).update({ position: newPos }).then(() => refreshPagos());
   }).catch(err => {
     console.error('togglePosicion error:', err);
     alert('No se pudo cambiar la posición.');
@@ -356,7 +368,7 @@ function editJugadorNombre(playerId) {
         alert('Ya hay un jugador activo con ese nombre.');
         return;
       }
-      jugadoresRef.doc(playerId).update({ name: clean }).then(() => initPagos());
+      jugadoresRef.doc(playerId).update({ name: clean }).then(() => refreshPagos());
     });
   }).catch(err => {
     console.error('editJugadorNombre error:', err);
@@ -382,7 +394,7 @@ function meterDeBanca(playerId) {
       return;
     }
 
-    jugadoresRef.doc(playerId).update({ banca: false }).then(() => initPagos());
+    jugadoresRef.doc(playerId).update({ banca: false }).then(() => refreshPagos());
   });
 }
 
@@ -412,7 +424,7 @@ function retirarJugador(playerId) {
       retiradoAt: firebase.firestore.FieldValue.serverTimestamp(),
       equipo: 0,
       numero: null
-    }).then(() => initPagos());
+    }).then(() => refreshPagos());
   });
 }
 
@@ -423,7 +435,7 @@ function restaurarJugador(playerId, destino) {
     retiradoAt: null,
     banca: destino === 'banca'
   };
-  jugadoresRef.doc(playerId).update(update).then(() => initPagos());
+  jugadoresRef.doc(playerId).update(update).then(() => refreshPagos());
 }
 
 function togglePago(playerId, currentlyPaid) {
