@@ -961,6 +961,21 @@
             letter-spacing: 0.03em;
         }
         .pagos-meter:active { background: rgba(167,238,67,0.22); }
+        .pagos-pos-toggle {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: rgba(88,166,255,0.1);
+            border: 1px solid rgba(88,166,255,0.3);
+            color: #58a6ff;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            -webkit-appearance: none;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }
+        .pagos-pos-toggle:active { background: rgba(88,166,255,0.2); }
         .pagos-meter:disabled {
             cursor: not-allowed;
             opacity: 0.35;

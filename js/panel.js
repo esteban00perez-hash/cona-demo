@@ -289,6 +289,7 @@ function renderPagosList(players) {
 function pagosRow(p, inBanca, hasSpace) {
   const pos  = p.position === 'portero' ? 'Portero' : 'Jugador';
   const paid = !!p.paid;
+  const nextPosLabel = p.position === 'portero' ? 'Jugador' : 'Portero';
   const meterBtn = inBanca
     ? `<button class="pagos-meter" ${hasSpace ? '' : 'disabled title="La lista está llena"'}
                onclick="meterDeBanca('${p.id}')">Meter</button>`
@@ -300,6 +301,7 @@ function pagosRow(p, inBanca, hasSpace) {
     </div>
     <div class="pagos-actions">
       ${meterBtn}
+      <button class="pagos-pos-toggle" onclick="togglePosicion('${p.id}')" title="Cambiar a ${nextPosLabel.toLowerCase()}">→ ${nextPosLabel}</button>
       <button class="pagos-toggle ${paid ? 'paid' : 'unpaid'}"
               onclick="togglePago('${p.id}', ${paid})">
         ${paid ? 'Pagado' : 'Pendiente'}
@@ -307,6 +309,35 @@ function pagosRow(p, inBanca, hasSpace) {
       <button class="pagos-retirar" onclick="retirarJugador('${p.id}')">Retirar</button>
     </div>
   </div>`;
+}
+
+function togglePosicion(playerId) {
+  if (!jugadoresRef) return;
+  jugadoresRef.orderBy('timestamp', 'asc').get().then(snap => {
+    const players = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const p = players.find(x => x.id === playerId);
+    if (!p) return;
+
+    const newPos = p.position === 'portero' ? 'jugador' : 'portero';
+
+    // Si el jugador está activo (no en banca), validar espacio en la nueva posición
+    if (!p.banca && !p.retirado) {
+      const maxJ = (typeof MAX_JUGADORES !== 'undefined' && MAX_JUGADORES) ? MAX_JUGADORES : 12;
+      const maxP = (typeof MAX_PORTEROS  !== 'undefined' && MAX_PORTEROS)  ? MAX_PORTEROS  : 2;
+      const active = players.filter(x => !x.banca && !x.retirado && x.id !== playerId);
+      const count  = active.filter(x => x.position === newPos).length;
+      const max    = newPos === 'portero' ? maxP : maxJ;
+      if (count >= max) {
+        alert('La lista de ' + (newPos === 'portero' ? 'porteros' : 'jugadores') + ' está llena (' + count + '/' + max + '). Retirá o baneá a alguien primero.');
+        return;
+      }
+    }
+
+    jugadoresRef.doc(playerId).update({ position: newPos }).then(() => initPagos());
+  }).catch(err => {
+    console.error('togglePosicion error:', err);
+    alert('No se pudo cambiar la posición.');
+  });
 }
 
 function editJugadorNombre(playerId) {
