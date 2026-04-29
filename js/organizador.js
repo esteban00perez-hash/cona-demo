@@ -332,11 +332,11 @@ function drawEvent(){
   h+='<button class="ve-btn tir" onclick="evPick(\'shotOff\')">'+I.shotOff+'<span>T. FUERA</span></button>';
   h+='<button class="ve-btn pal" onclick="evPick(\'post\')">'+I.post+'<span>PALO</span></button>';
   h+='<button class="ve-btn flt" onclick="evPick(\'falta\')">'+I.falta+'<span>FALTA</span></button>';
-  h+='<button class="ve-btn def" onclick="evPick(\'defcon\')">'+I.defcon+'<span>DEF CON</span></button>';
+  h+='<button class="ve-btn def" onclick="evPick(\'defcon\')">'+I.defcon+'<span>CONT. DEF.</span></button>';
   h+='</div>';
   el.innerHTML=h;
 }
-function evLabel(t){return {goal:'Gol',save:'Tapada',shotOff:'Tiro Fuera',post:'Palo',falta:'Falta',defcon:'DEF CON'}[t]||t;}
+function evLabel(t){return {goal:'Gol',save:'Tapada',shotOff:'Tiro Fuera',post:'Palo',falta:'Falta',defcon:'Cont. Def.'}[t]||t;}
 function evPick(type){
   _evPending=type;
   const evColors={goal:'var(--g)',save:'#fbbf24',shotOff:'var(--w7)',post:'#ffa500',falta:'#ff6b6b',defcon:'#58a6ff'};
@@ -390,7 +390,7 @@ function node(p,xy){
 let _lpTimer=null,_lpFired=false,_lpBarTimer=null,_lpFillInterval=null,_lpMidVib=null,_lpBarShown=false;
 function showLpBar(p,circleOnly){
   const bar=document.getElementById('lpBar'),info=document.getElementById('lpInfo'),fill=document.getElementById('lpFill');
-  const isPor=p.por;const label=isPor?'TAPADA':'DEF CON';const color=isPor?'#fbbf24':'#58a6ff';
+  const isPor=p.por;const label=isPor?'TAPADA':'Cont. Def.';const color=isPor?'#fbbf24':'#58a6ff';
   if(!circleOnly){info.textContent='#'+p.num+' '+p.name.split(' ')[0]+' — '+label;info.style.color=color;fill.style.background=color;fill.style.width='0%';bar.classList.add('on');}
   const cc=document.getElementById('ccCircle'),ccF=document.getElementById('ccFill');
   if(cc&&ccF&&_viewMode==='field'){cc.classList.add('filling');cc.style.color=color;ccF.style.background=color;ccF.style.height='0%';
@@ -426,7 +426,7 @@ function lpStart(id,e){
   _lpMidVib=setTimeout(()=>{if(navigator.vibrate)navigator.vibrate(10);},750);
   _lpTimer=setTimeout(()=>{_lpFired=true;cleanupPressing();const p=P.find(x=>x.id===id);if(!p)return;
     if(p.por){p.saves=(p.saves||0)+1;addEv('saves',p);_lastAction={pid:p.id,stat:'saves',delta:1,evIndex:EV.length-1};updSc();draw();saveState();saveP=p;showShooter(p);if(navigator.vibrate)navigator.vibrate([30,40,30]);}
-    else{p.defcon=(p.defcon||0)+1;addEv('defcon',p);_lastAction={pid:p.id,stat:'defcon',delta:1,evIndex:EV.length-1};updSc();draw();saveState();show(p.name.split(' ')[0]+' +1 DEF CON',true);if(navigator.vibrate)navigator.vibrate([30,40,30]);}
+    else{p.defcon=(p.defcon||0)+1;addEv('defcon',p);_lastAction={pid:p.id,stat:'defcon',delta:1,evIndex:EV.length-1};updSc();draw();saveState();show(p.name.split(' ')[0]+' +1 Cont. Defensiva',true);if(navigator.vibrate)navigator.vibrate([30,40,30]);}
   },1500);
 }
 function lpEnd(e){
@@ -464,9 +464,9 @@ function buildPop(p){
   const totalOff=(p.shotsOffError||0)+(p.shotsOffNeutral||0)+(p.shotsOffGood||0);
   const shotOffBtn='<div class="sc tir"><div class="sc-top"><span class="sc-ico">'+I.shotOff+'</span><span class="sc-lb">T. Fuera</span></div><div class="sc-row"><button class="sc-btn mn" onclick="undoShotOff()">-</button><div class="sc-v">'+totalOff+'</div><button class="sc-btn" onclick="doShotType(\'neutral\')">+</button></div></div>';
   if(p.por){
-    h+=sc('saves',I.save,'Tapadas','tap',p.saves,true);h+=secAtk;h+='<div class="sg">';h+=sc('goals',I.goal,'Goles','gol',p.goals);h+=shotOffBtn;h+=sc('posts',I.post,'Palo','pst',p.posts);h+='</div>';h+=secDef;h+='<div class="sg">';h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas,false,'En la linea, sin ella es gol');h+=sc('defcon',I.defcon,'DEF CON','sal',p.defcon||0,false,'Buena accion defensiva');h+='</div>';h+=sc('faltas',I.falta||I.autogoal,'Faltas','pst',p.faltas||0);h+=ogCounter(p,ogIco);
+    h+=sc('saves',I.save,'Tapadas','tap',p.saves,true);h+=secAtk;h+='<div class="sg">';h+=sc('goals',I.goal,'Goles','gol',p.goals);h+=shotOffBtn;h+=sc('posts',I.post,'Palo','pst',p.posts);h+='</div>';h+=secDef;h+='<div class="sg">';h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas,false,'En la linea, sin ella es gol');h+=sc('defcon',I.defcon,'Cont. Def.','sal',p.defcon||0,false,'Contribucion defensiva');h+='</div>';h+=sc('faltas',I.falta||I.autogoal,'Faltas','pst',p.faltas||0);h+=ogCounter(p,ogIco);
   }else{
-    h+=sc('goals',I.goal,'Goles','gol',p.goals,true);h+=secAtk;h+='<div class="sg">';h+=shotOffBtn;h+=sc('posts',I.post,'Palo','pst',p.posts);h+='</div>';h+=secDef;h+='<div class="sg">';h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas,false,'En la linea, sin ella es gol');h+=sc('defcon',I.defcon,'DEF CON','sal',p.defcon||0,false,'Buena accion defensiva');h+='</div>';h+=sc('faltas',I.falta||I.autogoal,'Faltas','pst',p.faltas||0);h+=ogCounter(p,ogIco);
+    h+=sc('goals',I.goal,'Goles','gol',p.goals,true);h+=secAtk;h+='<div class="sg">';h+=shotOffBtn;h+=sc('posts',I.post,'Palo','pst',p.posts);h+='</div>';h+=secDef;h+='<div class="sg">';h+=sc('salvadas',I.salvada,'Salvada Clave','sal',p.salvadas,false,'En la linea, sin ella es gol');h+=sc('defcon',I.defcon,'Cont. Def.','sal',p.defcon||0,false,'Contribucion defensiva');h+='</div>';h+=sc('faltas',I.falta||I.autogoal,'Faltas','pst',p.faltas||0);h+=ogCounter(p,ogIco);
   }
   const benchLabel=p.bench?'Meter al campo':'Sacar a banca';
   h+='<button class="bench-btn" onclick="toggleBench(\''+p.id+'\')">'+(p.bench?'&#9650; ':'&#9660; ')+benchLabel+'</button>';
@@ -705,7 +705,7 @@ function openTabla(){
   h+='<div class="tb-card"><div class="tb-big"><div class="tb-big-side"><div class="tb-big-dot t1">N</div><div class="tb-big-name">Negro</div></div><div class="tb-big-sc t1">'+g1+'</div><div class="tb-big-sep">-</div><div class="tb-big-sc t2">'+g2+'</div><div class="tb-big-side"><div class="tb-big-dot t2">V</div><div class="tb-big-name">Verde</div></div></div>';
   h+='<div class="tb-bar"><div class="tb-bar-bl t1" style="width:'+gP1+'%"></div><div class="tb-bar-bl t2" style="width:'+(100-gP1)+'%"></div></div></div>';
   h+='<div class="tb-card"><div class="tb-card-title">Estadisticas</div>';
-  h+=sRow(g1,g2,'Goles')+sRow(t1shots,t2shots,'Tiros totales')+sRow(t1onT,t2onT,'Tiros al arco')+sRow(t1off,t2off,'Tiros afuera')+sRow(t1posts,t2posts,'Palos')+sRow(t1saves,t2saves,'Tapadas')+sRow(t1ast,t2ast,'Asistencias')+sRow(t1salv,t2salv,'Salvadas Clave')+sRow(t1def,t2def,'DEF CON')+'</div>';
+  h+=sRow(g1,g2,'Goles')+sRow(t1shots,t2shots,'Tiros totales')+sRow(t1onT,t2onT,'Tiros al arco')+sRow(t1off,t2off,'Tiros afuera')+sRow(t1posts,t2posts,'Palos')+sRow(t1saves,t2saves,'Tapadas')+sRow(t1ast,t2ast,'Asistencias')+sRow(t1salv,t2salv,'Salvadas Clave')+sRow(t1def,t2def,'Cont. Def.')+'</div>';
   h+='<div class="tb-div"><div class="tb-div-line"></div><span class="tb-div-lb">Individuales</span><div class="tb-div-line"></div></div>';
   const scorers=P.filter(p=>p.goals>0).sort((a,b)=>b.goals-a.goals);const assisters=P.filter(p=>p.assists>0).sort((a,b)=>b.assists-a.assists);const savers=P.filter(p=>p.saves>0).sort((a,b)=>b.saves-a.saves);const salvadores=P.filter(p=>p.salvadas>0).sort((a,b)=>b.salvadas-a.salvadas);
   if(scorers.length||assisters.length||savers.length||salvadores.length){h+='<div class="tb-card">';if(scorers.length)h+=tbSection(I.goal,'Goleadores','gol',scorers,p=>p.goals);if(assisters.length)h+=tbSection(I.assist,'Asistidores','ast',assisters,p=>p.assists);if(savers.length)h+=tbSection(I.save,'Tapadas','tap',savers,p=>p.saves);if(salvadores.length)h+=tbSection(I.salvada,'Salvadas Clave','sal',salvadores,p=>p.salvadas);h+='</div>';}
@@ -804,8 +804,9 @@ function calcRatings(){
   if(!P||P.length===0){MVP=null;return;}
   const g1=teamScore('t1'),g2=teamScore('t2');const totalGoals=g1+g2;const winTeam=g1>g2?'t1':g2>g1?'t2':null;const conceded={t1:g2,t2:g1};
   P.forEach(p=>{let r=6.0;r+=(p.goals||0)*0.8;r+=(p.assists||0)*0.5;
-    // DEFCON bonus escalonado: +0.8 desde 8, +0.8 extra desde 15.
-    if((p.defcon||0)>=15)r+=1.6;else if((p.defcon||0)>=8)r+=0.8;
+    // Contribuciones defensivas: +0.10 por cada una, capeado a 15 (max +1.50).
+    // SYNC: misma fórmula en js/reporte.js normalizeRatings y en el breakdown del popup.
+    r+=Math.min(p.defcon||0,15)*0.10;
     r+=(p.salvadas||0)*0.35;r+=(p.por?(p.saves||0)*0.2:0);if(p.por)r+=(conceded[p.team]||0)*(-0.2);if(!p.por)r+=(conceded[p.team]||0)*(-0.05);
     r+=(p.shotsOn||0)*0.1;r+=(p.posts||0)*0.05;r+=(p.autogoals||0)*(-1.0);if(winTeam&&p.team===winTeam)r+=0.5;p._raw=r;
   });
@@ -867,8 +868,8 @@ function discardState(){
 function openHelp(){
   const bd=document.getElementById('helpBd');let h='';
   h+='<div class="hc"><div class="hc-ti atk">Como registrar</div>';
-  if(_viewMode==='field'){h+='<div class="hi"><span class="hi-g">Tap</span><span>Abre el panel de estadisticas del jugador.</span></div>';h+='<div class="hi"><span class="hi-g">Double-tap</span><span>Registra un gol directo y pregunta quien asistio.</span></div>';h+='<div class="hi"><span class="hi-g">Mantener 1.5s</span><span>Suma DEF CON (jugador de campo) o Tapada (portero). El circulo central se llena como indicador.</span></div>';}
-  else if(_viewMode==='list'||_viewMode==='grid'){h+='<div class="hi"><span class="hi-g">Tap</span><span>Abre el panel de estadisticas del jugador.</span></div>';h+='<div class="hi"><span class="hi-g">Mantener 1.5s</span><span>Suma DEF CON (jugador de campo) o Tapada (portero). La barra de progreso se llena arriba.</span></div>';}
+  if(_viewMode==='field'){h+='<div class="hi"><span class="hi-g">Tap</span><span>Abre el panel de estadisticas del jugador.</span></div>';h+='<div class="hi"><span class="hi-g">Double-tap</span><span>Registra un gol directo y pregunta quien asistio.</span></div>';h+='<div class="hi"><span class="hi-g">Mantener 1.5s</span><span>Suma Cont. Def. (jugador de campo) o Tapada (portero). El circulo central se llena como indicador.</span></div>';}
+  else if(_viewMode==='list'||_viewMode==='grid'){h+='<div class="hi"><span class="hi-g">Tap</span><span>Abre el panel de estadisticas del jugador.</span></div>';h+='<div class="hi"><span class="hi-g">Mantener 1.5s</span><span>Suma Cont. Def. (jugador de campo) o Tapada (portero). La barra de progreso se llena arriba.</span></div>';}
   else{h+='<div class="hi"><span class="hi-g">Paso 1</span><span>Selecciona que paso: gol, tapada, tiro fuera, etc.</span></div>';h+='<div class="hi"><span class="hi-g">Paso 2</span><span>Selecciona quien lo hizo.</span></div>';}
   h+='</div>';
   h+='<div class="hc"><div class="hc-ti info">Se registra automaticamente</div>';h+='<div class="hi"><span class="hi-g">Tiro a puerta</span><span>No se registra por separado. Cuando el portero hace una tapada, se pregunta quien tiro. Eso ya cuenta como tiro a puerta.</span></div>';h+='<div class="hi"><span class="hi-g">Asistencia</span><span>Se pregunta automaticamente al registrar un gol o autogol. No hay que anotarla aparte.</span></div></div>';
@@ -883,7 +884,7 @@ const OB_SLIDES=[
   {ico:'goal',title:'Bienvenido, Organizador',desc:'Esta es tu herramienta para registrar todo lo que pasa en la mejenga. Aca te explicamos como usarla.'},
   {ico:'assist',title:'Tap = Panel de Stats',desc:'Toca cualquier jugador para abrir su panel de estadisticas. Desde ahi podes sumar goles, tiros, palos, faltas y mas.',key:'Tap rapido'},
   {ico:'goal',title:'Double-Tap = Gol',desc:'Dos toques rapidos sobre un jugador registran un gol directo. Despues se te pregunta quien asistio.',key:'Solo en vista Cancha'},
-  {ico:'defcon',title:'Mantener = DEF CON',desc:'Mantene presionado a un jugador por 1.5 segundos para sumar un DEF CON. Si es portero, se suma una tapada y se pregunta quien tiro.',key:'El circulo central se llena'},
+  {ico:'defcon',title:'Mantener = Contribucion Defensiva',desc:'Mantene presionado a un jugador por 1.5 segundos para sumar una contribucion defensiva. Si es portero, se suma una tapada y se pregunta quien tiro.',key:'El circulo central se llena'},
   {ico:'save',title:'Tiros a puerta',desc:'No se registran por separado. Cuando el portero hace una tapada, se pregunta quien tiro. Eso ya cuenta como tiro a puerta automaticamente.',key:'Automatico'},
   {ico:'goal',title:'Listo para registrar!',desc:'Si tenes dudas, toca el boton ? arriba a la derecha para ver el manual completo. Podes cambiar de vista en cualquier momento.'}
 ];

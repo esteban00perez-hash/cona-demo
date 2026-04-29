@@ -63,8 +63,7 @@ td:last-child{font-weight:800;text-align:right}
     <tr><td>Equipo ganador</td><td class="pos">+0.50</td></tr>
     <tr><td>Salvada clave</td><td class="pos">+0.35</td></tr>
     <tr><td>Atajada (POR)</td><td class="pos">+0.20</td></tr>
-    <tr><td>Bonus DEF CON (8+)</td><td class="pos">+0.80</td></tr>
-    <tr><td>Bonus DEF CON (15+)</td><td class="pos">+1.60</td></tr>
+    <tr><td>Contribucion defensiva</td><td class="pos">+0.10 (cap 15 = +1.50)</td></tr>
     <tr><td>Tiro al arco</td><td class="pos">+0.10</td></tr>
     <tr><td>Palo</td><td class="pos">+0.05</td></tr>
     <tr><td>Tiro afuera</td><td>0.00</td></tr>
@@ -77,20 +76,19 @@ td:last-child{font-weight:800;text-align:right}
 </div>
 <p style="font-size:10px;color:var(--w4);margin-top:8px">Todas las acciones son individuales — solo afectan al jugador que las hizo. Las marcadas con (POR) aplican unicamente a porteros.</p>
 
-<h3>Bonus por consistencia defensiva</h3>
-<p>Los DEF CONs individuales no suman solos — el bonus se gana acumulando varios en la misma mejenga. Premia la consistencia defensiva, no una accion aislada:</p>
+<h3>Contribuciones defensivas</h3>
+<p>Cada contribucion defensiva (corte, marca, cobertura, presion sostenida) suma <strong>+0.10</strong> al puntaje raw. Premia la consistencia: cuantas mas hagas, mas suman.</p>
 <ul>
-  <li><strong>8+ DEF CONs:</strong> +0.80 bonus</li>
-  <li><strong>15+ DEF CONs:</strong> +1.60 bonus (reemplaza el de 8)</li>
+  <li><strong>Cap a las 15:</strong> a partir de la contribucion 16 ya no suma mas (max +1.50).</li>
 </ul>
-<p>Ejemplo: un jugador con 15 DEF CONs recibe <strong>+1.60 puntos</strong>, comparable a 2 goles.</p>
+<p>Ejemplo: 8 contribuciones = +0.80 puntos. 15 o mas = +1.50 puntos (comparable a casi 2 goles).</p>
 
 <p>El resultado es el <strong>puntaje raw</strong> de cada jugador. Este numero captura exactamente lo que hiciste en la cancha.</p>
 
 <div class="example">
   <div class="example-title">Ejemplo</div>
-  <p>Messi: 3 goles (2.4) + 2 asistencias (1.0) + equipo ganador (0.5) + 10 DEF CONs (+0.80 bonus) + tiros = <strong>raw ~10.0</strong></p>
-  <p style="margin-top:4px">Marcel Hernandez: 0 goles + 0 asistencias + 3 DEF CONs (sin bonus) + goles recibidos = <strong>raw ~5.8</strong></p>
+  <p>Messi: 3 goles (2.4) + 2 asistencias (1.0) + equipo ganador (0.5) + 10 contribuciones defensivas (+1.0) + tiros = <strong>raw ~10.5</strong></p>
+  <p style="margin-top:4px">Marcel Hernandez: 0 goles + 0 asistencias + 3 contribuciones defensivas (+0.30) + goles recibidos = <strong>raw ~6.1</strong></p>
 </div>
 
 <h2>2. Factor Cona (Normalizacion)</h2>

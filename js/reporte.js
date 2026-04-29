@@ -164,9 +164,9 @@ function render(D) {
       let r = 6.0;
       r += (p.goals||0)*0.8;
       r += (p.assists||0)*0.5;
-      // DEFCON bonus escalonado: +0.8 a partir de 8, +0.8 extra a partir de 15.
-      if((p.defcon||0)>=15)r+=1.6;
-      else if((p.defcon||0)>=8)r+=0.8;
+      // Contribuciones defensivas: +0.10 por cada una, capeado a 15 (max +1.50).
+      // SYNC: misma fórmula en js/organizador.js calcRatings y en el breakdown del popup más abajo.
+      r += Math.min(p.defcon||0, 15) * 0.10;
       r += (p.salvadas||0)*0.35;
       r += (p.por ? (p.saves||0)*0.2 : 0);
       if (p.por) r += (conceded[p.team]||0)*(-0.2);
@@ -331,7 +331,7 @@ function render(D) {
     { label:'Palos', key:'posts' },
     { label:'Tapadas (POR)', key:'saves' },
     { label:'Asistencias', key:'assists' },
-    { label:'Def Cons', key:'defcon' }
+    { label:'Contribuciones Defensivas', key:'defcon' }
   ];
   // Faltas solo aparecen si alguien anotó al menos una en la mejenga
   if (P.some(x => (x.faltas||0) > 0)) statDefs.push({ label:'Faltas', key:'faltas' });
@@ -527,7 +527,7 @@ function openPP(id) {
   const faltasChip = hasFaltas ? [{k:'faltas',l:'Faltas',c:'tap'}] : [];
   const stats = p.por
     ? [{k:'saves',l:'Tapadas',c:'tap'},{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOffError',l:'TF Error',c:'ag'},{k:'shotsOffNeutral',l:'TF Neutro',c:'tir'},{k:'shotsOffGood',l:'TF Buen tiro',c:'gol'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip]
-    : [{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'defcon',l:'DEF CON',c:'sal'},{k:'salvadas',l:'Salvada Clave',c:'sal'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOffError',l:'TF Error',c:'ag'},{k:'shotsOffNeutral',l:'TF Neutro',c:'tir'},{k:'shotsOffGood',l:'TF Buen tiro',c:'gol'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip];
+    : [{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'defcon',l:'Contribuciones Defensivas',c:'sal'},{k:'salvadas',l:'Salvada Clave',c:'sal'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOffError',l:'TF Error',c:'ag'},{k:'shotsOffNeutral',l:'TF Neutro',c:'tir'},{k:'shotsOffGood',l:'TF Buen tiro',c:'gol'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip];
   const icons = {
     goals: IC.goal, assists: IC.assist, saves: IC.glove, salvadas: IC.shield, defcon: IC.defcon,
     shotsOn: IC.shotOn, shotsOffError: IC.tfError, shotsOffNeutral: IC.tfNeutral, shotsOffGood: IC.tfGood, posts: IC.post, autogoals: IC.autogoal,
@@ -556,9 +556,10 @@ function openPP(id) {
   if (p.por && gc) lines.push({l:'Goles recibidos (GK)', stat:'x'+gc, pts:gc*(-0.2)});
   if (!p.por && gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.05)});
   if (p.defcon) {
-    const defBonus = p.defcon>=15 ? 1.6 : p.defcon>=8 ? 0.8 : 0;
-    const thr = p.defcon>=15 ? 15 : 8;
-    lines.push({l:'DEF CON' + (defBonus ? ' (≥'+thr+')' : ''), stat:'x'+p.defcon, pts:defBonus});
+    const cappedDef = Math.min(p.defcon, 15);
+    const defBonus = cappedDef * 0.10;
+    const lbl = p.defcon > 15 ? 'Contribuciones Defensivas (cap 15)' : 'Contribuciones Defensivas';
+    lines.push({l:lbl, stat:'x'+p.defcon, pts:defBonus});
   }
   if (p.salvadas) lines.push({l:'Salvadas Clave', stat:'x'+p.salvadas, pts:p.salvadas*0.35});
   if (p.shotsOn) lines.push({l:'Tiros al arco', stat:'x'+p.shotsOn, pts:p.shotsOn*0.1});
