@@ -526,18 +526,21 @@ function openPP(id) {
   const hasFaltas = (window._allPlayers||[]).some(x => (x.faltas||0) > 0);
   const faltasChip = hasFaltas ? [{k:'faltas',l:'Faltas',c:'tap'}] : [];
   const stats = p.por
-    ? [{k:'saves',l:'Tapadas',c:'tap'},{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOffError',l:'TF Error',c:'ag'},{k:'shotsOffNeutral',l:'TF Neutro',c:'tir'},{k:'shotsOffGood',l:'TF Buen tiro',c:'gol'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip]
-    : [{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'defcon',l:'Contribuciones Defensivas',c:'sal'},{k:'salvadas',l:'Salvada Clave',c:'sal'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOffError',l:'TF Error',c:'ag'},{k:'shotsOffNeutral',l:'TF Neutro',c:'tir'},{k:'shotsOffGood',l:'TF Buen tiro',c:'gol'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip];
+    ? [{k:'saves',l:'Tapadas',c:'tap'},{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOff',l:'Tiros Fuera',c:'tir'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip]
+    : [{k:'goals',l:'Goles',c:'gol'},{k:'assists',l:'Asistencias',c:'ast'},{k:'defcon',l:'Contrib. Defensivas',c:'sal'},{k:'salvadas',l:'Salvada Clave',c:'sal'},{k:'shotsOn',l:'Al arco',c:'ta'},{k:'shotsOff',l:'Tiros Fuera',c:'tir'},{k:'posts',l:'Palos',c:'pst'},{k:'autogoals',l:'Autogoles',c:'ag'},...faltasChip];
   const icons = {
     goals: IC.goal, assists: IC.assist, saves: IC.glove, salvadas: IC.shield, defcon: IC.defcon,
-    shotsOn: IC.shotOn, shotsOffError: IC.tfError, shotsOffNeutral: IC.tfNeutral, shotsOffGood: IC.tfGood, posts: IC.post, autogoals: IC.autogoal,
+    shotsOn: IC.shotOn, shotsOff: IC.tfNeutral, posts: IC.post, autogoals: IC.autogoal,
     faltas: IC.falta
   };
   let sh = '<div class="pp-sg">';
   stats.forEach(s => {
-    // "Al arco" = shotsOn + goals (every goal is a shot on target)
-    const v = s.k === 'shotsOn' ? (p.shotsOn||0) + (p.goals||0) : (p[s.k] || 0);
-    sh += `<div class="pp-si ${s.c}"><span class="pp-si-ico">${icons[s.k]||''}</span><span class="pp-si-lb">${s.l}</span><span class="pp-si-v">${v}</span></div>`;
+    let v;
+    if (s.k === 'shotsOn') v = (p.shotsOn||0) + (p.goals||0); // todo gol es tiro al arco
+    else if (s.k === 'shotsOff') v = (p.shotsOffError||0) + (p.shotsOffNeutral||0) + (p.shotsOffGood||0);
+    else v = p[s.k] || 0;
+    const zeroCls = v === 0 ? ' zero' : '';
+    sh += `<div class="pp-si ${s.c}${zeroCls}"><span class="pp-si-ico">${icons[s.k]||''}</span><span class="pp-si-lb">${s.l}</span><span class="pp-si-v">${v}</span></div>`;
   });
   sh += '</div>';
   $('ppStats').innerHTML = sh;

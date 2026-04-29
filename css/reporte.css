@@ -225,14 +225,22 @@ details[open] summary::after{transform:rotate(180deg)}
 .pp-slide{width:50%;overflow-y:auto;max-height:50vh;padding:12px 16px 20px;flex-shrink:0}
 /* Stat items */
 .pp-sg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.pp-si{display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px}
-.pp-si-ico{display:flex;align-items:center;justify-content:center}
-.pp-si-ico svg{width:16px;height:16px}
-.pp-si-lb{font-size:9px;font-weight:700;color:var(--w4);text-transform:uppercase;flex:1}
-.pp-si-v{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
-.pp-si.gol{color:var(--g)}.pp-si.ast{color:#58a6ff}.pp-si.tap{color:#fbbf24}
-.pp-si.tir{color:var(--w7)}.pp-si.pst{color:#ffa500}.pp-si.sal{color:#58a6ff}
-.pp-si.ag{color:#ff6b6b}.pp-si.ta{color:var(--w7)}
+.pp-si{display:flex;align-items:center;gap:10px;padding:11px 13px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:12px;transition:opacity .15s,border-color .15s,background .15s}
+.pp-si-ico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex-shrink:0}
+.pp-si-ico svg{width:18px;height:18px}
+.pp-si-lb{font-size:9.5px;font-weight:700;color:var(--w4);text-transform:uppercase;letter-spacing:.04em;flex:1;line-height:1.2}
+.pp-si-v{font-size:18px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.pp-si.gol{color:var(--g);background:rgba(167,238,67,.05);border-color:rgba(167,238,67,.18)}
+.pp-si.ast{color:#58a6ff;background:rgba(88,166,255,.05);border-color:rgba(88,166,255,.18)}
+.pp-si.tap{color:#fbbf24;background:rgba(251,191,36,.05);border-color:rgba(251,191,36,.18)}
+.pp-si.tir{color:var(--w7)}
+.pp-si.pst{color:#ffa500;background:rgba(255,165,0,.05);border-color:rgba(255,165,0,.18)}
+.pp-si.sal{color:#58a6ff;background:rgba(88,166,255,.05);border-color:rgba(88,166,255,.18)}
+.pp-si.ag{color:#ff6b6b;background:rgba(255,107,107,.05);border-color:rgba(255,107,107,.18)}
+.pp-si.ta{color:var(--w7)}
+/* Stat sin valor: atenuado para que la lectura priorice los stats que sí pasaron */
+.pp-si.zero{opacity:.42;background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.05)}
+.pp-si.zero .pp-si-v{color:var(--w4);font-weight:700}
 /* Rating breakdown */
 .pp-brk{display:flex;flex-direction:column;gap:4px}
 .pp-br{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.03)}
