@@ -164,9 +164,10 @@ function render(D) {
       let r = 6.0;
       r += (p.goals||0)*0.8;
       r += (p.assists||0)*0.5;
-      // Contribuciones defensivas: +0.10 por cada una, capeado a 15 (max +1.50).
+      // Contribuciones defensivas: +0.10 por cada una, sin cap.
+      // Cada acción defensiva premia al jugador; defensores puros no se castigan.
       // SYNC: misma fórmula en js/organizador.js calcRatings y en el breakdown del popup más abajo.
-      r += Math.min(p.defcon||0, 15) * 0.10;
+      r += (p.defcon||0) * 0.10;
       r += (p.salvadas||0)*0.35;
       r += (p.por ? (p.saves||0)*0.2 : 0);
       if (p.por) r += (conceded[p.team]||0)*(-0.2);
@@ -559,10 +560,7 @@ function openPP(id) {
   if (p.por && gc) lines.push({l:'Goles recibidos (GK)', stat:'x'+gc, pts:gc*(-0.2)});
   if (!p.por && gc) lines.push({l:'Goles recibidos', stat:'x'+gc, pts:gc*(-0.05)});
   if (p.defcon) {
-    const cappedDef = Math.min(p.defcon, 15);
-    const defBonus = cappedDef * 0.10;
-    const lbl = p.defcon > 15 ? 'Contribuciones Defensivas (cap 15)' : 'Contribuciones Defensivas';
-    lines.push({l:lbl, stat:'x'+p.defcon, pts:defBonus});
+    lines.push({l:'Contribuciones Defensivas', stat:'x'+p.defcon, pts:p.defcon * 0.10});
   }
   if (p.salvadas) lines.push({l:'Salvadas Clave', stat:'x'+p.salvadas, pts:p.salvadas*0.35});
   if (p.shotsOn) lines.push({l:'Tiros al arco', stat:'x'+p.shotsOn, pts:p.shotsOn*0.1});

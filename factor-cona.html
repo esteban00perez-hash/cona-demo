@@ -63,7 +63,7 @@ td:last-child{font-weight:800;text-align:right}
     <tr><td>Equipo ganador</td><td class="pos">+0.50</td></tr>
     <tr><td>Salvada clave</td><td class="pos">+0.35</td></tr>
     <tr><td>Atajada (POR)</td><td class="pos">+0.20</td></tr>
-    <tr><td>Contribucion defensiva</td><td class="pos">+0.10 (cap 15 = +1.50)</td></tr>
+    <tr><td>Contribucion defensiva</td><td class="pos">+0.10</td></tr>
     <tr><td>Tiro al arco</td><td class="pos">+0.10</td></tr>
     <tr><td>Palo</td><td class="pos">+0.05</td></tr>
     <tr><td>Tiro afuera</td><td>0.00</td></tr>
@@ -77,11 +77,8 @@ td:last-child{font-weight:800;text-align:right}
 <p style="font-size:10px;color:var(--w4);margin-top:8px">Todas las acciones son individuales — solo afectan al jugador que las hizo. Las marcadas con (POR) aplican unicamente a porteros.</p>
 
 <h3>Contribuciones defensivas</h3>
-<p>Cada contribucion defensiva (corte, marca, cobertura, presion sostenida) suma <strong>+0.10</strong> al puntaje raw. Premia la consistencia: cuantas mas hagas, mas suman.</p>
-<ul>
-  <li><strong>Cap a las 15:</strong> a partir de la contribucion 16 ya no suma mas (max +1.50).</li>
-</ul>
-<p>Ejemplo: 8 contribuciones = +0.80 puntos. 15 o mas = +1.50 puntos (comparable a casi 2 goles).</p>
+<p>Cada contribucion defensiva (corte, marca, cobertura, presion sostenida) suma <strong>+0.10</strong> al puntaje raw, <strong>sin tope</strong>. Premia la consistencia: cada accion defensiva cuenta igual desde la primera hasta la ultima. Un jugador que defiende todo el partido no se castiga por hacer demasiado.</p>
+<p>Ejemplo: 8 contribuciones = +0.80 puntos. 20 contribuciones = +2.00 puntos.</p>
 
 <p>El resultado es el <strong>puntaje raw</strong> de cada jugador. Este numero captura exactamente lo que hiciste en la cancha.</p>
 
